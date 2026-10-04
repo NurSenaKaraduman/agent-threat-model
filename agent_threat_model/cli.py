@@ -12,6 +12,7 @@ import typer
 
 from agent_threat_model import __version__
 from agent_threat_model.catalogue import EFFORT_ORDER, load_catalogue
+from agent_threat_model.diagram import mermaid
 from agent_threat_model.diff import Diff, diff_analyses
 from agent_threat_model.engine import BAND_ORDER, Analysis, analyse
 from agent_threat_model.loader import SystemLoadError, load_system
@@ -174,6 +175,25 @@ def validate_command(
         f"{len(system.tools)} tool(s), {len(system.data_stores)} data store(s), "
         f"{len(system.controls)} control(s))"
     )
+
+
+@app.command("diagram")
+def diagram_command(
+    file: Annotated[Path, typer.Argument(exists=True, dir_okay=False, help="System YAML file.")],
+    output: Annotated[
+        Path | None,
+        typer.Option("--output", "-o", help="Write the diagram here instead of stdout."),
+    ] = None,
+) -> None:
+    """Print a Mermaid diagram of a system description."""
+    try:
+        system = load_system(file)
+    except SystemLoadError as error:
+        typer.echo(f"invalid: {error.source}", err=True)
+        for problem in error.problems:
+            typer.echo(f"  - {problem}", err=True)
+        raise typer.Exit(EXIT_INPUT) from error
+    _write(mermaid(system), output)
 
 
 @app.command("init")

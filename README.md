@@ -119,6 +119,7 @@ Both `atm` and `agent-threat-model` are installed as commands.
 |---|---|
 | `atm analyse system.yaml` | Ranked table in the terminal (rich colours when available, plain text otherwise). `--format markdown\|json\|sarif\|html`, `-o FILE`, `--fail-on high` to break a build. `analyze` works too. |
 | `atm validate system.yaml` | Schema and cross-reference check, including control ids. Exit code 2 on error. |
+| `atm diagram system.yaml` | Print a Mermaid system diagram; `-o FILE` to write it to a file. |
 | `atm init [path]` | Write the support-bot example to start from. |
 | `atm catalogue [threats\|controls]` | List the bundled catalogue; `--format markdown\|json`. |
 | `atm diff old.yaml new.yaml` | Threats added, removed and re-scored between two descriptions; `--fail-on-regression`. |

@@ -4,6 +4,8 @@ from typer.testing import CliRunner
 
 from agent_threat_model import __version__
 from agent_threat_model.cli import app
+from agent_threat_model.diagram import mermaid
+from agent_threat_model.loader import load_system
 from tests.conftest import EXAMPLES
 
 runner = CliRunner()
@@ -101,3 +103,39 @@ def test_schema_command_outputs_json_schema():
     result = runner.invoke(app, ["schema"])
     assert result.exit_code == 0
     assert json.loads(result.output)["title"]
+
+
+def test_diagram_stdout(example_path):
+    path = example_path("support-bot")
+    result = runner.invoke(app, ["diagram", str(path)])
+    assert result.exit_code == 0, result.output
+    assert result.stdout == mermaid(load_system(path))
+
+
+def test_diagram_writes_file(tmp_path, example_path):
+    path = example_path("support-bot")
+    output = tmp_path / "diagrams" / "support-bot.mmd"
+    result = runner.invoke(app, ["diagram", str(path), "-o", str(output)])
+    assert result.exit_code == 0, result.output
+    assert result.stdout == ""
+    assert output.read_text(encoding="utf-8") == mermaid(load_system(path))
+
+
+def test_diagram_invalid_input(tmp_path):
+    bad = tmp_path / "bad.yaml"
+    bad.write_text(
+        "system: {name: x}\nagents: [{id: a, autonomy: act, inputs: [missing]}]\n",
+        encoding="utf-8",
+    )
+    result = runner.invoke(app, ["diagram", str(bad)])
+    assert result.exit_code == 2
+    assert "invalid:" in result.stderr
+    assert "not a channel id" in result.stderr
+    assert result.stdout == ""
+
+
+def test_diagram_matches_example_report(example_path):
+    report = (EXAMPLES / "reports" / "support-bot.md").read_text(encoding="utf-8")
+    block = report.split("```mermaid", 1)[1].split("```", 1)[0]
+    system = load_system(example_path("support-bot"))
+    assert block.strip() == mermaid(system).strip()
