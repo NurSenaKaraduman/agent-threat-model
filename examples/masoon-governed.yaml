@@ -1,9 +1,9 @@
-# The same accounts payable agent as finance-agent.yaml, run behind Hisar:
+# The same accounts payable agent as finance-agent.yaml, run behind Masoon:
 # brokered short-lived credentials, approvals enforced by a policy point
 # outside the model, a tamper-evident audit log, kill switch and budget caps.
-# Compare with:  atm diff examples/finance-agent.yaml examples/hisar-governed.yaml
+# Compare with:  atm diff examples/finance-agent.yaml examples/masoon-governed.yaml
 system:
-  name: Accounts payable agent (Hisar governed)
+  name: Accounts payable agent (Masoon governed)
   description: >-
     Reads supplier invoices from email and attachments, matches them against
     purchase orders in the ERP, posts ledger entries, schedules payments and

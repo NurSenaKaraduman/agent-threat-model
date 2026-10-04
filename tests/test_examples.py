@@ -17,9 +17,9 @@ def test_example_analyses_without_error(name, example_path):
         assert render(analysis, fmt)
 
 
-def test_hisar_governed_has_lower_residual_risk_than_finance(example_path):
+def test_masoon_governed_has_lower_residual_risk_than_finance(example_path):
     finance = analyse(load_system(example_path("finance-agent")))
-    governed = analyse(load_system(example_path("hisar-governed")))
+    governed = analyse(load_system(example_path("masoon-governed")))
     assert governed.residual_risk_score < finance.residual_risk_score - 30
     assert governed.residual_total < finance.residual_total
     assert len(governed.findings) < len(finance.findings)

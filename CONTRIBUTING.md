@@ -41,7 +41,7 @@ CI runs the same commands on Python 3.11 and 3.12 and fails if the generated fil
 
 ## Adding a control
 
-Add an entry to `controls.yaml` with `id`, `title`, `description`, `type` (preventive, detective, corrective), `effort` (low, medium, high) and at least one real `references` URL (OWASP, NIST, MITRE ATLAS, a Hisar repository or a primary source). A control must be cited by at least one threat; the test suite enforces this.
+Add an entry to `controls.yaml` with `id`, `title`, `description`, `type` (preventive, detective, corrective), `effort` (low, medium, high) and at least one real `references` URL (OWASP, NIST, MITRE ATLAS, a Masoon repository or a primary source). A control must be cited by at least one threat; the test suite enforces this.
 
 ## Style
 

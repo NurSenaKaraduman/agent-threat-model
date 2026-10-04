@@ -122,4 +122,4 @@ Arguments are `key=value`; several values are separated with `|`. Rules are pars
 
 ## A complete example
 
-See [`examples/`](../examples/) for four systems: a support chatbot, a coding agent, an accounts payable agent and the same agent governed by Hisar controls. `atm init` writes the support-bot example to start from.
+See [`examples/`](../examples/) for four systems: a support chatbot, a coding agent, an accounts payable agent and the same agent governed by Masoon controls. `atm init` writes the support-bot example to start from.

@@ -55,7 +55,7 @@ def test_identical_systems_produce_empty_diff(analysed):
 
 def test_example_diff_finance_to_governed(example_path):
     old = analyse(load_system(example_path("finance-agent")), source="finance")
-    new = analyse(load_system(example_path("hisar-governed")), source="governed")
+    new = analyse(load_system(example_path("masoon-governed")), source="governed")
     diff = diff_analyses(old, new)
     assert diff.score_delta < -30
     assert "brokered-credentials" in diff.controls_added

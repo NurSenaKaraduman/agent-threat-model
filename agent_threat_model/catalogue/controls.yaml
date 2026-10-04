@@ -55,7 +55,7 @@ controls:
       - https://atlas.mitre.org/mitigations/AML.M0028
       - https://atlas.mitre.org/mitigations/AML.M0026
       - https://github.com/OWASP/www-project-top-10-for-large-language-model-applications/blob/main/2_0_vulns/LLM06_ExcessiveAgency.md
-      - https://basitalisandhu.github.io/hisar/hisar-broker.html
+      - https://basitalisandhu.github.io/masoon/masoon-broker.html
 
   - id: approval-gates
     title: Human approval for high-impact actions
@@ -67,7 +67,7 @@ controls:
     effort: medium
     references:
       - https://atlas.mitre.org/mitigations/AML.M0029
-      - https://basitalisandhu.github.io/hisar/hisar-broker.html
+      - https://basitalisandhu.github.io/masoon/masoon-broker.html
       - https://github.com/OWASP/www-project-top-10-for-large-language-model-applications/blob/main/2_0_vulns/LLM06_ExcessiveAgency.md
 
   - id: runtime-policy-enforcement
@@ -92,7 +92,7 @@ controls:
     type: preventive
     effort: medium
     references:
-      - https://basitalisandhu.github.io/hisar/hisar-broker.html
+      - https://basitalisandhu.github.io/masoon/masoon-broker.html
       - https://cheatsheetseries.owasp.org/cheatsheets/Secrets_Management_Cheat_Sheet.html
       - https://atlas.mitre.org/mitigations/AML.M0019
 
@@ -169,7 +169,7 @@ controls:
     references:
       - https://atlas.mitre.org/mitigations/AML.M0024
       - https://cheatsheetseries.owasp.org/cheatsheets/Logging_Cheat_Sheet.html
-      - https://basitalisandhu.github.io/hisar/hisar-broker.html
+      - https://basitalisandhu.github.io/masoon/masoon-broker.html
 
   - id: behavioural-monitoring
     title: Monitor agent behaviour for anomalies
@@ -192,7 +192,7 @@ controls:
     type: corrective
     effort: low
     references:
-      - https://basitalisandhu.github.io/hisar/hisar-broker.html
+      - https://basitalisandhu.github.io/masoon/masoon-broker.html
       - https://nvlpubs.nist.gov/nistpubs/ai/NIST.AI.100-1.pdf
 
   - id: rate-limiting
@@ -312,7 +312,7 @@ controls:
     effort: medium
     references:
       - https://atlas.mitre.org/mitigations/AML.M0029
-      - https://basitalisandhu.github.io/hisar/hisar-broker.html
+      - https://basitalisandhu.github.io/masoon/masoon-broker.html
 
   - id: agent-identity
     title: Authenticated identities for agents and principals
@@ -325,7 +325,7 @@ controls:
     references:
       - https://atlas.mitre.org/mitigations/AML.M0032
       - https://cheatsheetseries.owasp.org/cheatsheets/Microservices_Security_Cheat_Sheet.html
-      - https://basitalisandhu.github.io/hisar/hisar-broker.html
+      - https://basitalisandhu.github.io/masoon/masoon-broker.html
 
   - id: backups-and-rollback
     title: Backups and rollback for agent-writable data

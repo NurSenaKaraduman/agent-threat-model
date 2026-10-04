@@ -29,13 +29,13 @@ docs: schema
 	$(PY) python scripts/gen_catalogue_doc.py
 
 reports:
-	@for name in support-bot coding-agent finance-agent hisar-governed; do \
+	@for name in support-bot coding-agent finance-agent masoon-governed; do \
 	  for fmt in markdown json sarif html; do \
 	    case $$fmt in markdown) ext=md ;; *) ext=$$fmt ;; esac; \
 	    $(PY) atm analyse examples/$$name.yaml --format $$fmt --output examples/reports/$$name.$$ext; \
 	  done; \
 	done
-	$(PY) atm diff examples/finance-agent.yaml examples/hisar-governed.yaml --format markdown --output examples/reports/finance-to-hisar.diff.md
+	$(PY) atm diff examples/finance-agent.yaml examples/masoon-governed.yaml --format markdown --output examples/reports/finance-to-masoon.diff.md
 
 clean:
 	rm -rf dist build .pytest_cache .ruff_cache

@@ -4,10 +4,10 @@
     "name": "agent-threat-model",
     "version": "0.1.0"
   },
-  "source": "examples/hisar-governed.yaml",
+  "source": "examples/masoon-governed.yaml",
   "system": {
     "system": {
-      "name": "Accounts payable agent (Hisar governed)",
+      "name": "Accounts payable agent (Masoon governed)",
       "description": "Reads supplier invoices from email and attachments, matches them against purchase orders in the ERP, posts ledger entries, schedules payments and emails suppliers about status. Credentials are brokered per task and every side effect passes a policy enforcement point.",
       "owner": "finance-systems team"
     },

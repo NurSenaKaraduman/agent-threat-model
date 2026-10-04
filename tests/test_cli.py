@@ -41,7 +41,7 @@ def test_analyse_writes_sarif_file(tmp_path, example_path):
 def test_analyse_fail_on_exit_code(example_path):
     result = runner.invoke(app, ["analyse", str(example_path("support-bot")), "--fail-on", "high"])
     assert result.exit_code == 1
-    ok = runner.invoke(app, ["analyse", str(example_path("hisar-governed")), "--fail-on", "high"])
+    ok = runner.invoke(app, ["analyse", str(example_path("masoon-governed")), "--fail-on", "high"])
     assert ok.exit_code == 0, ok.output
 
 
@@ -81,7 +81,7 @@ def test_catalogue_listing_formats():
 
 def test_diff_command_and_regression_flag(example_path):
     result = runner.invoke(
-        app, ["diff", str(example_path("finance-agent")), str(example_path("hisar-governed"))]
+        app, ["diff", str(example_path("finance-agent")), str(example_path("masoon-governed"))]
     )
     assert result.exit_code == 0
     assert "Residual risk score: 90" in result.output or "Residual risk score:" in result.output
@@ -89,7 +89,7 @@ def test_diff_command_and_regression_flag(example_path):
         app,
         [
             "diff",
-            str(example_path("hisar-governed")),
+            str(example_path("masoon-governed")),
             str(example_path("finance-agent")),
             "--fail-on-regression",
         ],

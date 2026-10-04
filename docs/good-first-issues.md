@@ -57,7 +57,7 @@ own for wikis and design documents.
 ## 4. Add a fifth worked example: a research agent
 
 **Context.** The four examples cover a support bot, a coding agent, a finance agent and
-a Hisar-governed variant. A browsing agent (web search tool, file write tool, persistent
+a Masoon-governed variant. A browsing agent (web search tool, file write tool, persistent
 memory, untrusted web pages as an input channel) exercises threats the others do not.
 
 **Acceptance criteria.**

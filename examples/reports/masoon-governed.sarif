@@ -345,7 +345,7 @@
             {
               "physicalLocation": {
                 "artifactLocation": {
-                  "uri": "examples/hisar-governed.yaml",
+                  "uri": "examples/masoon-governed.yaml",
                   "uriBaseId": "%SRCROOT%"
                 },
                 "region": {
@@ -363,7 +363,7 @@
             {
               "physicalLocation": {
                 "artifactLocation": {
-                  "uri": "examples/hisar-governed.yaml",
+                  "uri": "examples/masoon-governed.yaml",
                   "uriBaseId": "%SRCROOT%"
                 },
                 "region": {
@@ -381,7 +381,7 @@
             {
               "physicalLocation": {
                 "artifactLocation": {
-                  "uri": "examples/hisar-governed.yaml",
+                  "uri": "examples/masoon-governed.yaml",
                   "uriBaseId": "%SRCROOT%"
                 },
                 "region": {
@@ -434,7 +434,7 @@
             {
               "physicalLocation": {
                 "artifactLocation": {
-                  "uri": "examples/hisar-governed.yaml",
+                  "uri": "examples/masoon-governed.yaml",
                   "uriBaseId": "%SRCROOT%"
                 },
                 "region": {
@@ -452,7 +452,7 @@
             {
               "physicalLocation": {
                 "artifactLocation": {
-                  "uri": "examples/hisar-governed.yaml",
+                  "uri": "examples/masoon-governed.yaml",
                   "uriBaseId": "%SRCROOT%"
                 },
                 "region": {
@@ -502,7 +502,7 @@
             {
               "physicalLocation": {
                 "artifactLocation": {
-                  "uri": "examples/hisar-governed.yaml",
+                  "uri": "examples/masoon-governed.yaml",
                   "uriBaseId": "%SRCROOT%"
                 },
                 "region": {
@@ -520,7 +520,7 @@
             {
               "physicalLocation": {
                 "artifactLocation": {
-                  "uri": "examples/hisar-governed.yaml",
+                  "uri": "examples/masoon-governed.yaml",
                   "uriBaseId": "%SRCROOT%"
                 },
                 "region": {
@@ -569,7 +569,7 @@
             {
               "physicalLocation": {
                 "artifactLocation": {
-                  "uri": "examples/hisar-governed.yaml",
+                  "uri": "examples/masoon-governed.yaml",
                   "uriBaseId": "%SRCROOT%"
                 },
                 "region": {
@@ -587,7 +587,7 @@
             {
               "physicalLocation": {
                 "artifactLocation": {
-                  "uri": "examples/hisar-governed.yaml",
+                  "uri": "examples/masoon-governed.yaml",
                   "uriBaseId": "%SRCROOT%"
                 },
                 "region": {
@@ -637,7 +637,7 @@
             {
               "physicalLocation": {
                 "artifactLocation": {
-                  "uri": "examples/hisar-governed.yaml",
+                  "uri": "examples/masoon-governed.yaml",
                   "uriBaseId": "%SRCROOT%"
                 },
                 "region": {
@@ -655,7 +655,7 @@
             {
               "physicalLocation": {
                 "artifactLocation": {
-                  "uri": "examples/hisar-governed.yaml",
+                  "uri": "examples/masoon-governed.yaml",
                   "uriBaseId": "%SRCROOT%"
                 },
                 "region": {
@@ -707,7 +707,7 @@
             {
               "physicalLocation": {
                 "artifactLocation": {
-                  "uri": "examples/hisar-governed.yaml",
+                  "uri": "examples/masoon-governed.yaml",
                   "uriBaseId": "%SRCROOT%"
                 },
                 "region": {
@@ -725,7 +725,7 @@
             {
               "physicalLocation": {
                 "artifactLocation": {
-                  "uri": "examples/hisar-governed.yaml",
+                  "uri": "examples/masoon-governed.yaml",
                   "uriBaseId": "%SRCROOT%"
                 },
                 "region": {
@@ -743,7 +743,7 @@
             {
               "physicalLocation": {
                 "artifactLocation": {
-                  "uri": "examples/hisar-governed.yaml",
+                  "uri": "examples/masoon-governed.yaml",
                   "uriBaseId": "%SRCROOT%"
                 },
                 "region": {
@@ -761,7 +761,7 @@
             {
               "physicalLocation": {
                 "artifactLocation": {
-                  "uri": "examples/hisar-governed.yaml",
+                  "uri": "examples/masoon-governed.yaml",
                   "uriBaseId": "%SRCROOT%"
                 },
                 "region": {
@@ -815,7 +815,7 @@
             {
               "physicalLocation": {
                 "artifactLocation": {
-                  "uri": "examples/hisar-governed.yaml",
+                  "uri": "examples/masoon-governed.yaml",
                   "uriBaseId": "%SRCROOT%"
                 },
                 "region": {
@@ -833,7 +833,7 @@
             {
               "physicalLocation": {
                 "artifactLocation": {
-                  "uri": "examples/hisar-governed.yaml",
+                  "uri": "examples/masoon-governed.yaml",
                   "uriBaseId": "%SRCROOT%"
                 },
                 "region": {
@@ -851,7 +851,7 @@
             {
               "physicalLocation": {
                 "artifactLocation": {
-                  "uri": "examples/hisar-governed.yaml",
+                  "uri": "examples/masoon-governed.yaml",
                   "uriBaseId": "%SRCROOT%"
                 },
                 "region": {
@@ -869,7 +869,7 @@
             {
               "physicalLocation": {
                 "artifactLocation": {
-                  "uri": "examples/hisar-governed.yaml",
+                  "uri": "examples/masoon-governed.yaml",
                   "uriBaseId": "%SRCROOT%"
                 },
                 "region": {
@@ -922,7 +922,7 @@
             {
               "physicalLocation": {
                 "artifactLocation": {
-                  "uri": "examples/hisar-governed.yaml",
+                  "uri": "examples/masoon-governed.yaml",
                   "uriBaseId": "%SRCROOT%"
                 },
                 "region": {
@@ -940,7 +940,7 @@
             {
               "physicalLocation": {
                 "artifactLocation": {
-                  "uri": "examples/hisar-governed.yaml",
+                  "uri": "examples/masoon-governed.yaml",
                   "uriBaseId": "%SRCROOT%"
                 },
                 "region": {
@@ -958,7 +958,7 @@
             {
               "physicalLocation": {
                 "artifactLocation": {
-                  "uri": "examples/hisar-governed.yaml",
+                  "uri": "examples/masoon-governed.yaml",
                   "uriBaseId": "%SRCROOT%"
                 },
                 "region": {
@@ -976,7 +976,7 @@
             {
               "physicalLocation": {
                 "artifactLocation": {
-                  "uri": "examples/hisar-governed.yaml",
+                  "uri": "examples/masoon-governed.yaml",
                   "uriBaseId": "%SRCROOT%"
                 },
                 "region": {
@@ -994,7 +994,7 @@
             {
               "physicalLocation": {
                 "artifactLocation": {
-                  "uri": "examples/hisar-governed.yaml",
+                  "uri": "examples/masoon-governed.yaml",
                   "uriBaseId": "%SRCROOT%"
                 },
                 "region": {
@@ -1056,7 +1056,7 @@
             {
               "physicalLocation": {
                 "artifactLocation": {
-                  "uri": "examples/hisar-governed.yaml",
+                  "uri": "examples/masoon-governed.yaml",
                   "uriBaseId": "%SRCROOT%"
                 },
                 "region": {
@@ -1074,7 +1074,7 @@
             {
               "physicalLocation": {
                 "artifactLocation": {
-                  "uri": "examples/hisar-governed.yaml",
+                  "uri": "examples/masoon-governed.yaml",
                   "uriBaseId": "%SRCROOT%"
                 },
                 "region": {
@@ -1092,7 +1092,7 @@
             {
               "physicalLocation": {
                 "artifactLocation": {
-                  "uri": "examples/hisar-governed.yaml",
+                  "uri": "examples/masoon-governed.yaml",
                   "uriBaseId": "%SRCROOT%"
                 },
                 "region": {
@@ -1110,7 +1110,7 @@
             {
               "physicalLocation": {
                 "artifactLocation": {
-                  "uri": "examples/hisar-governed.yaml",
+                  "uri": "examples/masoon-governed.yaml",
                   "uriBaseId": "%SRCROOT%"
                 },
                 "region": {
@@ -1128,7 +1128,7 @@
             {
               "physicalLocation": {
                 "artifactLocation": {
-                  "uri": "examples/hisar-governed.yaml",
+                  "uri": "examples/masoon-governed.yaml",
                   "uriBaseId": "%SRCROOT%"
                 },
                 "region": {
@@ -1183,7 +1183,7 @@
             {
               "physicalLocation": {
                 "artifactLocation": {
-                  "uri": "examples/hisar-governed.yaml",
+                  "uri": "examples/masoon-governed.yaml",
                   "uriBaseId": "%SRCROOT%"
                 },
                 "region": {
@@ -1201,7 +1201,7 @@
             {
               "physicalLocation": {
                 "artifactLocation": {
-                  "uri": "examples/hisar-governed.yaml",
+                  "uri": "examples/masoon-governed.yaml",
                   "uriBaseId": "%SRCROOT%"
                 },
                 "region": {
@@ -1219,7 +1219,7 @@
             {
               "physicalLocation": {
                 "artifactLocation": {
-                  "uri": "examples/hisar-governed.yaml",
+                  "uri": "examples/masoon-governed.yaml",
                   "uriBaseId": "%SRCROOT%"
                 },
                 "region": {
@@ -1265,7 +1265,7 @@
       "properties": {
         "residualRiskScore": 27,
         "rating": "medium",
-        "systemName": "Accounts payable agent (Hisar governed)"
+        "systemName": "Accounts payable agent (Masoon governed)"
       }
     }
   ]

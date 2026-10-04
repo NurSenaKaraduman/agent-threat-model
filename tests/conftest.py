@@ -15,7 +15,7 @@ from agent_threat_model.predicates import Context
 
 ROOT = Path(__file__).resolve().parents[1]
 EXAMPLES = ROOT / "examples"
-EXAMPLE_NAMES = ["support-bot", "coding-agent", "finance-agent", "hisar-governed"]
+EXAMPLE_NAMES = ["support-bot", "coding-agent", "finance-agent", "masoon-governed"]
 
 BASE: dict[str, Any] = {
     "system": {"name": "Test system", "description": "Fixture", "owner": "tests"},

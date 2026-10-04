@@ -71,7 +71,7 @@ Homepage = "https://github.com/basitalisandhu/agent-threat-model"
 Repository = "https://github.com/basitalisandhu/agent-threat-model"
 Issues = "https://github.com/basitalisandhu/agent-threat-model/issues"
 Changelog = "https://github.com/basitalisandhu/agent-threat-model/blob/main/CHANGELOG.md"
-Documentation = "https://basitalisandhu.github.io/hisar/agent-threat-model.html"
+Documentation = "https://basitalisandhu.github.io/masoon/agent-threat-model.html"
 
 [tool.hatch.build.targets.wheel]
 packages = ["agent_threat_model"]

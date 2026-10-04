@@ -1,4 +1,4 @@
-# Threat register diff: `examples/finance-agent.yaml` to `examples/hisar-governed.yaml`
+# Threat register diff: `examples/finance-agent.yaml` to `examples/masoon-governed.yaml`
 
 Residual risk score **90** (critical) to **27** (medium), change -63.
 
