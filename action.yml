@@ -1,0 +1,112 @@
+name: agent-threat-model
+description: Threat-model an LLM-agent system described in YAML and upload the result to GitHub code scanning as SARIF.
+author: Muhammad Basit Ali
+branding:
+  icon: shield
+  color: red
+
+inputs:
+  system-file:
+    description: Path to the system description YAML.
+    required: false
+    default: system.yaml
+  sarif-file:
+    description: Where to write the SARIF report.
+    required: false
+    default: agent-threat-model.sarif
+  markdown-file:
+    description: Optional path for a Markdown report (empty to skip).
+    required: false
+    default: ""
+  fail-on:
+    description: Fail the step when a threat of this residual severity or worse applies (none, low, medium, high, critical).
+    required: false
+    default: none
+  upload:
+    description: Upload the SARIF file to GitHub code scanning (needs security-events write permission).
+    required: false
+    default: "true"
+  python-version:
+    description: Python version to set up.
+    required: false
+    default: "3.12"
+  version:
+    description: agent-threat-model version to install from PyPI. Empty installs the action's own checkout.
+    required: false
+    default: ""
+
+outputs:
+  sarif-file:
+    description: Path of the SARIF report that was written.
+    value: ${{ steps.analyse.outputs.sarif-file }}
+  residual-risk-score:
+    description: Residual risk score, 0 to 100.
+    value: ${{ steps.analyse.outputs.residual-risk-score }}
+  rating:
+    description: Rating derived from the score (low, medium, high, critical).
+    value: ${{ steps.analyse.outputs.rating }}
+
+runs:
+  using: composite
+  steps:
+    - name: Set up Python
+      uses: actions/setup-python@v5
+      with:
+        python-version: ${{ inputs.python-version }}
+
+    - name: Install agent-threat-model
+      shell: bash
+      env:
+        ATM_VERSION: ${{ inputs.version }}
+        ATM_ACTION_PATH: ${{ github.action_path }}
+      run: |
+        python -m pip install --upgrade pip >/dev/null
+        if [ -n "$ATM_VERSION" ]; then
+          python -m pip install "agent-threat-model==$ATM_VERSION"
+        else
+          python -m pip install "$ATM_ACTION_PATH"
+        fi
+        atm --version
+
+    - name: Validate and analyse
+      id: analyse
+      shell: bash
+      env:
+        SYSTEM_FILE: ${{ inputs.system-file }}
+        SARIF_FILE: ${{ inputs.sarif-file }}
+        MARKDOWN_FILE: ${{ inputs.markdown-file }}
+      run: |
+        atm validate "$SYSTEM_FILE"
+        atm analyse "$SYSTEM_FILE" --format sarif --output "$SARIF_FILE"
+        if [ -n "$MARKDOWN_FILE" ]; then
+          atm analyse "$SYSTEM_FILE" --format markdown --output "$MARKDOWN_FILE"
+        fi
+        atm analyse "$SYSTEM_FILE" --format json --output atm-summary.json
+        score=$(python -c "import json; print(json.load(open('atm-summary.json'))['summary']['residual_risk_score'])")
+        rating=$(python -c "import json; print(json.load(open('atm-summary.json'))['summary']['rating'])")
+        rm -f atm-summary.json
+        echo "sarif-file=$SARIF_FILE" >> "$GITHUB_OUTPUT"
+        echo "residual-risk-score=$score" >> "$GITHUB_OUTPUT"
+        echo "rating=$rating" >> "$GITHUB_OUTPUT"
+        echo "### agent-threat-model" >> "$GITHUB_STEP_SUMMARY"
+        echo "" >> "$GITHUB_STEP_SUMMARY"
+        echo "Residual risk score: **$score/100** ($rating) for \`$SYSTEM_FILE\`" >> "$GITHUB_STEP_SUMMARY"
+        echo "" >> "$GITHUB_STEP_SUMMARY"
+        echo '```' >> "$GITHUB_STEP_SUMMARY"
+        atm analyse "$SYSTEM_FILE" --plain >> "$GITHUB_STEP_SUMMARY"
+        echo '```' >> "$GITHUB_STEP_SUMMARY"
+
+    - name: Upload SARIF to code scanning
+      if: ${{ inputs.upload == 'true' }}
+      uses: github/codeql-action/upload-sarif@v3
+      with:
+        sarif_file: ${{ inputs.sarif-file }}
+        category: agent-threat-model
+
+    - name: Enforce severity threshold
+      if: ${{ inputs.fail-on != 'none' }}
+      shell: bash
+      env:
+        SYSTEM_FILE: ${{ inputs.system-file }}
+        FAIL_ON: ${{ inputs.fail-on }}
+      run: atm analyse "$SYSTEM_FILE" --plain --fail-on "$FAIL_ON" >/dev/null

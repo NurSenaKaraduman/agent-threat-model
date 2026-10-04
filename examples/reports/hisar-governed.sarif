@@ -1,0 +1,1272 @@
+{
+  "$schema": "https://json.schemastore.org/sarif-2.1.0.json",
+  "version": "2.1.0",
+  "runs": [
+    {
+      "tool": {
+        "driver": {
+          "name": "agent-threat-model",
+          "version": "0.1.0",
+          "semanticVersion": "0.1.0",
+          "informationUri": "https://github.com/basitalisandhu/agent-threat-model",
+          "rules": [
+            {
+              "id": "indirect-prompt-injection",
+              "name": "IndirectPromptInjection",
+              "shortDescription": {
+                "text": "Indirect prompt injection via untrusted channel"
+              },
+              "fullDescription": {
+                "text": "Content the agent reads from an untrusted channel (email, web pages, documents, retrieved passages, API responses) carries instructions that the model follows as if they came from the operator. Every tool the agent can reach becomes available to whoever wrote that content."
+              },
+              "help": {
+                "text": "Content the agent reads from an untrusted channel (email, web pages, documents, retrieved passages, API responses) carries instructions that the model follows as if they came from the operator. Every tool the agent can reach becomes available to whoever wrote that content.",
+                "markdown": "**Indirect prompt injection via untrusted channel**\n\nContent the agent reads from an untrusted channel (email, web pages, documents, retrieved passages, API responses) carries instructions that the model follows as if they came from the operator. Every tool the agent can reach becomes available to whoever wrote that content.\n\nSTRIDE: Tampering\nOWASP LLM Top 10 (2025): LLM01 Prompt Injection\nOWASP Top 10 for Agentic Applications (2026): ASI01 Agent Goal Hijack\nMITRE ATLAS: [AML.T0051.001](https://atlas.mitre.org/techniques/AML.T0051.001)\n\nMitigations: input-provenance-tagging, least-privilege-tool-scopes, approval-gates, untrusted-content-isolation, prompt-injection-filtering"
+              },
+              "helpUri": "https://github.com/OWASP/www-project-top-10-for-large-language-model-applications/blob/main/2_0_vulns/LLM01_PromptInjection.md",
+              "defaultConfiguration": {
+                "level": "warning"
+              },
+              "properties": {
+                "tags": [
+                  "security",
+                  "stride/tampering",
+                  "owasp-llm/LLM01",
+                  "owasp-agentic/ASI01",
+                  "mitre-atlas/AML.T0051.001"
+                ],
+                "security-severity": "3.1",
+                "precision": "medium",
+                "problem.severity": "warning"
+              }
+            },
+            {
+              "id": "malicious-file-input",
+              "name": "MaliciousFileInput",
+              "shortDescription": {
+                "text": "Malicious files and documents as input"
+              },
+              "fullDescription": {
+                "text": "The agent parses files or documents. Crafted files exploit parser bugs, hide instructions in metadata or invisible text, and carry macros or links that later tools act on."
+              },
+              "help": {
+                "text": "The agent parses files or documents. Crafted files exploit parser bugs, hide instructions in metadata or invisible text, and carry macros or links that later tools act on.",
+                "markdown": "**Malicious files and documents as input**\n\nThe agent parses files or documents. Crafted files exploit parser bugs, hide instructions in metadata or invisible text, and carry macros or links that later tools act on.\n\nSTRIDE: Tampering\nOWASP LLM Top 10 (2025): LLM01 Prompt Injection\nOWASP Top 10 for Agentic Applications (2026): ASI01 Agent Goal Hijack\nMITRE ATLAS: [AML.T0051.001](https://atlas.mitre.org/techniques/AML.T0051.001), [AML.T0011.000](https://atlas.mitre.org/techniques/AML.T0011.000)\n\nMitigations: input-provenance-tagging, untrusted-content-isolation, sandboxed-execution, prompt-injection-filtering"
+              },
+              "helpUri": "https://genai.owasp.org/llm-top-10/",
+              "defaultConfiguration": {
+                "level": "warning"
+              },
+              "properties": {
+                "tags": [
+                  "security",
+                  "stride/tampering",
+                  "owasp-llm/LLM01",
+                  "owasp-agentic/ASI01",
+                  "mitre-atlas/AML.T0051.001",
+                  "mitre-atlas/AML.T0011.000"
+                ],
+                "security-severity": "2.8",
+                "precision": "medium",
+                "problem.severity": "warning"
+              }
+            },
+            {
+              "id": "insecure-output-handling",
+              "name": "InsecureOutputHandling",
+              "shortDescription": {
+                "text": "Model output consumed without validation"
+              },
+              "fullDescription": {
+                "text": "Downstream components render model output in a browser, pass it to a shell or database, or execute it. Injected or malformed output becomes cross-site scripting, command injection or unintended writes."
+              },
+              "help": {
+                "text": "Downstream components render model output in a browser, pass it to a shell or database, or execute it. Injected or malformed output becomes cross-site scripting, command injection or unintended writes.",
+                "markdown": "**Model output consumed without validation**\n\nDownstream components render model output in a browser, pass it to a shell or database, or execute it. Injected or malformed output becomes cross-site scripting, command injection or unintended writes.\n\nSTRIDE: Tampering\nOWASP LLM Top 10 (2025): LLM05 Improper Output Handling\nOWASP Top 10 for Agentic Applications (2026): ASI05 Unexpected Code Execution\nMITRE ATLAS: [AML.T0077](https://atlas.mitre.org/techniques/AML.T0077), [AML.T0067](https://atlas.mitre.org/techniques/AML.T0067)\n\nMitigations: argument-validation, output-encoding, sandboxed-execution"
+              },
+              "helpUri": "https://github.com/OWASP/www-project-top-10-for-large-language-model-applications/blob/main/2_0_vulns/LLM05_ImproperOutputHandling.md",
+              "defaultConfiguration": {
+                "level": "warning"
+              },
+              "properties": {
+                "tags": [
+                  "security",
+                  "stride/tampering",
+                  "owasp-llm/LLM05",
+                  "owasp-agentic/ASI05",
+                  "mitre-atlas/AML.T0077",
+                  "mitre-atlas/AML.T0067"
+                ],
+                "security-severity": "2.6",
+                "precision": "medium",
+                "problem.severity": "warning"
+              }
+            },
+            {
+              "id": "session-cross-contamination",
+              "name": "SessionCrossContamination",
+              "shortDescription": {
+                "text": "Memory leaks between users or sessions"
+              },
+              "fullDescription": {
+                "text": "The agent keeps memory and serves more than one user. Without strict partitioning, one user's data or instructions surface in another user's session."
+              },
+              "help": {
+                "text": "The agent keeps memory and serves more than one user. Without strict partitioning, one user's data or instructions surface in another user's session.",
+                "markdown": "**Memory leaks between users or sessions**\n\nThe agent keeps memory and serves more than one user. Without strict partitioning, one user's data or instructions surface in another user's session.\n\nSTRIDE: Information disclosure\nOWASP LLM Top 10 (2025): LLM02 Sensitive Information Disclosure\nOWASP Top 10 for Agentic Applications (2026): ASI06 Memory and Context Poisoning\nMITRE ATLAS: [AML.T0057](https://atlas.mitre.org/techniques/AML.T0057), [AML.T0092](https://atlas.mitre.org/techniques/AML.T0092)\n\nMitigations: per-user-authorisation, session-isolation, memory-write-validation"
+              },
+              "helpUri": "https://genai.owasp.org/llm-top-10/",
+              "defaultConfiguration": {
+                "level": "note"
+              },
+              "properties": {
+                "tags": [
+                  "security",
+                  "stride/information-disclosure",
+                  "owasp-llm/LLM02",
+                  "owasp-agentic/ASI06",
+                  "mitre-atlas/AML.T0057",
+                  "mitre-atlas/AML.T0092"
+                ],
+                "security-severity": "2.4",
+                "precision": "medium",
+                "problem.severity": "note"
+              }
+            },
+            {
+              "id": "direct-prompt-injection",
+              "name": "DirectPromptInjection",
+              "shortDescription": {
+                "text": "Direct prompt injection and jailbreak by a user"
+              },
+              "fullDescription": {
+                "text": "A user types instructions that override the system prompt or safety guidance, then uses the agent's tools for purposes the operator did not intend. Any agent that accepts user input and has tools is exposed."
+              },
+              "help": {
+                "text": "A user types instructions that override the system prompt or safety guidance, then uses the agent's tools for purposes the operator did not intend. Any agent that accepts user input and has tools is exposed.",
+                "markdown": "**Direct prompt injection and jailbreak by a user**\n\nA user types instructions that override the system prompt or safety guidance, then uses the agent's tools for purposes the operator did not intend. Any agent that accepts user input and has tools is exposed.\n\nSTRIDE: Tampering\nOWASP LLM Top 10 (2025): LLM01 Prompt Injection\nOWASP Top 10 for Agentic Applications (2026): ASI01 Agent Goal Hijack\nMITRE ATLAS: [AML.T0051.000](https://atlas.mitre.org/techniques/AML.T0051.000), [AML.T0054](https://atlas.mitre.org/techniques/AML.T0054)\n\nMitigations: least-privilege-tool-scopes, runtime-policy-enforcement, approval-gates, prompt-injection-filtering, adversarial-testing"
+              },
+              "helpUri": "https://genai.owasp.org/llm-top-10/",
+              "defaultConfiguration": {
+                "level": "note"
+              },
+              "properties": {
+                "tags": [
+                  "security",
+                  "stride/tampering",
+                  "owasp-llm/LLM01",
+                  "owasp-agentic/ASI01",
+                  "mitre-atlas/AML.T0051.000",
+                  "mitre-atlas/AML.T0054"
+                ],
+                "security-severity": "2.0",
+                "precision": "medium",
+                "problem.severity": "note"
+              }
+            },
+            {
+              "id": "destructive-write-actions",
+              "name": "DestructiveWriteActions",
+              "shortDescription": {
+                "text": "Destructive actions through write tools"
+              },
+              "fullDescription": {
+                "text": "The agent can modify or delete data and reads untrusted content. An injected instruction (or a plain mistake) deletes records, overwrites files or force-pushes over history."
+              },
+              "help": {
+                "text": "The agent can modify or delete data and reads untrusted content. An injected instruction (or a plain mistake) deletes records, overwrites files or force-pushes over history.",
+                "markdown": "**Destructive actions through write tools**\n\nThe agent can modify or delete data and reads untrusted content. An injected instruction (or a plain mistake) deletes records, overwrites files or force-pushes over history.\n\nSTRIDE: Tampering\nOWASP LLM Top 10 (2025): LLM06 Excessive Agency, LLM01 Prompt Injection\nOWASP Top 10 for Agentic Applications (2026): ASI02 Tool Misuse and Exploitation\nMITRE ATLAS: [AML.T0101](https://atlas.mitre.org/techniques/AML.T0101)\n\nMitigations: approval-gates, least-privilege-tool-scopes, audit-log, backups-and-rollback"
+              },
+              "helpUri": "https://genai.owasp.org/llm-top-10/",
+              "defaultConfiguration": {
+                "level": "note"
+              },
+              "properties": {
+                "tags": [
+                  "security",
+                  "stride/tampering",
+                  "owasp-llm/LLM06",
+                  "owasp-llm/LLM01",
+                  "owasp-agentic/ASI02",
+                  "mitre-atlas/AML.T0101"
+                ],
+                "security-severity": "1.6",
+                "precision": "medium",
+                "problem.severity": "note"
+              }
+            },
+            {
+              "id": "system-prompt-leakage",
+              "name": "SystemPromptLeakage",
+              "shortDescription": {
+                "text": "System prompt and configuration leakage"
+              },
+              "fullDescription": {
+                "text": "Users or third-party content can coax the model into revealing its system prompt, tool list and configuration. On its own this is reconnaissance; it becomes serious when the prompt holds secrets or business rules."
+              },
+              "help": {
+                "text": "Users or third-party content can coax the model into revealing its system prompt, tool list and configuration. On its own this is reconnaissance; it becomes serious when the prompt holds secrets or business rules.",
+                "markdown": "**System prompt and configuration leakage**\n\nUsers or third-party content can coax the model into revealing its system prompt, tool list and configuration. On its own this is reconnaissance; it becomes serious when the prompt holds secrets or business rules.\n\nSTRIDE: Information disclosure\nOWASP LLM Top 10 (2025): LLM07 System Prompt Leakage\nMITRE ATLAS: [AML.T0056](https://atlas.mitre.org/techniques/AML.T0056), [AML.T0069.002](https://atlas.mitre.org/techniques/AML.T0069.002), [AML.T0084](https://atlas.mitre.org/techniques/AML.T0084), [AML.T0084.001](https://atlas.mitre.org/techniques/AML.T0084.001)\n\nMitigations: secrets-out-of-context, runtime-policy-enforcement, adversarial-testing"
+              },
+              "helpUri": "https://github.com/OWASP/www-project-top-10-for-large-language-model-applications/blob/main/2_0_vulns/LLM07_SystemPromptLeakage.md",
+              "defaultConfiguration": {
+                "level": "note"
+              },
+              "properties": {
+                "tags": [
+                  "security",
+                  "stride/information-disclosure",
+                  "owasp-llm/LLM07",
+                  "mitre-atlas/AML.T0056",
+                  "mitre-atlas/AML.T0069.002",
+                  "mitre-atlas/AML.T0084",
+                  "mitre-atlas/AML.T0084.001"
+                ],
+                "security-severity": "1.2",
+                "precision": "medium",
+                "problem.severity": "note"
+              }
+            },
+            {
+              "id": "data-exfiltration-via-messaging",
+              "name": "DataExfiltrationViaMessaging",
+              "shortDescription": {
+                "text": "Data exfiltration through messaging tools"
+              },
+              "fullDescription": {
+                "text": "The agent can send email or chat messages and also reads untrusted content or sensitive data. An injected instruction forwards that data to an attacker-chosen recipient in a message that looks routine."
+              },
+              "help": {
+                "text": "The agent can send email or chat messages and also reads untrusted content or sensitive data. An injected instruction forwards that data to an attacker-chosen recipient in a message that looks routine.",
+                "markdown": "**Data exfiltration through messaging tools**\n\nThe agent can send email or chat messages and also reads untrusted content or sensitive data. An injected instruction forwards that data to an attacker-chosen recipient in a message that looks routine.\n\nSTRIDE: Information disclosure\nOWASP LLM Top 10 (2025): LLM02 Sensitive Information Disclosure, LLM01 Prompt Injection\nOWASP Top 10 for Agentic Applications (2026): ASI02 Tool Misuse and Exploitation\nMITRE ATLAS: [AML.T0086](https://atlas.mitre.org/techniques/AML.T0086), [AML.T0025](https://atlas.mitre.org/techniques/AML.T0025)\n\nMitigations: egress-allowlist, dlp-outbound, approval-gates, input-provenance-tagging, audit-log"
+              },
+              "helpUri": "https://genai.owasp.org/llm-top-10/",
+              "defaultConfiguration": {
+                "level": "note"
+              },
+              "properties": {
+                "tags": [
+                  "security",
+                  "stride/information-disclosure",
+                  "owasp-llm/LLM02",
+                  "owasp-llm/LLM01",
+                  "owasp-agentic/ASI02",
+                  "mitre-atlas/AML.T0086",
+                  "mitre-atlas/AML.T0025"
+                ],
+                "security-severity": "1.2",
+                "precision": "medium",
+                "problem.severity": "note"
+              }
+            },
+            {
+              "id": "sensitive-data-disclosure",
+              "name": "SensitiveDataDisclosure",
+              "shortDescription": {
+                "text": "Sensitive data reachable by the model"
+              },
+              "fullDescription": {
+                "text": "The agent can read confidential or regulated records through a tool. Whatever enters the context can be summarised, quoted or exfiltrated, and a shared service account returns records the requesting user may not be entitled to."
+              },
+              "help": {
+                "text": "The agent can read confidential or regulated records through a tool. Whatever enters the context can be summarised, quoted or exfiltrated, and a shared service account returns records the requesting user may not be entitled to.",
+                "markdown": "**Sensitive data reachable by the model**\n\nThe agent can read confidential or regulated records through a tool. Whatever enters the context can be summarised, quoted or exfiltrated, and a shared service account returns records the requesting user may not be entitled to.\n\nSTRIDE: Information disclosure\nOWASP LLM Top 10 (2025): LLM02 Sensitive Information Disclosure\nOWASP Top 10 for Agentic Applications (2026): ASI03 Identity and Privilege Abuse, ASI02 Tool Misuse and Exploitation\nMITRE ATLAS: [AML.T0057](https://atlas.mitre.org/techniques/AML.T0057), [AML.T0085.000](https://atlas.mitre.org/techniques/AML.T0085.000), [AML.T0036](https://atlas.mitre.org/techniques/AML.T0036)\n\nMitigations: per-user-authorisation, least-privilege-tool-scopes, dlp-outbound, audit-log"
+              },
+              "helpUri": "https://github.com/OWASP/www-project-top-10-for-large-language-model-applications/blob/main/2_0_vulns/LLM02_SensitiveInformationDisclosure.md",
+              "defaultConfiguration": {
+                "level": "note"
+              },
+              "properties": {
+                "tags": [
+                  "security",
+                  "stride/information-disclosure",
+                  "owasp-llm/LLM02",
+                  "owasp-agentic/ASI03",
+                  "owasp-agentic/ASI02",
+                  "mitre-atlas/AML.T0057",
+                  "mitre-atlas/AML.T0085.000",
+                  "mitre-atlas/AML.T0036"
+                ],
+                "security-severity": "1.2",
+                "precision": "medium",
+                "problem.severity": "note"
+              }
+            },
+            {
+              "id": "hallucinated-actions",
+              "name": "HallucinatedActions",
+              "shortDescription": {
+                "text": "Acting on hallucinated facts or identifiers"
+              },
+              "fullDescription": {
+                "text": "The agent invents a package name, account id, file path or amount and a side-effecting tool executes it. Attackers register the names models tend to invent so the mistake resolves to something malicious."
+              },
+              "help": {
+                "text": "The agent invents a package name, account id, file path or amount and a side-effecting tool executes it. Attackers register the names models tend to invent so the mistake resolves to something malicious.",
+                "markdown": "**Acting on hallucinated facts or identifiers**\n\nThe agent invents a package name, account id, file path or amount and a side-effecting tool executes it. Attackers register the names models tend to invent so the mistake resolves to something malicious.\n\nSTRIDE: Tampering\nOWASP LLM Top 10 (2025): LLM09 Misinformation, LLM06 Excessive Agency\nOWASP Top 10 for Agentic Applications (2026): ASI02 Tool Misuse and Exploitation, ASI04 Agentic Supply Chain Vulnerabilities\nMITRE ATLAS: [AML.T0060](https://atlas.mitre.org/techniques/AML.T0060), [AML.T0053](https://atlas.mitre.org/techniques/AML.T0053)\n\nMitigations: argument-validation, approval-gates, tool-integrity-pinning, adversarial-testing"
+              },
+              "helpUri": "https://arxiv.org/abs/2406.10279",
+              "defaultConfiguration": {
+                "level": "note"
+              },
+              "properties": {
+                "tags": [
+                  "security",
+                  "stride/tampering",
+                  "owasp-llm/LLM09",
+                  "owasp-llm/LLM06",
+                  "owasp-agentic/ASI02",
+                  "owasp-agentic/ASI04",
+                  "mitre-atlas/AML.T0060",
+                  "mitre-atlas/AML.T0053"
+                ],
+                "security-severity": "1.2",
+                "precision": "medium",
+                "problem.severity": "note"
+              }
+            }
+          ]
+        }
+      },
+      "invocations": [
+        {
+          "executionSuccessful": true
+        }
+      ],
+      "results": [
+        {
+          "ruleId": "indirect-prompt-injection",
+          "ruleIndex": 0,
+          "level": "warning",
+          "message": {
+            "text": "Indirect prompt injection via untrusted channel: residual severity 7.7 (medium). agent 'ap-agent' reads untrusted channel 'supplier-email' (email, origin third-party). Missing mitigations: untrusted-content-isolation, prompt-injection-filtering."
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "examples/hisar-governed.yaml",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 29,
+                  "startColumn": 1
+                }
+              },
+              "logicalLocations": [
+                {
+                  "name": "ap-agent",
+                  "kind": "object"
+                }
+              ]
+            },
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "examples/hisar-governed.yaml",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 42,
+                  "startColumn": 1
+                }
+              },
+              "logicalLocations": [
+                {
+                  "name": "invoice-files",
+                  "kind": "object"
+                }
+              ]
+            },
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "examples/hisar-governed.yaml",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 38,
+                  "startColumn": 1
+                }
+              },
+              "logicalLocations": [
+                {
+                  "name": "supplier-email",
+                  "kind": "object"
+                }
+              ]
+            }
+          ],
+          "partialFingerprints": {
+            "threatElements/v1": "5d50f1600f932ef264a587786e793d43"
+          },
+          "properties": {
+            "inherent": 16,
+            "residual": 7.7,
+            "elements": [
+              "ap-agent",
+              "invoice-files",
+              "supplier-email"
+            ],
+            "reasons": [
+              "agent 'ap-agent' reads untrusted channel 'supplier-email' (email, origin third-party)",
+              "agent 'ap-agent' reads untrusted channel 'invoice-files' (document, origin third-party)"
+            ],
+            "mitigationsPresent": [
+              "input-provenance-tagging",
+              "least-privilege-tool-scopes",
+              "approval-gates"
+            ],
+            "mitigationsMissing": [
+              "untrusted-content-isolation",
+              "prompt-injection-filtering"
+            ]
+          }
+        },
+        {
+          "ruleId": "malicious-file-input",
+          "ruleIndex": 1,
+          "level": "warning",
+          "message": {
+            "text": "Malicious files and documents as input: residual severity 7 (medium). agent 'ap-agent' reads untrusted document channel 'invoice-files'. Missing mitigations: untrusted-content-isolation, sandboxed-execution, prompt-injection-filtering."
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "examples/hisar-governed.yaml",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 29,
+                  "startColumn": 1
+                }
+              },
+              "logicalLocations": [
+                {
+                  "name": "ap-agent",
+                  "kind": "object"
+                }
+              ]
+            },
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "examples/hisar-governed.yaml",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 42,
+                  "startColumn": 1
+                }
+              },
+              "logicalLocations": [
+                {
+                  "name": "invoice-files",
+                  "kind": "object"
+                }
+              ]
+            }
+          ],
+          "partialFingerprints": {
+            "threatElements/v1": "4cf885060d84684b105c71da24789171"
+          },
+          "properties": {
+            "inherent": 9,
+            "residual": 7.0,
+            "elements": [
+              "ap-agent",
+              "invoice-files"
+            ],
+            "reasons": [
+              "agent 'ap-agent' reads untrusted document channel 'invoice-files'"
+            ],
+            "mitigationsPresent": [
+              "input-provenance-tagging"
+            ],
+            "mitigationsMissing": [
+              "untrusted-content-isolation",
+              "sandboxed-execution",
+              "prompt-injection-filtering"
+            ]
+          }
+        },
+        {
+          "ruleId": "insecure-output-handling",
+          "ruleIndex": 2,
+          "level": "warning",
+          "message": {
+            "text": "Model output consumed without validation: residual severity 6.6 (medium). agent 'ap-agent' can call tool 'update-ledger' (write). Missing mitigations: output-encoding, sandboxed-execution."
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "examples/hisar-governed.yaml",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 29,
+                  "startColumn": 1
+                }
+              },
+              "logicalLocations": [
+                {
+                  "name": "ap-agent",
+                  "kind": "object"
+                }
+              ]
+            },
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "examples/hisar-governed.yaml",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 71,
+                  "startColumn": 1
+                }
+              },
+              "logicalLocations": [
+                {
+                  "name": "update-ledger",
+                  "kind": "object"
+                }
+              ]
+            }
+          ],
+          "partialFingerprints": {
+            "threatElements/v1": "f322fd116ca2f178aebb78de38dd3af0"
+          },
+          "properties": {
+            "inherent": 9,
+            "residual": 6.6,
+            "elements": [
+              "ap-agent",
+              "update-ledger"
+            ],
+            "reasons": [
+              "agent 'ap-agent' can call tool 'update-ledger' (write)"
+            ],
+            "mitigationsPresent": [
+              "argument-validation"
+            ],
+            "mitigationsMissing": [
+              "output-encoding",
+              "sandboxed-execution"
+            ]
+          }
+        },
+        {
+          "ruleId": "session-cross-contamination",
+          "ruleIndex": 3,
+          "level": "note",
+          "message": {
+            "text": "Memory leaks between users or sessions: residual severity 5.9 (low). agent 'ap-agent' keeps session memory. Missing mitigations: session-isolation, memory-write-validation."
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "examples/hisar-governed.yaml",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 29,
+                  "startColumn": 1
+                }
+              },
+              "logicalLocations": [
+                {
+                  "name": "ap-agent",
+                  "kind": "object"
+                }
+              ]
+            },
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "examples/hisar-governed.yaml",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 51,
+                  "startColumn": 1
+                }
+              },
+              "logicalLocations": [
+                {
+                  "name": "approval-console",
+                  "kind": "object"
+                }
+              ]
+            }
+          ],
+          "partialFingerprints": {
+            "threatElements/v1": "1ad5e8a3a1365f41dc332a4e2e6f9d9c"
+          },
+          "properties": {
+            "inherent": 8,
+            "residual": 5.9,
+            "elements": [
+              "ap-agent",
+              "approval-console"
+            ],
+            "reasons": [
+              "agent 'ap-agent' keeps session memory",
+              "agent 'ap-agent' reads channel 'approval-console' with origin user"
+            ],
+            "mitigationsPresent": [
+              "per-user-authorisation"
+            ],
+            "mitigationsMissing": [
+              "session-isolation",
+              "memory-write-validation"
+            ]
+          }
+        },
+        {
+          "ruleId": "direct-prompt-injection",
+          "ruleIndex": 4,
+          "level": "note",
+          "message": {
+            "text": "Direct prompt injection and jailbreak by a user: residual severity 5.1 (low). agent 'ap-agent' reads channel 'approval-console' with origin user. Missing mitigations: prompt-injection-filtering, adversarial-testing."
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "examples/hisar-governed.yaml",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 29,
+                  "startColumn": 1
+                }
+              },
+              "logicalLocations": [
+                {
+                  "name": "ap-agent",
+                  "kind": "object"
+                }
+              ]
+            },
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "examples/hisar-governed.yaml",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 51,
+                  "startColumn": 1
+                }
+              },
+              "logicalLocations": [
+                {
+                  "name": "approval-console",
+                  "kind": "object"
+                }
+              ]
+            }
+          ],
+          "partialFingerprints": {
+            "threatElements/v1": "84f60844511fed4947b33c3c5ae5b951"
+          },
+          "properties": {
+            "inherent": 12,
+            "residual": 5.1,
+            "elements": [
+              "ap-agent",
+              "approval-console"
+            ],
+            "reasons": [
+              "agent 'ap-agent' reads channel 'approval-console' with origin user",
+              "agent 'ap-agent' can call 5 tool(s)"
+            ],
+            "mitigationsPresent": [
+              "least-privilege-tool-scopes",
+              "runtime-policy-enforcement",
+              "approval-gates"
+            ],
+            "mitigationsMissing": [
+              "prompt-injection-filtering",
+              "adversarial-testing"
+            ]
+          }
+        },
+        {
+          "ruleId": "destructive-write-actions",
+          "ruleIndex": 5,
+          "level": "note",
+          "message": {
+            "text": "Destructive actions through write tools: residual severity 3.9 (low). agent 'ap-agent' can call tool 'update-ledger' (write). Missing mitigations: backups-and-rollback."
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "examples/hisar-governed.yaml",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 29,
+                  "startColumn": 1
+                }
+              },
+              "logicalLocations": [
+                {
+                  "name": "ap-agent",
+                  "kind": "object"
+                }
+              ]
+            },
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "examples/hisar-governed.yaml",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 42,
+                  "startColumn": 1
+                }
+              },
+              "logicalLocations": [
+                {
+                  "name": "invoice-files",
+                  "kind": "object"
+                }
+              ]
+            },
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "examples/hisar-governed.yaml",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 38,
+                  "startColumn": 1
+                }
+              },
+              "logicalLocations": [
+                {
+                  "name": "supplier-email",
+                  "kind": "object"
+                }
+              ]
+            },
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "examples/hisar-governed.yaml",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 71,
+                  "startColumn": 1
+                }
+              },
+              "logicalLocations": [
+                {
+                  "name": "update-ledger",
+                  "kind": "object"
+                }
+              ]
+            }
+          ],
+          "partialFingerprints": {
+            "threatElements/v1": "38ea5b972a4383414447646eb7e163bd"
+          },
+          "properties": {
+            "inherent": 12,
+            "residual": 3.9,
+            "elements": [
+              "ap-agent",
+              "invoice-files",
+              "supplier-email",
+              "update-ledger"
+            ],
+            "reasons": [
+              "agent 'ap-agent' can call tool 'update-ledger' (write)",
+              "agent 'ap-agent' reads untrusted channel 'supplier-email' (email, origin third-party)",
+              "agent 'ap-agent' reads untrusted channel 'invoice-files' (document, origin third-party)"
+            ],
+            "mitigationsPresent": [
+              "approval-gates",
+              "least-privilege-tool-scopes",
+              "audit-log"
+            ],
+            "mitigationsMissing": [
+              "backups-and-rollback"
+            ]
+          }
+        },
+        {
+          "ruleId": "system-prompt-leakage",
+          "ruleIndex": 6,
+          "level": "note",
+          "message": {
+            "text": "System prompt and configuration leakage: residual severity 3.1 (low). agent 'ap-agent' reads channel 'supplier-email' with origin third-party. Missing mitigations: adversarial-testing."
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "examples/hisar-governed.yaml",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 29,
+                  "startColumn": 1
+                }
+              },
+              "logicalLocations": [
+                {
+                  "name": "ap-agent",
+                  "kind": "object"
+                }
+              ]
+            },
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "examples/hisar-governed.yaml",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 51,
+                  "startColumn": 1
+                }
+              },
+              "logicalLocations": [
+                {
+                  "name": "approval-console",
+                  "kind": "object"
+                }
+              ]
+            },
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "examples/hisar-governed.yaml",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 42,
+                  "startColumn": 1
+                }
+              },
+              "logicalLocations": [
+                {
+                  "name": "invoice-files",
+                  "kind": "object"
+                }
+              ]
+            },
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "examples/hisar-governed.yaml",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 38,
+                  "startColumn": 1
+                }
+              },
+              "logicalLocations": [
+                {
+                  "name": "supplier-email",
+                  "kind": "object"
+                }
+              ]
+            }
+          ],
+          "partialFingerprints": {
+            "threatElements/v1": "d3885f0b2357e71fafee6d4943390ca7"
+          },
+          "properties": {
+            "inherent": 8,
+            "residual": 3.1,
+            "elements": [
+              "ap-agent",
+              "approval-console",
+              "invoice-files",
+              "supplier-email"
+            ],
+            "reasons": [
+              "agent 'ap-agent' reads channel 'supplier-email' with origin third-party",
+              "agent 'ap-agent' reads channel 'invoice-files' with origin third-party",
+              "agent 'ap-agent' reads channel 'approval-console' with origin user"
+            ],
+            "mitigationsPresent": [
+              "secrets-out-of-context",
+              "runtime-policy-enforcement"
+            ],
+            "mitigationsMissing": [
+              "adversarial-testing"
+            ]
+          }
+        },
+        {
+          "ruleId": "data-exfiltration-via-messaging",
+          "ruleIndex": 7,
+          "level": "note",
+          "message": {
+            "text": "Data exfiltration through messaging tools: residual severity 3 (low). agent 'ap-agent' can call tool 'notify-supplier' (messaging). Missing mitigations: none."
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "examples/hisar-governed.yaml",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 29,
+                  "startColumn": 1
+                }
+              },
+              "logicalLocations": [
+                {
+                  "name": "ap-agent",
+                  "kind": "object"
+                }
+              ]
+            },
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "examples/hisar-governed.yaml",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 94,
+                  "startColumn": 1
+                }
+              },
+              "logicalLocations": [
+                {
+                  "name": "erp",
+                  "kind": "object"
+                }
+              ]
+            },
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "examples/hisar-governed.yaml",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 96,
+                  "startColumn": 1
+                }
+              },
+              "logicalLocations": [
+                {
+                  "name": "invoice-archive",
+                  "kind": "object"
+                }
+              ]
+            },
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "examples/hisar-governed.yaml",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 42,
+                  "startColumn": 1
+                }
+              },
+              "logicalLocations": [
+                {
+                  "name": "invoice-files",
+                  "kind": "object"
+                }
+              ]
+            },
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "examples/hisar-governed.yaml",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 64,
+                  "startColumn": 1
+                }
+              },
+              "logicalLocations": [
+                {
+                  "name": "match-po",
+                  "kind": "object"
+                }
+              ]
+            }
+          ],
+          "partialFingerprints": {
+            "threatElements/v1": "d499ba286cab85e18534cc5e0b7dc2de"
+          },
+          "properties": {
+            "inherent": 15,
+            "residual": 3.0,
+            "elements": [
+              "ap-agent",
+              "erp",
+              "invoice-archive",
+              "invoice-files",
+              "match-po",
+              "notify-supplier",
+              "read-invoices",
+              "supplier-email",
+              "update-ledger"
+            ],
+            "reasons": [
+              "agent 'ap-agent' can call tool 'notify-supplier' (messaging)",
+              "agent 'ap-agent' reads untrusted channel 'supplier-email' (email, origin third-party)",
+              "agent 'ap-agent' reads untrusted channel 'invoice-files' (document, origin third-party)",
+              "agent 'ap-agent' reaches regulated store 'invoice-archive' through tool 'read-invoices' (read)",
+              "agent 'ap-agent' reaches confidential store 'erp' through tool 'match-po' (read)",
+              "agent 'ap-agent' reaches confidential store 'erp' through tool 'update-ledger' (write)"
+            ],
+            "mitigationsPresent": [
+              "egress-allowlist",
+              "dlp-outbound",
+              "approval-gates",
+              "input-provenance-tagging",
+              "audit-log"
+            ],
+            "mitigationsMissing": []
+          }
+        },
+        {
+          "ruleId": "sensitive-data-disclosure",
+          "ruleIndex": 8,
+          "level": "note",
+          "message": {
+            "text": "Sensitive data reachable by the model: residual severity 3 (low). agent 'ap-agent' reaches regulated store 'invoice-archive' through tool 'read-invoices' (read). Missing mitigations: none."
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "examples/hisar-governed.yaml",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 29,
+                  "startColumn": 1
+                }
+              },
+              "logicalLocations": [
+                {
+                  "name": "ap-agent",
+                  "kind": "object"
+                }
+              ]
+            },
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "examples/hisar-governed.yaml",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 94,
+                  "startColumn": 1
+                }
+              },
+              "logicalLocations": [
+                {
+                  "name": "erp",
+                  "kind": "object"
+                }
+              ]
+            },
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "examples/hisar-governed.yaml",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 96,
+                  "startColumn": 1
+                }
+              },
+              "logicalLocations": [
+                {
+                  "name": "invoice-archive",
+                  "kind": "object"
+                }
+              ]
+            },
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "examples/hisar-governed.yaml",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 64,
+                  "startColumn": 1
+                }
+              },
+              "logicalLocations": [
+                {
+                  "name": "match-po",
+                  "kind": "object"
+                }
+              ]
+            },
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "examples/hisar-governed.yaml",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 57,
+                  "startColumn": 1
+                }
+              },
+              "logicalLocations": [
+                {
+                  "name": "read-invoices",
+                  "kind": "object"
+                }
+              ]
+            }
+          ],
+          "partialFingerprints": {
+            "threatElements/v1": "41348f65f6279e2aafd6f0c3bcca673d"
+          },
+          "properties": {
+            "inherent": 15,
+            "residual": 3.0,
+            "elements": [
+              "ap-agent",
+              "erp",
+              "invoice-archive",
+              "match-po",
+              "read-invoices",
+              "update-ledger"
+            ],
+            "reasons": [
+              "agent 'ap-agent' reaches regulated store 'invoice-archive' through tool 'read-invoices' (read)",
+              "agent 'ap-agent' reaches confidential store 'erp' through tool 'match-po' (read)",
+              "agent 'ap-agent' reaches confidential store 'erp' through tool 'update-ledger' (write)"
+            ],
+            "mitigationsPresent": [
+              "per-user-authorisation",
+              "least-privilege-tool-scopes",
+              "dlp-outbound",
+              "audit-log"
+            ],
+            "mitigationsMissing": []
+          }
+        },
+        {
+          "ruleId": "hallucinated-actions",
+          "ruleIndex": 9,
+          "level": "note",
+          "message": {
+            "text": "Acting on hallucinated facts or identifiers: residual severity 3 (low). agent 'ap-agent' has autonomy act-with-approval. Missing mitigations: adversarial-testing."
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "examples/hisar-governed.yaml",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 29,
+                  "startColumn": 1
+                }
+              },
+              "logicalLocations": [
+                {
+                  "name": "ap-agent",
+                  "kind": "object"
+                }
+              ]
+            },
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "examples/hisar-governed.yaml",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 78,
+                  "startColumn": 1
+                }
+              },
+              "logicalLocations": [
+                {
+                  "name": "schedule-payment",
+                  "kind": "object"
+                }
+              ]
+            },
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "examples/hisar-governed.yaml",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 71,
+                  "startColumn": 1
+                }
+              },
+              "logicalLocations": [
+                {
+                  "name": "update-ledger",
+                  "kind": "object"
+                }
+              ]
+            }
+          ],
+          "partialFingerprints": {
+            "threatElements/v1": "2327c3f830cc426d1e046693d2154a94"
+          },
+          "properties": {
+            "inherent": 9,
+            "residual": 3.0,
+            "elements": [
+              "ap-agent",
+              "schedule-payment",
+              "update-ledger"
+            ],
+            "reasons": [
+              "agent 'ap-agent' has autonomy act-with-approval",
+              "agent 'ap-agent' can call tool 'update-ledger' (write)",
+              "agent 'ap-agent' can call tool 'schedule-payment' (payment)"
+            ],
+            "mitigationsPresent": [
+              "argument-validation",
+              "approval-gates",
+              "tool-integrity-pinning"
+            ],
+            "mitigationsMissing": [
+              "adversarial-testing"
+            ]
+          }
+        }
+      ],
+      "properties": {
+        "residualRiskScore": 27,
+        "rating": "medium",
+        "systemName": "Accounts payable agent (Hisar governed)"
+      }
+    }
+  ]
+}

@@ -1,0 +1,2696 @@
+{
+  "$schema": "https://json.schemastore.org/sarif-2.1.0.json",
+  "version": "2.1.0",
+  "runs": [
+    {
+      "tool": {
+        "driver": {
+          "name": "agent-threat-model",
+          "version": "0.1.0",
+          "semanticVersion": "0.1.0",
+          "informationUri": "https://github.com/basitalisandhu/agent-threat-model",
+          "rules": [
+            {
+              "id": "unsandboxed-exec",
+              "name": "UnsandboxedExec",
+              "shortDescription": {
+                "text": "Unsandboxed code or shell execution"
+              },
+              "fullDescription": {
+                "text": "An exec tool runs model-chosen commands on a host that holds credentials, source code or network access. Any injection or mistake becomes arbitrary code execution with the host's privileges."
+              },
+              "help": {
+                "text": "An exec tool runs model-chosen commands on a host that holds credentials, source code or network access. Any injection or mistake becomes arbitrary code execution with the host's privileges.",
+                "markdown": "**Unsandboxed code or shell execution**\n\nAn exec tool runs model-chosen commands on a host that holds credentials, source code or network access. Any injection or mistake becomes arbitrary code execution with the host's privileges.\n\nSTRIDE: Elevation of privilege\nOWASP LLM Top 10 (2025): LLM06 Excessive Agency, LLM05 Improper Output Handling\nOWASP Top 10 for Agentic Applications (2026): ASI05 Unexpected Code Execution\nMITRE ATLAS: [AML.T0050](https://atlas.mitre.org/techniques/AML.T0050), [AML.T0105](https://atlas.mitre.org/techniques/AML.T0105), [AML.T0072](https://atlas.mitre.org/techniques/AML.T0072)\n\nMitigations: audit-log, sandboxed-execution, approval-gates, egress-allowlist, kill-switch"
+              },
+              "helpUri": "https://genai.owasp.org/llm-top-10/",
+              "defaultConfiguration": {
+                "level": "error"
+              },
+              "properties": {
+                "tags": [
+                  "security",
+                  "stride/elevation-of-privilege",
+                  "owasp-llm/LLM06",
+                  "owasp-llm/LLM05",
+                  "owasp-agentic/ASI05",
+                  "mitre-atlas/AML.T0050",
+                  "mitre-atlas/AML.T0105",
+                  "mitre-atlas/AML.T0072"
+                ],
+                "security-severity": "7.1",
+                "precision": "medium",
+                "problem.severity": "error"
+              }
+            },
+            {
+              "id": "indirect-prompt-injection",
+              "name": "IndirectPromptInjection",
+              "shortDescription": {
+                "text": "Indirect prompt injection via untrusted channel"
+              },
+              "fullDescription": {
+                "text": "Content the agent reads from an untrusted channel (email, web pages, documents, retrieved passages, API responses) carries instructions that the model follows as if they came from the operator. Every tool the agent can reach becomes available to whoever wrote that content."
+              },
+              "help": {
+                "text": "Content the agent reads from an untrusted channel (email, web pages, documents, retrieved passages, API responses) carries instructions that the model follows as if they came from the operator. Every tool the agent can reach becomes available to whoever wrote that content.",
+                "markdown": "**Indirect prompt injection via untrusted channel**\n\nContent the agent reads from an untrusted channel (email, web pages, documents, retrieved passages, API responses) carries instructions that the model follows as if they came from the operator. Every tool the agent can reach becomes available to whoever wrote that content.\n\nSTRIDE: Tampering\nOWASP LLM Top 10 (2025): LLM01 Prompt Injection\nOWASP Top 10 for Agentic Applications (2026): ASI01 Agent Goal Hijack\nMITRE ATLAS: [AML.T0051.001](https://atlas.mitre.org/techniques/AML.T0051.001)\n\nMitigations: input-provenance-tagging, untrusted-content-isolation, prompt-injection-filtering, least-privilege-tool-scopes, approval-gates"
+              },
+              "helpUri": "https://github.com/OWASP/www-project-top-10-for-large-language-model-applications/blob/main/2_0_vulns/LLM01_PromptInjection.md",
+              "defaultConfiguration": {
+                "level": "error"
+              },
+              "properties": {
+                "tags": [
+                  "security",
+                  "stride/tampering",
+                  "owasp-llm/LLM01",
+                  "owasp-agentic/ASI01",
+                  "mitre-atlas/AML.T0051.001"
+                ],
+                "security-severity": "6.4",
+                "precision": "medium",
+                "problem.severity": "error"
+              }
+            },
+            {
+              "id": "excessive-agency",
+              "name": "ExcessiveAgency",
+              "shortDescription": {
+                "text": "Excessive agency on write, exec or payment tools"
+              },
+              "fullDescription": {
+                "text": "An agent that may act on its own can call a tool with side effects without any approval step. One wrong inference, one injected instruction or one hallucinated argument becomes a real-world action."
+              },
+              "help": {
+                "text": "An agent that may act on its own can call a tool with side effects without any approval step. One wrong inference, one injected instruction or one hallucinated argument becomes a real-world action.",
+                "markdown": "**Excessive agency on write, exec or payment tools**\n\nAn agent that may act on its own can call a tool with side effects without any approval step. One wrong inference, one injected instruction or one hallucinated argument becomes a real-world action.\n\nSTRIDE: Elevation of privilege\nOWASP LLM Top 10 (2025): LLM06 Excessive Agency\nOWASP Top 10 for Agentic Applications (2026): ASI02 Tool Misuse and Exploitation, ASI03 Identity and Privilege Abuse\nMITRE ATLAS: [AML.T0053](https://atlas.mitre.org/techniques/AML.T0053)\n\nMitigations: audit-log, approval-gates, runtime-policy-enforcement, least-privilege-tool-scopes, kill-switch"
+              },
+              "helpUri": "https://github.com/OWASP/www-project-top-10-for-large-language-model-applications/blob/main/2_0_vulns/LLM06_ExcessiveAgency.md",
+              "defaultConfiguration": {
+                "level": "error"
+              },
+              "properties": {
+                "tags": [
+                  "security",
+                  "stride/elevation-of-privilege",
+                  "owasp-llm/LLM06",
+                  "owasp-agentic/ASI02",
+                  "owasp-agentic/ASI03",
+                  "mitre-atlas/AML.T0053"
+                ],
+                "security-severity": "5.6",
+                "precision": "medium",
+                "problem.severity": "error"
+              }
+            },
+            {
+              "id": "credential-exfiltration-via-tool-args",
+              "name": "CredentialExfiltrationViaToolArgs",
+              "shortDescription": {
+                "text": "Credential exfiltration through tool call arguments"
+              },
+              "fullDescription": {
+                "text": "A tool holds a static key that is visible to the model (in configuration, descriptions or memory) and another tool can send data outward. An injected instruction asks the model to place the secret into a URL, message body or file that leaves the system."
+              },
+              "help": {
+                "text": "A tool holds a static key that is visible to the model (in configuration, descriptions or memory) and another tool can send data outward. An injected instruction asks the model to place the secret into a URL, message body or file that leaves the system.",
+                "markdown": "**Credential exfiltration through tool call arguments**\n\nA tool holds a static key that is visible to the model (in configuration, descriptions or memory) and another tool can send data outward. An injected instruction asks the model to place the secret into a URL, message body or file that leaves the system.\n\nSTRIDE: Information disclosure\nOWASP LLM Top 10 (2025): LLM02 Sensitive Information Disclosure, LLM01 Prompt Injection\nOWASP Top 10 for Agentic Applications (2026): ASI02 Tool Misuse and Exploitation, ASI03 Identity and Privilege Abuse\nMITRE ATLAS: [AML.T0098](https://atlas.mitre.org/techniques/AML.T0098), [AML.T0086](https://atlas.mitre.org/techniques/AML.T0086), [AML.T0083](https://atlas.mitre.org/techniques/AML.T0083)\n\nMitigations: audit-log, secrets-out-of-context, brokered-credentials, egress-allowlist, argument-validation"
+              },
+              "helpUri": "https://genai.owasp.org/llm-top-10/",
+              "defaultConfiguration": {
+                "level": "error"
+              },
+              "properties": {
+                "tags": [
+                  "security",
+                  "stride/information-disclosure",
+                  "owasp-llm/LLM02",
+                  "owasp-llm/LLM01",
+                  "owasp-agentic/ASI02",
+                  "owasp-agentic/ASI03",
+                  "mitre-atlas/AML.T0098",
+                  "mitre-atlas/AML.T0086",
+                  "mitre-atlas/AML.T0083"
+                ],
+                "security-severity": "5.4",
+                "precision": "medium",
+                "problem.severity": "error"
+              }
+            },
+            {
+              "id": "denial-of-wallet",
+              "name": "DenialOfWallet",
+              "shortDescription": {
+                "text": "Denial of wallet"
+              },
+              "fullDescription": {
+                "text": "The agent can spend money or paid API quota and nothing caps the amount per task. A loop, an injection or a malicious user turns the agent into a bill."
+              },
+              "help": {
+                "text": "The agent can spend money or paid API quota and nothing caps the amount per task. A loop, an injection or a malicious user turns the agent into a bill.",
+                "markdown": "**Denial of wallet**\n\nThe agent can spend money or paid API quota and nothing caps the amount per task. A loop, an injection or a malicious user turns the agent into a bill.\n\nSTRIDE: Denial of service\nOWASP LLM Top 10 (2025): LLM10 Unbounded Consumption\nOWASP Top 10 for Agentic Applications (2026): ASI08 Cascading Agent Failures\nMITRE ATLAS: [AML.T0034.002](https://atlas.mitre.org/techniques/AML.T0034.002), [AML.T0034](https://atlas.mitre.org/techniques/AML.T0034)\n\nMitigations: budget-caps, rate-limiting, approval-gates, behavioural-monitoring"
+              },
+              "helpUri": "https://github.com/OWASP/www-project-top-10-for-large-language-model-applications/blob/main/2_0_vulns/LLM10_UnboundedConsumption.md",
+              "defaultConfiguration": {
+                "level": "error"
+              },
+              "properties": {
+                "tags": [
+                  "security",
+                  "stride/denial-of-service",
+                  "owasp-llm/LLM10",
+                  "owasp-agentic/ASI08",
+                  "mitre-atlas/AML.T0034.002",
+                  "mitre-atlas/AML.T0034"
+                ],
+                "security-severity": "4.8",
+                "precision": "medium",
+                "problem.severity": "error"
+              }
+            },
+            {
+              "id": "low-trust-principal-drives-agent",
+              "name": "LowTrustPrincipalDrivesAgent",
+              "shortDescription": {
+                "text": "Low-trust principal drives an autonomous agent"
+              },
+              "fullDescription": {
+                "text": "A principal the operator does not trust (anonymous users, external partners) can send instructions to an agent that acts without approval. The agent's tools are effectively exposed to the public."
+              },
+              "help": {
+                "text": "A principal the operator does not trust (anonymous users, external partners) can send instructions to an agent that acts without approval. The agent's tools are effectively exposed to the public.",
+                "markdown": "**Low-trust principal drives an autonomous agent**\n\nA principal the operator does not trust (anonymous users, external partners) can send instructions to an agent that acts without approval. The agent's tools are effectively exposed to the public.\n\nSTRIDE: Spoofing\nOWASP LLM Top 10 (2025): LLM06 Excessive Agency\nOWASP Top 10 for Agentic Applications (2026): ASI01 Agent Goal Hijack, ASI03 Identity and Privilege Abuse\nMITRE ATLAS: [AML.T0053](https://atlas.mitre.org/techniques/AML.T0053)\n\nMitigations: approval-gates, agent-identity, least-privilege-tool-scopes, rate-limiting"
+              },
+              "helpUri": "https://genai.owasp.org/llm-top-10/",
+              "defaultConfiguration": {
+                "level": "error"
+              },
+              "properties": {
+                "tags": [
+                  "security",
+                  "stride/spoofing",
+                  "owasp-llm/LLM06",
+                  "owasp-agentic/ASI01",
+                  "owasp-agentic/ASI03",
+                  "mitre-atlas/AML.T0053"
+                ],
+                "security-severity": "4.8",
+                "precision": "medium",
+                "problem.severity": "error"
+              }
+            },
+            {
+              "id": "missing-kill-switch",
+              "name": "MissingKillSwitch",
+              "shortDescription": {
+                "text": "No kill switch or credential revocation"
+              },
+              "fullDescription": {
+                "text": "An agent that acts in the world cannot be stopped quickly. When behaviour goes wrong the only options are to find the process and the keys by hand while actions keep happening."
+              },
+              "help": {
+                "text": "An agent that acts in the world cannot be stopped quickly. When behaviour goes wrong the only options are to find the process and the keys by hand while actions keep happening.",
+                "markdown": "**No kill switch or credential revocation**\n\nAn agent that acts in the world cannot be stopped quickly. When behaviour goes wrong the only options are to find the process and the keys by hand while actions keep happening.\n\nSTRIDE: Elevation of privilege\nOWASP LLM Top 10 (2025): LLM06 Excessive Agency\nOWASP Top 10 for Agentic Applications (2026): ASI10 Rogue Agents, ASI08 Cascading Agent Failures\n\nMitigations: kill-switch, brokered-credentials, incident-response-playbook"
+              },
+              "helpUri": "https://genai.owasp.org/llm-top-10/",
+              "defaultConfiguration": {
+                "level": "error"
+              },
+              "properties": {
+                "tags": [
+                  "security",
+                  "stride/elevation-of-privilege",
+                  "owasp-llm/LLM06",
+                  "owasp-agentic/ASI10",
+                  "owasp-agentic/ASI08"
+                ],
+                "security-severity": "4.8",
+                "precision": "medium",
+                "problem.severity": "error"
+              }
+            },
+            {
+              "id": "over-permissive-scopes",
+              "name": "OverPermissiveScopes",
+              "shortDescription": {
+                "text": "Over-permissive tool scopes"
+              },
+              "fullDescription": {
+                "text": "A tool is granted wildcard, admin or undeclared scope. Whatever goes wrong, the blast radius is the whole account rather than the one resource the task needed."
+              },
+              "help": {
+                "text": "A tool is granted wildcard, admin or undeclared scope. Whatever goes wrong, the blast radius is the whole account rather than the one resource the task needed.",
+                "markdown": "**Over-permissive tool scopes**\n\nA tool is granted wildcard, admin or undeclared scope. Whatever goes wrong, the blast radius is the whole account rather than the one resource the task needed.\n\nSTRIDE: Elevation of privilege\nOWASP LLM Top 10 (2025): LLM06 Excessive Agency\nOWASP Top 10 for Agentic Applications (2026): ASI03 Identity and Privilege Abuse\nMITRE ATLAS: [AML.T0053](https://atlas.mitre.org/techniques/AML.T0053)\n\nMitigations: least-privilege-tool-scopes, brokered-credentials, approval-gates"
+              },
+              "helpUri": "https://genai.owasp.org/llm-top-10/",
+              "defaultConfiguration": {
+                "level": "error"
+              },
+              "properties": {
+                "tags": [
+                  "security",
+                  "stride/elevation-of-privilege",
+                  "owasp-llm/LLM06",
+                  "owasp-agentic/ASI03",
+                  "mitre-atlas/AML.T0053"
+                ],
+                "security-severity": "4.8",
+                "precision": "medium",
+                "problem.severity": "error"
+              }
+            },
+            {
+              "id": "tool-poisoning",
+              "name": "ToolPoisoning",
+              "shortDescription": {
+                "text": "Tool poisoning via third-party tool descriptions"
+              },
+              "fullDescription": {
+                "text": "A third-party tool or tool server ships descriptions, schemas or results that contain hidden instructions. The model reads them as trusted configuration and can be steered to leak data or call other tools."
+              },
+              "help": {
+                "text": "A third-party tool or tool server ships descriptions, schemas or results that contain hidden instructions. The model reads them as trusted configuration and can be steered to leak data or call other tools.",
+                "markdown": "**Tool poisoning via third-party tool descriptions**\n\nA third-party tool or tool server ships descriptions, schemas or results that contain hidden instructions. The model reads them as trusted configuration and can be steered to leak data or call other tools.\n\nSTRIDE: Tampering\nOWASP LLM Top 10 (2025): LLM01 Prompt Injection, LLM03 Supply Chain\nOWASP Top 10 for Agentic Applications (2026): ASI04 Agentic Supply Chain Vulnerabilities, ASI01 Agent Goal Hijack\nMITRE ATLAS: [AML.T0110](https://atlas.mitre.org/techniques/AML.T0110), [AML.T0104](https://atlas.mitre.org/techniques/AML.T0104), [AML.T0099](https://atlas.mitre.org/techniques/AML.T0099)\n\nMitigations: tool-integrity-pinning, input-provenance-tagging, least-privilege-tool-scopes, approval-gates"
+              },
+              "helpUri": "https://modelcontextprotocol.io/specification/2025-06-18/basic/security_best_practices",
+              "defaultConfiguration": {
+                "level": "error"
+              },
+              "properties": {
+                "tags": [
+                  "security",
+                  "stride/tampering",
+                  "owasp-llm/LLM01",
+                  "owasp-llm/LLM03",
+                  "owasp-agentic/ASI04",
+                  "owasp-agentic/ASI01",
+                  "mitre-atlas/AML.T0110",
+                  "mitre-atlas/AML.T0104",
+                  "mitre-atlas/AML.T0099"
+                ],
+                "security-severity": "4.8",
+                "precision": "medium",
+                "problem.severity": "error"
+              }
+            },
+            {
+              "id": "memory-poisoning",
+              "name": "MemoryPoisoning",
+              "shortDescription": {
+                "text": "Persistent memory poisoning"
+              },
+              "fullDescription": {
+                "text": "The agent writes what it learns into long-term memory. Content from one interaction (possibly injected) is stored and later retrieved as trusted context, so a single poisoned message steers every future session."
+              },
+              "help": {
+                "text": "The agent writes what it learns into long-term memory. Content from one interaction (possibly injected) is stored and later retrieved as trusted context, so a single poisoned message steers every future session.",
+                "markdown": "**Persistent memory poisoning**\n\nThe agent writes what it learns into long-term memory. Content from one interaction (possibly injected) is stored and later retrieved as trusted context, so a single poisoned message steers every future session.\n\nSTRIDE: Tampering\nOWASP LLM Top 10 (2025): LLM01 Prompt Injection, LLM04 Data and Model Poisoning\nOWASP Top 10 for Agentic Applications (2026): ASI06 Memory and Context Poisoning\nMITRE ATLAS: [AML.T0080.000](https://atlas.mitre.org/techniques/AML.T0080.000)\n\nMitigations: audit-log, memory-write-validation, session-isolation, input-provenance-tagging"
+              },
+              "helpUri": "https://genai.owasp.org/llm-top-10/",
+              "defaultConfiguration": {
+                "level": "warning"
+              },
+              "properties": {
+                "tags": [
+                  "security",
+                  "stride/tampering",
+                  "owasp-llm/LLM01",
+                  "owasp-llm/LLM04",
+                  "owasp-agentic/ASI06",
+                  "mitre-atlas/AML.T0080.000"
+                ],
+                "security-severity": "4.2",
+                "precision": "medium",
+                "problem.severity": "warning"
+              }
+            },
+            {
+              "id": "ssrf-via-url-tool",
+              "name": "SsrfViaUrlTool",
+              "shortDescription": {
+                "text": "Server-side request forgery through URL-accepting tools"
+              },
+              "fullDescription": {
+                "text": "A tool fetches URLs chosen by the model. Attacker-influenced input makes it request internal services, cloud metadata endpoints or private address ranges, and the response flows back into the context."
+              },
+              "help": {
+                "text": "A tool fetches URLs chosen by the model. Attacker-influenced input makes it request internal services, cloud metadata endpoints or private address ranges, and the response flows back into the context.",
+                "markdown": "**Server-side request forgery through URL-accepting tools**\n\nA tool fetches URLs chosen by the model. Attacker-influenced input makes it request internal services, cloud metadata endpoints or private address ranges, and the response flows back into the context.\n\nSTRIDE: Information disclosure\nOWASP LLM Top 10 (2025): LLM06 Excessive Agency, LLM05 Improper Output Handling\nOWASP Top 10 for Agentic Applications (2026): ASI02 Tool Misuse and Exploitation\nMITRE ATLAS: [AML.T0053](https://atlas.mitre.org/techniques/AML.T0053)\n\nMitigations: audit-log, egress-allowlist, argument-validation, sandboxed-execution"
+              },
+              "helpUri": "https://cheatsheetseries.owasp.org/cheatsheets/Server_Side_Request_Forgery_Prevention_Cheat_Sheet.html",
+              "defaultConfiguration": {
+                "level": "warning"
+              },
+              "properties": {
+                "tags": [
+                  "security",
+                  "stride/information-disclosure",
+                  "owasp-llm/LLM06",
+                  "owasp-llm/LLM05",
+                  "owasp-agentic/ASI02",
+                  "mitre-atlas/AML.T0053"
+                ],
+                "security-severity": "4.2",
+                "precision": "medium",
+                "problem.severity": "warning"
+              }
+            },
+            {
+              "id": "sensitive-data-disclosure",
+              "name": "SensitiveDataDisclosure",
+              "shortDescription": {
+                "text": "Sensitive data reachable by the model"
+              },
+              "fullDescription": {
+                "text": "The agent can read confidential or regulated records through a tool. Whatever enters the context can be summarised, quoted or exfiltrated, and a shared service account returns records the requesting user may not be entitled to."
+              },
+              "help": {
+                "text": "The agent can read confidential or regulated records through a tool. Whatever enters the context can be summarised, quoted or exfiltrated, and a shared service account returns records the requesting user may not be entitled to.",
+                "markdown": "**Sensitive data reachable by the model**\n\nThe agent can read confidential or regulated records through a tool. Whatever enters the context can be summarised, quoted or exfiltrated, and a shared service account returns records the requesting user may not be entitled to.\n\nSTRIDE: Information disclosure\nOWASP LLM Top 10 (2025): LLM02 Sensitive Information Disclosure\nOWASP Top 10 for Agentic Applications (2026): ASI03 Identity and Privilege Abuse, ASI02 Tool Misuse and Exploitation\nMITRE ATLAS: [AML.T0057](https://atlas.mitre.org/techniques/AML.T0057), [AML.T0085.000](https://atlas.mitre.org/techniques/AML.T0085.000), [AML.T0036](https://atlas.mitre.org/techniques/AML.T0036)\n\nMitigations: audit-log, per-user-authorisation, least-privilege-tool-scopes, dlp-outbound"
+              },
+              "helpUri": "https://github.com/OWASP/www-project-top-10-for-large-language-model-applications/blob/main/2_0_vulns/LLM02_SensitiveInformationDisclosure.md",
+              "defaultConfiguration": {
+                "level": "warning"
+              },
+              "properties": {
+                "tags": [
+                  "security",
+                  "stride/information-disclosure",
+                  "owasp-llm/LLM02",
+                  "owasp-agentic/ASI03",
+                  "owasp-agentic/ASI02",
+                  "mitre-atlas/AML.T0057",
+                  "mitre-atlas/AML.T0085.000",
+                  "mitre-atlas/AML.T0036"
+                ],
+                "security-severity": "4.1",
+                "precision": "medium",
+                "problem.severity": "warning"
+              }
+            },
+            {
+              "id": "destructive-write-actions",
+              "name": "DestructiveWriteActions",
+              "shortDescription": {
+                "text": "Destructive actions through write tools"
+              },
+              "fullDescription": {
+                "text": "The agent can modify or delete data and reads untrusted content. An injected instruction (or a plain mistake) deletes records, overwrites files or force-pushes over history."
+              },
+              "help": {
+                "text": "The agent can modify or delete data and reads untrusted content. An injected instruction (or a plain mistake) deletes records, overwrites files or force-pushes over history.",
+                "markdown": "**Destructive actions through write tools**\n\nThe agent can modify or delete data and reads untrusted content. An injected instruction (or a plain mistake) deletes records, overwrites files or force-pushes over history.\n\nSTRIDE: Tampering\nOWASP LLM Top 10 (2025): LLM06 Excessive Agency, LLM01 Prompt Injection\nOWASP Top 10 for Agentic Applications (2026): ASI02 Tool Misuse and Exploitation\nMITRE ATLAS: [AML.T0101](https://atlas.mitre.org/techniques/AML.T0101)\n\nMitigations: audit-log, approval-gates, backups-and-rollback, least-privilege-tool-scopes"
+              },
+              "helpUri": "https://genai.owasp.org/llm-top-10/",
+              "defaultConfiguration": {
+                "level": "warning"
+              },
+              "properties": {
+                "tags": [
+                  "security",
+                  "stride/tampering",
+                  "owasp-llm/LLM06",
+                  "owasp-llm/LLM01",
+                  "owasp-agentic/ASI02",
+                  "mitre-atlas/AML.T0101"
+                ],
+                "security-severity": "4.0",
+                "precision": "medium",
+                "problem.severity": "warning"
+              }
+            },
+            {
+              "id": "static-long-lived-credentials",
+              "name": "StaticLongLivedCredentials",
+              "shortDescription": {
+                "text": "Static long-lived credentials held by the agent"
+              },
+              "fullDescription": {
+                "text": "Tools authenticate with static keys that do not expire. If a key leaks through logs, prompts or an injected exfiltration it remains valid until someone notices, and it cannot be scoped to a single task."
+              },
+              "help": {
+                "text": "Tools authenticate with static keys that do not expire. If a key leaks through logs, prompts or an injected exfiltration it remains valid until someone notices, and it cannot be scoped to a single task.",
+                "markdown": "**Static long-lived credentials held by the agent**\n\nTools authenticate with static keys that do not expire. If a key leaks through logs, prompts or an injected exfiltration it remains valid until someone notices, and it cannot be scoped to a single task.\n\nSTRIDE: Information disclosure\nOWASP LLM Top 10 (2025): LLM02 Sensitive Information Disclosure\nOWASP Top 10 for Agentic Applications (2026): ASI03 Identity and Privilege Abuse\nMITRE ATLAS: [AML.T0055](https://atlas.mitre.org/techniques/AML.T0055), [AML.T0083](https://atlas.mitre.org/techniques/AML.T0083)\n\nMitigations: audit-log, brokered-credentials, secrets-out-of-context, kill-switch"
+              },
+              "helpUri": "https://genai.owasp.org/llm-top-10/",
+              "defaultConfiguration": {
+                "level": "warning"
+              },
+              "properties": {
+                "tags": [
+                  "security",
+                  "stride/information-disclosure",
+                  "owasp-llm/LLM02",
+                  "owasp-agentic/ASI03",
+                  "mitre-atlas/AML.T0055",
+                  "mitre-atlas/AML.T0083"
+                ],
+                "security-severity": "4.0",
+                "precision": "medium",
+                "problem.severity": "warning"
+              }
+            },
+            {
+              "id": "unauthenticated-tool",
+              "name": "UnauthenticatedTool",
+              "shortDescription": {
+                "text": "Side-effecting tool with no authentication"
+              },
+              "fullDescription": {
+                "text": "A tool that writes, executes, pays, sends or fetches requires no authentication at all. Calls cannot be attributed to an agent or principal, and anything that can reach the endpoint can use it."
+              },
+              "help": {
+                "text": "A tool that writes, executes, pays, sends or fetches requires no authentication at all. Calls cannot be attributed to an agent or principal, and anything that can reach the endpoint can use it.",
+                "markdown": "**Side-effecting tool with no authentication**\n\nA tool that writes, executes, pays, sends or fetches requires no authentication at all. Calls cannot be attributed to an agent or principal, and anything that can reach the endpoint can use it.\n\nSTRIDE: Spoofing\nOWASP LLM Top 10 (2025): LLM06 Excessive Agency\nOWASP Top 10 for Agentic Applications (2026): ASI03 Identity and Privilege Abuse\nMITRE ATLAS: [AML.T0053](https://atlas.mitre.org/techniques/AML.T0053)\n\nMitigations: audit-log, agent-identity, brokered-credentials"
+              },
+              "helpUri": "https://genai.owasp.org/llm-top-10/",
+              "defaultConfiguration": {
+                "level": "warning"
+              },
+              "properties": {
+                "tags": [
+                  "security",
+                  "stride/spoofing",
+                  "owasp-llm/LLM06",
+                  "owasp-agentic/ASI03",
+                  "mitre-atlas/AML.T0053"
+                ],
+                "security-severity": "3.9",
+                "precision": "medium",
+                "problem.severity": "warning"
+              }
+            },
+            {
+              "id": "hallucinated-actions",
+              "name": "HallucinatedActions",
+              "shortDescription": {
+                "text": "Acting on hallucinated facts or identifiers"
+              },
+              "fullDescription": {
+                "text": "The agent invents a package name, account id, file path or amount and a side-effecting tool executes it. Attackers register the names models tend to invent so the mistake resolves to something malicious."
+              },
+              "help": {
+                "text": "The agent invents a package name, account id, file path or amount and a side-effecting tool executes it. Attackers register the names models tend to invent so the mistake resolves to something malicious.",
+                "markdown": "**Acting on hallucinated facts or identifiers**\n\nThe agent invents a package name, account id, file path or amount and a side-effecting tool executes it. Attackers register the names models tend to invent so the mistake resolves to something malicious.\n\nSTRIDE: Tampering\nOWASP LLM Top 10 (2025): LLM09 Misinformation, LLM06 Excessive Agency\nOWASP Top 10 for Agentic Applications (2026): ASI02 Tool Misuse and Exploitation, ASI04 Agentic Supply Chain Vulnerabilities\nMITRE ATLAS: [AML.T0060](https://atlas.mitre.org/techniques/AML.T0060), [AML.T0053](https://atlas.mitre.org/techniques/AML.T0053)\n\nMitigations: argument-validation, approval-gates, tool-integrity-pinning, adversarial-testing"
+              },
+              "helpUri": "https://arxiv.org/abs/2406.10279",
+              "defaultConfiguration": {
+                "level": "warning"
+              },
+              "properties": {
+                "tags": [
+                  "security",
+                  "stride/tampering",
+                  "owasp-llm/LLM09",
+                  "owasp-llm/LLM06",
+                  "owasp-agentic/ASI02",
+                  "owasp-agentic/ASI04",
+                  "mitre-atlas/AML.T0060",
+                  "mitre-atlas/AML.T0053"
+                ],
+                "security-severity": "3.6",
+                "precision": "medium",
+                "problem.severity": "warning"
+              }
+            },
+            {
+              "id": "insecure-output-handling",
+              "name": "InsecureOutputHandling",
+              "shortDescription": {
+                "text": "Model output consumed without validation"
+              },
+              "fullDescription": {
+                "text": "Downstream components render model output in a browser, pass it to a shell or database, or execute it. Injected or malformed output becomes cross-site scripting, command injection or unintended writes."
+              },
+              "help": {
+                "text": "Downstream components render model output in a browser, pass it to a shell or database, or execute it. Injected or malformed output becomes cross-site scripting, command injection or unintended writes.",
+                "markdown": "**Model output consumed without validation**\n\nDownstream components render model output in a browser, pass it to a shell or database, or execute it. Injected or malformed output becomes cross-site scripting, command injection or unintended writes.\n\nSTRIDE: Tampering\nOWASP LLM Top 10 (2025): LLM05 Improper Output Handling\nOWASP Top 10 for Agentic Applications (2026): ASI05 Unexpected Code Execution\nMITRE ATLAS: [AML.T0077](https://atlas.mitre.org/techniques/AML.T0077), [AML.T0067](https://atlas.mitre.org/techniques/AML.T0067)\n\nMitigations: output-encoding, argument-validation, sandboxed-execution"
+              },
+              "helpUri": "https://github.com/OWASP/www-project-top-10-for-large-language-model-applications/blob/main/2_0_vulns/LLM05_ImproperOutputHandling.md",
+              "defaultConfiguration": {
+                "level": "warning"
+              },
+              "properties": {
+                "tags": [
+                  "security",
+                  "stride/tampering",
+                  "owasp-llm/LLM05",
+                  "owasp-agentic/ASI05",
+                  "mitre-atlas/AML.T0077",
+                  "mitre-atlas/AML.T0067"
+                ],
+                "security-severity": "3.6",
+                "precision": "medium",
+                "problem.severity": "warning"
+              }
+            },
+            {
+              "id": "malicious-file-input",
+              "name": "MaliciousFileInput",
+              "shortDescription": {
+                "text": "Malicious files and documents as input"
+              },
+              "fullDescription": {
+                "text": "The agent parses files or documents. Crafted files exploit parser bugs, hide instructions in metadata or invisible text, and carry macros or links that later tools act on."
+              },
+              "help": {
+                "text": "The agent parses files or documents. Crafted files exploit parser bugs, hide instructions in metadata or invisible text, and carry macros or links that later tools act on.",
+                "markdown": "**Malicious files and documents as input**\n\nThe agent parses files or documents. Crafted files exploit parser bugs, hide instructions in metadata or invisible text, and carry macros or links that later tools act on.\n\nSTRIDE: Tampering\nOWASP LLM Top 10 (2025): LLM01 Prompt Injection\nOWASP Top 10 for Agentic Applications (2026): ASI01 Agent Goal Hijack\nMITRE ATLAS: [AML.T0051.001](https://atlas.mitre.org/techniques/AML.T0051.001), [AML.T0011.000](https://atlas.mitre.org/techniques/AML.T0011.000)\n\nMitigations: untrusted-content-isolation, sandboxed-execution, prompt-injection-filtering, input-provenance-tagging"
+              },
+              "helpUri": "https://genai.owasp.org/llm-top-10/",
+              "defaultConfiguration": {
+                "level": "warning"
+              },
+              "properties": {
+                "tags": [
+                  "security",
+                  "stride/tampering",
+                  "owasp-llm/LLM01",
+                  "owasp-agentic/ASI01",
+                  "mitre-atlas/AML.T0051.001",
+                  "mitre-atlas/AML.T0011.000"
+                ],
+                "security-severity": "3.6",
+                "precision": "medium",
+                "problem.severity": "warning"
+              }
+            },
+            {
+              "id": "no-rate-limits",
+              "name": "NoRateLimits",
+              "shortDescription": {
+                "text": "No rate limits on tool calls"
+              },
+              "fullDescription": {
+                "text": "Nothing bounds how many tool calls or loop iterations an agent may make. A runaway loop or an attacker-driven burst exhausts quotas, floods downstream systems and amplifies every other threat."
+              },
+              "help": {
+                "text": "Nothing bounds how many tool calls or loop iterations an agent may make. A runaway loop or an attacker-driven burst exhausts quotas, floods downstream systems and amplifies every other threat.",
+                "markdown": "**No rate limits on tool calls**\n\nNothing bounds how many tool calls or loop iterations an agent may make. A runaway loop or an attacker-driven burst exhausts quotas, floods downstream systems and amplifies every other threat.\n\nSTRIDE: Denial of service\nOWASP LLM Top 10 (2025): LLM10 Unbounded Consumption\nOWASP Top 10 for Agentic Applications (2026): ASI08 Cascading Agent Failures\nMITRE ATLAS: [AML.T0029](https://atlas.mitre.org/techniques/AML.T0029), [AML.T0034](https://atlas.mitre.org/techniques/AML.T0034)\n\nMitigations: rate-limiting, budget-caps, behavioural-monitoring"
+              },
+              "helpUri": "https://genai.owasp.org/llm-top-10/",
+              "defaultConfiguration": {
+                "level": "warning"
+              },
+              "properties": {
+                "tags": [
+                  "security",
+                  "stride/denial-of-service",
+                  "owasp-llm/LLM10",
+                  "owasp-agentic/ASI08",
+                  "mitre-atlas/AML.T0029",
+                  "mitre-atlas/AML.T0034"
+                ],
+                "security-severity": "3.6",
+                "precision": "medium",
+                "problem.severity": "warning"
+              }
+            },
+            {
+              "id": "supply-chain-unpinned",
+              "name": "SupplyChainUnpinned",
+              "shortDescription": {
+                "text": "Unpinned model or tool versions"
+              },
+              "fullDescription": {
+                "text": "The model version, tool packages or tool servers are not pinned. A silent upstream change (or a deliberate rug pull) alters behaviour and permissions without any review."
+              },
+              "help": {
+                "text": "The model version, tool packages or tool servers are not pinned. A silent upstream change (or a deliberate rug pull) alters behaviour and permissions without any review.",
+                "markdown": "**Unpinned model or tool versions**\n\nThe model version, tool packages or tool servers are not pinned. A silent upstream change (or a deliberate rug pull) alters behaviour and permissions without any review.\n\nSTRIDE: Tampering\nOWASP LLM Top 10 (2025): LLM03 Supply Chain\nOWASP Top 10 for Agentic Applications (2026): ASI04 Agentic Supply Chain Vulnerabilities\nMITRE ATLAS: [AML.T0010](https://atlas.mitre.org/techniques/AML.T0010), [AML.T0010.005](https://atlas.mitre.org/techniques/AML.T0010.005), [AML.T0109](https://atlas.mitre.org/techniques/AML.T0109)\n\nMitigations: tool-integrity-pinning, model-version-pinning, adversarial-testing"
+              },
+              "helpUri": "https://github.com/OWASP/www-project-top-10-for-large-language-model-applications/blob/main/2_0_vulns/LLM03_SupplyChain.md",
+              "defaultConfiguration": {
+                "level": "warning"
+              },
+              "properties": {
+                "tags": [
+                  "security",
+                  "stride/tampering",
+                  "owasp-llm/LLM03",
+                  "owasp-agentic/ASI04",
+                  "mitre-atlas/AML.T0010",
+                  "mitre-atlas/AML.T0010.005",
+                  "mitre-atlas/AML.T0109"
+                ],
+                "security-severity": "3.2",
+                "precision": "medium",
+                "problem.severity": "warning"
+              }
+            },
+            {
+              "id": "system-prompt-leakage",
+              "name": "SystemPromptLeakage",
+              "shortDescription": {
+                "text": "System prompt and configuration leakage"
+              },
+              "fullDescription": {
+                "text": "Users or third-party content can coax the model into revealing its system prompt, tool list and configuration. On its own this is reconnaissance; it becomes serious when the prompt holds secrets or business rules."
+              },
+              "help": {
+                "text": "Users or third-party content can coax the model into revealing its system prompt, tool list and configuration. On its own this is reconnaissance; it becomes serious when the prompt holds secrets or business rules.",
+                "markdown": "**System prompt and configuration leakage**\n\nUsers or third-party content can coax the model into revealing its system prompt, tool list and configuration. On its own this is reconnaissance; it becomes serious when the prompt holds secrets or business rules.\n\nSTRIDE: Information disclosure\nOWASP LLM Top 10 (2025): LLM07 System Prompt Leakage\nMITRE ATLAS: [AML.T0056](https://atlas.mitre.org/techniques/AML.T0056), [AML.T0069.002](https://atlas.mitre.org/techniques/AML.T0069.002), [AML.T0084](https://atlas.mitre.org/techniques/AML.T0084), [AML.T0084.001](https://atlas.mitre.org/techniques/AML.T0084.001)\n\nMitigations: secrets-out-of-context, runtime-policy-enforcement, adversarial-testing"
+              },
+              "helpUri": "https://github.com/OWASP/www-project-top-10-for-large-language-model-applications/blob/main/2_0_vulns/LLM07_SystemPromptLeakage.md",
+              "defaultConfiguration": {
+                "level": "warning"
+              },
+              "properties": {
+                "tags": [
+                  "security",
+                  "stride/information-disclosure",
+                  "owasp-llm/LLM07",
+                  "mitre-atlas/AML.T0056",
+                  "mitre-atlas/AML.T0069.002",
+                  "mitre-atlas/AML.T0084",
+                  "mitre-atlas/AML.T0084.001"
+                ],
+                "security-severity": "3.2",
+                "precision": "medium",
+                "problem.severity": "warning"
+              }
+            },
+            {
+              "id": "agent-config-tampering",
+              "name": "AgentConfigTampering",
+              "shortDescription": {
+                "text": "Agent configuration tampering"
+              },
+              "fullDescription": {
+                "text": "Prompts, tool lists and policies live in files or stores an agent can write to, or that lack change control. Modifying them silently changes what the agent is allowed to do."
+              },
+              "help": {
+                "text": "Prompts, tool lists and policies live in files or stores an agent can write to, or that lack change control. Modifying them silently changes what the agent is allowed to do.",
+                "markdown": "**Agent configuration tampering**\n\nPrompts, tool lists and policies live in files or stores an agent can write to, or that lack change control. Modifying them silently changes what the agent is allowed to do.\n\nSTRIDE: Tampering\nOWASP LLM Top 10 (2025): LLM03 Supply Chain, LLM06 Excessive Agency\nOWASP Top 10 for Agentic Applications (2026): ASI10 Rogue Agents, ASI04 Agentic Supply Chain Vulnerabilities\nMITRE ATLAS: [AML.T0081](https://atlas.mitre.org/techniques/AML.T0081)\n\nMitigations: audit-log, runtime-policy-enforcement, tool-integrity-pinning, least-privilege-tool-scopes"
+              },
+              "helpUri": "https://genai.owasp.org/llm-top-10/",
+              "defaultConfiguration": {
+                "level": "warning"
+              },
+              "properties": {
+                "tags": [
+                  "security",
+                  "stride/tampering",
+                  "owasp-llm/LLM03",
+                  "owasp-llm/LLM06",
+                  "owasp-agentic/ASI10",
+                  "owasp-agentic/ASI04",
+                  "mitre-atlas/AML.T0081"
+                ],
+                "security-severity": "2.8",
+                "precision": "medium",
+                "problem.severity": "warning"
+              }
+            }
+          ]
+        }
+      },
+      "invocations": [
+        {
+          "executionSuccessful": true
+        }
+      ],
+      "results": [
+        {
+          "ruleId": "unsandboxed-exec",
+          "ruleIndex": 0,
+          "level": "error",
+          "message": {
+            "text": "Unsandboxed code or shell execution: residual severity 17.7 (high). tool 'shell' (exec) runs without a sandbox. Missing mitigations: sandboxed-execution, approval-gates, egress-allowlist, kill-switch."
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "examples/coding-agent.yaml",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 25,
+                  "startColumn": 1
+                }
+              },
+              "logicalLocations": [
+                {
+                  "name": "coder",
+                  "kind": "object"
+                }
+              ]
+            },
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "examples/coding-agent.yaml",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 66,
+                  "startColumn": 1
+                }
+              },
+              "logicalLocations": [
+                {
+                  "name": "package-install",
+                  "kind": "object"
+                }
+              ]
+            },
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "examples/coding-agent.yaml",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 59,
+                  "startColumn": 1
+                }
+              },
+              "logicalLocations": [
+                {
+                  "name": "shell",
+                  "kind": "object"
+                }
+              ]
+            }
+          ],
+          "partialFingerprints": {
+            "threatElements/v1": "1c14f5b18b6c6c1da9f0b5493b906d32"
+          },
+          "properties": {
+            "inherent": 20,
+            "residual": 17.7,
+            "elements": [
+              "coder",
+              "package-install",
+              "shell"
+            ],
+            "reasons": [
+              "tool 'shell' (exec) runs without a sandbox",
+              "tool 'package-install' (exec) runs without a sandbox"
+            ],
+            "mitigationsPresent": [
+              "audit-log"
+            ],
+            "mitigationsMissing": [
+              "sandboxed-execution",
+              "approval-gates",
+              "egress-allowlist",
+              "kill-switch"
+            ]
+          }
+        },
+        {
+          "ruleId": "indirect-prompt-injection",
+          "ruleIndex": 1,
+          "level": "error",
+          "message": {
+            "text": "Indirect prompt injection via untrusted channel: residual severity 16 (high). agent 'coder' reads untrusted channel 'issue-tracker' (api, origin third-party). Missing mitigations: input-provenance-tagging, untrusted-content-isolation, prompt-injection-filtering, least-privilege-tool-scopes, approval-gates."
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "examples/coding-agent.yaml",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 25,
+                  "startColumn": 1
+                }
+              },
+              "logicalLocations": [
+                {
+                  "name": "coder",
+                  "kind": "object"
+                }
+              ]
+            },
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "examples/coding-agent.yaml",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 33,
+                  "startColumn": 1
+                }
+              },
+              "logicalLocations": [
+                {
+                  "name": "issue-tracker",
+                  "kind": "object"
+                }
+              ]
+            },
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "examples/coding-agent.yaml",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 38,
+                  "startColumn": 1
+                }
+              },
+              "logicalLocations": [
+                {
+                  "name": "repo-files",
+                  "kind": "object"
+                }
+              ]
+            },
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "examples/coding-agent.yaml",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 43,
+                  "startColumn": 1
+                }
+              },
+              "logicalLocations": [
+                {
+                  "name": "web-docs",
+                  "kind": "object"
+                }
+              ]
+            }
+          ],
+          "partialFingerprints": {
+            "threatElements/v1": "75d7522f0c39f88a1afe4a8f980a93f6"
+          },
+          "properties": {
+            "inherent": 16,
+            "residual": 16.0,
+            "elements": [
+              "coder",
+              "issue-tracker",
+              "repo-files",
+              "web-docs"
+            ],
+            "reasons": [
+              "agent 'coder' reads untrusted channel 'issue-tracker' (api, origin third-party)",
+              "agent 'coder' reads untrusted channel 'repo-files' (file, origin third-party)",
+              "agent 'coder' reads untrusted channel 'web-docs' (web, origin third-party)"
+            ],
+            "mitigationsPresent": [],
+            "mitigationsMissing": [
+              "input-provenance-tagging",
+              "untrusted-content-isolation",
+              "prompt-injection-filtering",
+              "least-privilege-tool-scopes",
+              "approval-gates"
+            ]
+          }
+        },
+        {
+          "ruleId": "excessive-agency",
+          "ruleIndex": 2,
+          "level": "error",
+          "message": {
+            "text": "Excessive agency on write, exec or payment tools: residual severity 14.1 (high). agent 'coder' (act) can call tool 'shell' (exec) with approval: none. Missing mitigations: approval-gates, runtime-policy-enforcement, least-privilege-tool-scopes, kill-switch."
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "examples/coding-agent.yaml",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 25,
+                  "startColumn": 1
+                }
+              },
+              "logicalLocations": [
+                {
+                  "name": "coder",
+                  "kind": "object"
+                }
+              ]
+            },
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "examples/coding-agent.yaml",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 80,
+                  "startColumn": 1
+                }
+              },
+              "logicalLocations": [
+                {
+                  "name": "git-push",
+                  "kind": "object"
+                }
+              ]
+            },
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "examples/coding-agent.yaml",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 66,
+                  "startColumn": 1
+                }
+              },
+              "logicalLocations": [
+                {
+                  "name": "package-install",
+                  "kind": "object"
+                }
+              ]
+            },
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "examples/coding-agent.yaml",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 59,
+                  "startColumn": 1
+                }
+              },
+              "logicalLocations": [
+                {
+                  "name": "shell",
+                  "kind": "object"
+                }
+              ]
+            }
+          ],
+          "partialFingerprints": {
+            "threatElements/v1": "fb575fc4672e1a53c47d8eeb9484dd55"
+          },
+          "properties": {
+            "inherent": 16,
+            "residual": 14.1,
+            "elements": [
+              "coder",
+              "git-push",
+              "package-install",
+              "shell"
+            ],
+            "reasons": [
+              "agent 'coder' (act) can call tool 'shell' (exec) with approval: none",
+              "agent 'coder' (act) can call tool 'package-install' (exec) with approval: none",
+              "agent 'coder' (act) can call tool 'git-push' (write) with approval: none"
+            ],
+            "mitigationsPresent": [
+              "audit-log"
+            ],
+            "mitigationsMissing": [
+              "approval-gates",
+              "runtime-policy-enforcement",
+              "least-privilege-tool-scopes",
+              "kill-switch"
+            ]
+          }
+        },
+        {
+          "ruleId": "credential-exfiltration-via-tool-args",
+          "ruleIndex": 3,
+          "level": "error",
+          "message": {
+            "text": "Credential exfiltration through tool call arguments: residual severity 13.4 (high). tool 'git-push' (write) uses auth: static-key. Missing mitigations: secrets-out-of-context, brokered-credentials, egress-allowlist, argument-validation."
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "examples/coding-agent.yaml",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 25,
+                  "startColumn": 1
+                }
+              },
+              "logicalLocations": [
+                {
+                  "name": "coder",
+                  "kind": "object"
+                }
+              ]
+            },
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "examples/coding-agent.yaml",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 74,
+                  "startColumn": 1
+                }
+              },
+              "logicalLocations": [
+                {
+                  "name": "fetch-url",
+                  "kind": "object"
+                }
+              ]
+            },
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "examples/coding-agent.yaml",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 80,
+                  "startColumn": 1
+                }
+              },
+              "logicalLocations": [
+                {
+                  "name": "git-push",
+                  "kind": "object"
+                }
+              ]
+            }
+          ],
+          "partialFingerprints": {
+            "threatElements/v1": "c0a950cc4002b3a04c279f0a2d8c0b54"
+          },
+          "properties": {
+            "inherent": 15,
+            "residual": 13.4,
+            "elements": [
+              "coder",
+              "fetch-url",
+              "git-push"
+            ],
+            "reasons": [
+              "tool 'git-push' (write) uses auth: static-key",
+              "agent 'coder' can call tool 'fetch-url' (network)",
+              "agent 'coder' can call tool 'git-push' (write)"
+            ],
+            "mitigationsPresent": [
+              "audit-log"
+            ],
+            "mitigationsMissing": [
+              "secrets-out-of-context",
+              "brokered-credentials",
+              "egress-allowlist",
+              "argument-validation"
+            ]
+          }
+        },
+        {
+          "ruleId": "denial-of-wallet",
+          "ruleIndex": 4,
+          "level": "error",
+          "message": {
+            "text": "Denial of wallet: residual severity 12 (high). control 'budget-caps' is not in place. Missing mitigations: budget-caps, rate-limiting, approval-gates, behavioural-monitoring."
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "examples/coding-agent.yaml",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 25,
+                  "startColumn": 1
+                }
+              },
+              "logicalLocations": [
+                {
+                  "name": "coder",
+                  "kind": "object"
+                }
+              ]
+            },
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "examples/coding-agent.yaml",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 74,
+                  "startColumn": 1
+                }
+              },
+              "logicalLocations": [
+                {
+                  "name": "fetch-url",
+                  "kind": "object"
+                }
+              ]
+            }
+          ],
+          "partialFingerprints": {
+            "threatElements/v1": "8406a3c74a197ad1addab04e23c24394"
+          },
+          "properties": {
+            "inherent": 12,
+            "residual": 12.0,
+            "elements": [
+              "coder",
+              "fetch-url"
+            ],
+            "reasons": [
+              "control 'budget-caps' is not in place",
+              "agent 'coder' can call tool 'fetch-url' (network)",
+              "agent 'coder' has autonomy act"
+            ],
+            "mitigationsPresent": [],
+            "mitigationsMissing": [
+              "budget-caps",
+              "rate-limiting",
+              "approval-gates",
+              "behavioural-monitoring"
+            ]
+          }
+        },
+        {
+          "ruleId": "low-trust-principal-drives-agent",
+          "ruleIndex": 5,
+          "level": "error",
+          "message": {
+            "text": "Low-trust principal drives an autonomous agent: residual severity 12 (high). low-trust principal 'external-contributor' reaches agent 'coder' through channel 'issue-tracker'. Missing mitigations: approval-gates, agent-identity, least-privilege-tool-scopes, rate-limiting."
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "examples/coding-agent.yaml",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 25,
+                  "startColumn": 1
+                }
+              },
+              "logicalLocations": [
+                {
+                  "name": "coder",
+                  "kind": "object"
+                }
+              ]
+            },
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "examples/coding-agent.yaml",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 15,
+                  "startColumn": 1
+                }
+              },
+              "logicalLocations": [
+                {
+                  "name": "external-contributor",
+                  "kind": "object"
+                }
+              ]
+            },
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "examples/coding-agent.yaml",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 33,
+                  "startColumn": 1
+                }
+              },
+              "logicalLocations": [
+                {
+                  "name": "issue-tracker",
+                  "kind": "object"
+                }
+              ]
+            }
+          ],
+          "partialFingerprints": {
+            "threatElements/v1": "0b89822fc46efeb5fcdf8d531ec90284"
+          },
+          "properties": {
+            "inherent": 12,
+            "residual": 12.0,
+            "elements": [
+              "coder",
+              "external-contributor",
+              "issue-tracker"
+            ],
+            "reasons": [
+              "low-trust principal 'external-contributor' reaches agent 'coder' through channel 'issue-tracker'",
+              "agent 'coder' has autonomy act"
+            ],
+            "mitigationsPresent": [],
+            "mitigationsMissing": [
+              "approval-gates",
+              "agent-identity",
+              "least-privilege-tool-scopes",
+              "rate-limiting"
+            ]
+          }
+        },
+        {
+          "ruleId": "missing-kill-switch",
+          "ruleIndex": 6,
+          "level": "error",
+          "message": {
+            "text": "No kill switch or credential revocation: residual severity 12 (high). control 'kill-switch' is not in place. Missing mitigations: kill-switch, brokered-credentials, incident-response-playbook."
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "examples/coding-agent.yaml",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 25,
+                  "startColumn": 1
+                }
+              },
+              "logicalLocations": [
+                {
+                  "name": "coder",
+                  "kind": "object"
+                }
+              ]
+            }
+          ],
+          "partialFingerprints": {
+            "threatElements/v1": "721851ca32a38bce1fe70890a4638318"
+          },
+          "properties": {
+            "inherent": 12,
+            "residual": 12.0,
+            "elements": [
+              "coder"
+            ],
+            "reasons": [
+              "control 'kill-switch' is not in place",
+              "agent 'coder' has autonomy act"
+            ],
+            "mitigationsPresent": [],
+            "mitigationsMissing": [
+              "kill-switch",
+              "brokered-credentials",
+              "incident-response-playbook"
+            ]
+          }
+        },
+        {
+          "ruleId": "over-permissive-scopes",
+          "ruleIndex": 7,
+          "level": "error",
+          "message": {
+            "text": "Over-permissive tool scopes: residual severity 12 (high). tool 'shell' (exec) has a broad scope: run any command in the checkout. Missing mitigations: least-privilege-tool-scopes, brokered-credentials, approval-gates."
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "examples/coding-agent.yaml",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 25,
+                  "startColumn": 1
+                }
+              },
+              "logicalLocations": [
+                {
+                  "name": "coder",
+                  "kind": "object"
+                }
+              ]
+            },
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "examples/coding-agent.yaml",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 80,
+                  "startColumn": 1
+                }
+              },
+              "logicalLocations": [
+                {
+                  "name": "git-push",
+                  "kind": "object"
+                }
+              ]
+            },
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "examples/coding-agent.yaml",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 59,
+                  "startColumn": 1
+                }
+              },
+              "logicalLocations": [
+                {
+                  "name": "shell",
+                  "kind": "object"
+                }
+              ]
+            }
+          ],
+          "partialFingerprints": {
+            "threatElements/v1": "29bc95d2f01e0ab862ec582fcff1412d"
+          },
+          "properties": {
+            "inherent": 12,
+            "residual": 12.0,
+            "elements": [
+              "coder",
+              "git-push",
+              "shell"
+            ],
+            "reasons": [
+              "tool 'shell' (exec) has a broad scope: run any command in the checkout",
+              "tool 'git-push' (write) has a broad scope: push to any branch of the repository"
+            ],
+            "mitigationsPresent": [],
+            "mitigationsMissing": [
+              "least-privilege-tool-scopes",
+              "brokered-credentials",
+              "approval-gates"
+            ]
+          }
+        },
+        {
+          "ruleId": "tool-poisoning",
+          "ruleIndex": 8,
+          "level": "error",
+          "message": {
+            "text": "Tool poisoning via third-party tool descriptions: residual severity 12 (high). tool 'package-install' (exec) and its description come from a third party. Missing mitigations: tool-integrity-pinning, input-provenance-tagging, least-privilege-tool-scopes, approval-gates."
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "examples/coding-agent.yaml",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 25,
+                  "startColumn": 1
+                }
+              },
+              "logicalLocations": [
+                {
+                  "name": "coder",
+                  "kind": "object"
+                }
+              ]
+            },
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "examples/coding-agent.yaml",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 66,
+                  "startColumn": 1
+                }
+              },
+              "logicalLocations": [
+                {
+                  "name": "package-install",
+                  "kind": "object"
+                }
+              ]
+            }
+          ],
+          "partialFingerprints": {
+            "threatElements/v1": "584f7a6c3b2a6950add1c6bf7bcb02c2"
+          },
+          "properties": {
+            "inherent": 12,
+            "residual": 12.0,
+            "elements": [
+              "coder",
+              "package-install"
+            ],
+            "reasons": [
+              "tool 'package-install' (exec) and its description come from a third party"
+            ],
+            "mitigationsPresent": [],
+            "mitigationsMissing": [
+              "tool-integrity-pinning",
+              "input-provenance-tagging",
+              "least-privilege-tool-scopes",
+              "approval-gates"
+            ]
+          }
+        },
+        {
+          "ruleId": "memory-poisoning",
+          "ruleIndex": 9,
+          "level": "warning",
+          "message": {
+            "text": "Persistent memory poisoning: residual severity 10.4 (medium). agent 'coder' keeps persistent memory. Missing mitigations: memory-write-validation, session-isolation, input-provenance-tagging."
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "examples/coding-agent.yaml",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 25,
+                  "startColumn": 1
+                }
+              },
+              "logicalLocations": [
+                {
+                  "name": "coder",
+                  "kind": "object"
+                }
+              ]
+            }
+          ],
+          "partialFingerprints": {
+            "threatElements/v1": "2fd11a3b1b965cc9ef426ff3f5cc55a7"
+          },
+          "properties": {
+            "inherent": 12,
+            "residual": 10.4,
+            "elements": [
+              "coder"
+            ],
+            "reasons": [
+              "agent 'coder' keeps persistent memory"
+            ],
+            "mitigationsPresent": [
+              "audit-log"
+            ],
+            "mitigationsMissing": [
+              "memory-write-validation",
+              "session-isolation",
+              "input-provenance-tagging"
+            ]
+          }
+        },
+        {
+          "ruleId": "ssrf-via-url-tool",
+          "ruleIndex": 10,
+          "level": "warning",
+          "message": {
+            "text": "Server-side request forgery through URL-accepting tools: residual severity 10.4 (medium). agent 'coder' can call tool 'fetch-url' (network). Missing mitigations: egress-allowlist, argument-validation, sandboxed-execution."
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "examples/coding-agent.yaml",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 25,
+                  "startColumn": 1
+                }
+              },
+              "logicalLocations": [
+                {
+                  "name": "coder",
+                  "kind": "object"
+                }
+              ]
+            },
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "examples/coding-agent.yaml",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 74,
+                  "startColumn": 1
+                }
+              },
+              "logicalLocations": [
+                {
+                  "name": "fetch-url",
+                  "kind": "object"
+                }
+              ]
+            }
+          ],
+          "partialFingerprints": {
+            "threatElements/v1": "0be92e0a07f41915421c61b41be0f329"
+          },
+          "properties": {
+            "inherent": 12,
+            "residual": 10.4,
+            "elements": [
+              "coder",
+              "fetch-url"
+            ],
+            "reasons": [
+              "agent 'coder' can call tool 'fetch-url' (network)"
+            ],
+            "mitigationsPresent": [
+              "audit-log"
+            ],
+            "mitigationsMissing": [
+              "egress-allowlist",
+              "argument-validation",
+              "sandboxed-execution"
+            ]
+          }
+        },
+        {
+          "ruleId": "sensitive-data-disclosure",
+          "ruleIndex": 11,
+          "level": "warning",
+          "message": {
+            "text": "Sensitive data reachable by the model: residual severity 10.2 (medium). agent 'coder' reaches confidential store 'source-code' through tool 'read-repo' (read). Missing mitigations: per-user-authorisation, least-privilege-tool-scopes, dlp-outbound."
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "examples/coding-agent.yaml",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 25,
+                  "startColumn": 1
+                }
+              },
+              "logicalLocations": [
+                {
+                  "name": "coder",
+                  "kind": "object"
+                }
+              ]
+            },
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "examples/coding-agent.yaml",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 80,
+                  "startColumn": 1
+                }
+              },
+              "logicalLocations": [
+                {
+                  "name": "git-push",
+                  "kind": "object"
+                }
+              ]
+            },
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "examples/coding-agent.yaml",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 53,
+                  "startColumn": 1
+                }
+              },
+              "logicalLocations": [
+                {
+                  "name": "read-repo",
+                  "kind": "object"
+                }
+              ]
+            },
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "examples/coding-agent.yaml",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 88,
+                  "startColumn": 1
+                }
+              },
+              "logicalLocations": [
+                {
+                  "name": "source-code",
+                  "kind": "object"
+                }
+              ]
+            }
+          ],
+          "partialFingerprints": {
+            "threatElements/v1": "7530caf8023631a9d419094350ee9b92"
+          },
+          "properties": {
+            "inherent": 12,
+            "residual": 10.2,
+            "elements": [
+              "coder",
+              "git-push",
+              "read-repo",
+              "source-code"
+            ],
+            "reasons": [
+              "agent 'coder' reaches confidential store 'source-code' through tool 'read-repo' (read)",
+              "agent 'coder' reaches confidential store 'source-code' through tool 'git-push' (write)"
+            ],
+            "mitigationsPresent": [
+              "audit-log"
+            ],
+            "mitigationsMissing": [
+              "per-user-authorisation",
+              "least-privilege-tool-scopes",
+              "dlp-outbound"
+            ]
+          }
+        },
+        {
+          "ruleId": "destructive-write-actions",
+          "ruleIndex": 12,
+          "level": "warning",
+          "message": {
+            "text": "Destructive actions through write tools: residual severity 10.1 (medium). agent 'coder' can call tool 'git-push' (write). Missing mitigations: approval-gates, backups-and-rollback, least-privilege-tool-scopes."
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "examples/coding-agent.yaml",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 25,
+                  "startColumn": 1
+                }
+              },
+              "logicalLocations": [
+                {
+                  "name": "coder",
+                  "kind": "object"
+                }
+              ]
+            },
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "examples/coding-agent.yaml",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 80,
+                  "startColumn": 1
+                }
+              },
+              "logicalLocations": [
+                {
+                  "name": "git-push",
+                  "kind": "object"
+                }
+              ]
+            },
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "examples/coding-agent.yaml",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 33,
+                  "startColumn": 1
+                }
+              },
+              "logicalLocations": [
+                {
+                  "name": "issue-tracker",
+                  "kind": "object"
+                }
+              ]
+            },
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "examples/coding-agent.yaml",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 38,
+                  "startColumn": 1
+                }
+              },
+              "logicalLocations": [
+                {
+                  "name": "repo-files",
+                  "kind": "object"
+                }
+              ]
+            },
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "examples/coding-agent.yaml",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 43,
+                  "startColumn": 1
+                }
+              },
+              "logicalLocations": [
+                {
+                  "name": "web-docs",
+                  "kind": "object"
+                }
+              ]
+            }
+          ],
+          "partialFingerprints": {
+            "threatElements/v1": "7006084350663204a684466e488dc00b"
+          },
+          "properties": {
+            "inherent": 12,
+            "residual": 10.1,
+            "elements": [
+              "coder",
+              "git-push",
+              "issue-tracker",
+              "repo-files",
+              "web-docs"
+            ],
+            "reasons": [
+              "agent 'coder' can call tool 'git-push' (write)",
+              "agent 'coder' reads untrusted channel 'issue-tracker' (api, origin third-party)",
+              "agent 'coder' reads untrusted channel 'repo-files' (file, origin third-party)",
+              "agent 'coder' reads untrusted channel 'web-docs' (web, origin third-party)"
+            ],
+            "mitigationsPresent": [
+              "audit-log"
+            ],
+            "mitigationsMissing": [
+              "approval-gates",
+              "backups-and-rollback",
+              "least-privilege-tool-scopes"
+            ]
+          }
+        },
+        {
+          "ruleId": "static-long-lived-credentials",
+          "ruleIndex": 13,
+          "level": "warning",
+          "message": {
+            "text": "Static long-lived credentials held by the agent: residual severity 10.1 (medium). tool 'git-push' (write) uses auth: static-key. Missing mitigations: brokered-credentials, secrets-out-of-context, kill-switch."
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "examples/coding-agent.yaml",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 25,
+                  "startColumn": 1
+                }
+              },
+              "logicalLocations": [
+                {
+                  "name": "coder",
+                  "kind": "object"
+                }
+              ]
+            },
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "examples/coding-agent.yaml",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 80,
+                  "startColumn": 1
+                }
+              },
+              "logicalLocations": [
+                {
+                  "name": "git-push",
+                  "kind": "object"
+                }
+              ]
+            }
+          ],
+          "partialFingerprints": {
+            "threatElements/v1": "e782d62bca60c74d0a7525e4d53d957d"
+          },
+          "properties": {
+            "inherent": 12,
+            "residual": 10.1,
+            "elements": [
+              "coder",
+              "git-push"
+            ],
+            "reasons": [
+              "tool 'git-push' (write) uses auth: static-key"
+            ],
+            "mitigationsPresent": [
+              "audit-log"
+            ],
+            "mitigationsMissing": [
+              "brokered-credentials",
+              "secrets-out-of-context",
+              "kill-switch"
+            ]
+          }
+        },
+        {
+          "ruleId": "unauthenticated-tool",
+          "ruleIndex": 14,
+          "level": "warning",
+          "message": {
+            "text": "Side-effecting tool with no authentication: residual severity 9.8 (medium). tool 'shell' (exec) uses auth: none. Missing mitigations: agent-identity, brokered-credentials."
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "examples/coding-agent.yaml",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 25,
+                  "startColumn": 1
+                }
+              },
+              "logicalLocations": [
+                {
+                  "name": "coder",
+                  "kind": "object"
+                }
+              ]
+            },
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "examples/coding-agent.yaml",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 74,
+                  "startColumn": 1
+                }
+              },
+              "logicalLocations": [
+                {
+                  "name": "fetch-url",
+                  "kind": "object"
+                }
+              ]
+            },
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "examples/coding-agent.yaml",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 66,
+                  "startColumn": 1
+                }
+              },
+              "logicalLocations": [
+                {
+                  "name": "package-install",
+                  "kind": "object"
+                }
+              ]
+            },
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "examples/coding-agent.yaml",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 59,
+                  "startColumn": 1
+                }
+              },
+              "logicalLocations": [
+                {
+                  "name": "shell",
+                  "kind": "object"
+                }
+              ]
+            }
+          ],
+          "partialFingerprints": {
+            "threatElements/v1": "6fc58d41a7d6582b7a65d68ecb1022e2"
+          },
+          "properties": {
+            "inherent": 12,
+            "residual": 9.8,
+            "elements": [
+              "coder",
+              "fetch-url",
+              "package-install",
+              "shell"
+            ],
+            "reasons": [
+              "tool 'shell' (exec) uses auth: none",
+              "tool 'package-install' (exec) uses auth: none",
+              "tool 'fetch-url' (network) uses auth: none"
+            ],
+            "mitigationsPresent": [
+              "audit-log"
+            ],
+            "mitigationsMissing": [
+              "agent-identity",
+              "brokered-credentials"
+            ]
+          }
+        },
+        {
+          "ruleId": "hallucinated-actions",
+          "ruleIndex": 15,
+          "level": "warning",
+          "message": {
+            "text": "Acting on hallucinated facts or identifiers: residual severity 9 (medium). agent 'coder' has autonomy act. Missing mitigations: argument-validation, approval-gates, tool-integrity-pinning, adversarial-testing."
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "examples/coding-agent.yaml",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 25,
+                  "startColumn": 1
+                }
+              },
+              "logicalLocations": [
+                {
+                  "name": "coder",
+                  "kind": "object"
+                }
+              ]
+            },
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "examples/coding-agent.yaml",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 80,
+                  "startColumn": 1
+                }
+              },
+              "logicalLocations": [
+                {
+                  "name": "git-push",
+                  "kind": "object"
+                }
+              ]
+            },
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "examples/coding-agent.yaml",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 66,
+                  "startColumn": 1
+                }
+              },
+              "logicalLocations": [
+                {
+                  "name": "package-install",
+                  "kind": "object"
+                }
+              ]
+            },
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "examples/coding-agent.yaml",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 59,
+                  "startColumn": 1
+                }
+              },
+              "logicalLocations": [
+                {
+                  "name": "shell",
+                  "kind": "object"
+                }
+              ]
+            }
+          ],
+          "partialFingerprints": {
+            "threatElements/v1": "446e2e99ad99bbb4313194eb4051757f"
+          },
+          "properties": {
+            "inherent": 9,
+            "residual": 9.0,
+            "elements": [
+              "coder",
+              "git-push",
+              "package-install",
+              "shell"
+            ],
+            "reasons": [
+              "agent 'coder' has autonomy act",
+              "agent 'coder' can call tool 'shell' (exec)",
+              "agent 'coder' can call tool 'package-install' (exec)",
+              "agent 'coder' can call tool 'git-push' (write)"
+            ],
+            "mitigationsPresent": [],
+            "mitigationsMissing": [
+              "argument-validation",
+              "approval-gates",
+              "tool-integrity-pinning",
+              "adversarial-testing"
+            ]
+          }
+        },
+        {
+          "ruleId": "insecure-output-handling",
+          "ruleIndex": 16,
+          "level": "warning",
+          "message": {
+            "text": "Model output consumed without validation: residual severity 9 (medium). agent 'coder' can call tool 'shell' (exec). Missing mitigations: output-encoding, argument-validation, sandboxed-execution."
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "examples/coding-agent.yaml",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 25,
+                  "startColumn": 1
+                }
+              },
+              "logicalLocations": [
+                {
+                  "name": "coder",
+                  "kind": "object"
+                }
+              ]
+            },
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "examples/coding-agent.yaml",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 80,
+                  "startColumn": 1
+                }
+              },
+              "logicalLocations": [
+                {
+                  "name": "git-push",
+                  "kind": "object"
+                }
+              ]
+            },
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "examples/coding-agent.yaml",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 66,
+                  "startColumn": 1
+                }
+              },
+              "logicalLocations": [
+                {
+                  "name": "package-install",
+                  "kind": "object"
+                }
+              ]
+            },
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "examples/coding-agent.yaml",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 59,
+                  "startColumn": 1
+                }
+              },
+              "logicalLocations": [
+                {
+                  "name": "shell",
+                  "kind": "object"
+                }
+              ]
+            },
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "examples/coding-agent.yaml",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 43,
+                  "startColumn": 1
+                }
+              },
+              "logicalLocations": [
+                {
+                  "name": "web-docs",
+                  "kind": "object"
+                }
+              ]
+            }
+          ],
+          "partialFingerprints": {
+            "threatElements/v1": "98cbe62a4c37aa64c968bc2bc82745c5"
+          },
+          "properties": {
+            "inherent": 9,
+            "residual": 9.0,
+            "elements": [
+              "coder",
+              "git-push",
+              "package-install",
+              "shell",
+              "web-docs"
+            ],
+            "reasons": [
+              "agent 'coder' can call tool 'shell' (exec)",
+              "agent 'coder' can call tool 'package-install' (exec)",
+              "agent 'coder' can call tool 'git-push' (write)",
+              "agent 'coder' reads untrusted web channel 'web-docs'"
+            ],
+            "mitigationsPresent": [],
+            "mitigationsMissing": [
+              "output-encoding",
+              "argument-validation",
+              "sandboxed-execution"
+            ]
+          }
+        },
+        {
+          "ruleId": "malicious-file-input",
+          "ruleIndex": 17,
+          "level": "warning",
+          "message": {
+            "text": "Malicious files and documents as input: residual severity 9 (medium). agent 'coder' reads untrusted file channel 'repo-files'. Missing mitigations: untrusted-content-isolation, sandboxed-execution, prompt-injection-filtering, input-provenance-tagging."
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "examples/coding-agent.yaml",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 25,
+                  "startColumn": 1
+                }
+              },
+              "logicalLocations": [
+                {
+                  "name": "coder",
+                  "kind": "object"
+                }
+              ]
+            },
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "examples/coding-agent.yaml",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 38,
+                  "startColumn": 1
+                }
+              },
+              "logicalLocations": [
+                {
+                  "name": "repo-files",
+                  "kind": "object"
+                }
+              ]
+            }
+          ],
+          "partialFingerprints": {
+            "threatElements/v1": "78f76c9b26ea1b369b2e624fb294957d"
+          },
+          "properties": {
+            "inherent": 9,
+            "residual": 9.0,
+            "elements": [
+              "coder",
+              "repo-files"
+            ],
+            "reasons": [
+              "agent 'coder' reads untrusted file channel 'repo-files'"
+            ],
+            "mitigationsPresent": [],
+            "mitigationsMissing": [
+              "untrusted-content-isolation",
+              "sandboxed-execution",
+              "prompt-injection-filtering",
+              "input-provenance-tagging"
+            ]
+          }
+        },
+        {
+          "ruleId": "no-rate-limits",
+          "ruleIndex": 18,
+          "level": "warning",
+          "message": {
+            "text": "No rate limits on tool calls: residual severity 9 (medium). control 'rate-limiting' is not in place. Missing mitigations: rate-limiting, budget-caps, behavioural-monitoring."
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "examples/coding-agent.yaml",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 25,
+                  "startColumn": 1
+                }
+              },
+              "logicalLocations": [
+                {
+                  "name": "coder",
+                  "kind": "object"
+                }
+              ]
+            }
+          ],
+          "partialFingerprints": {
+            "threatElements/v1": "996c83abdc0d40d8af9d8d2bf0cbb2cd"
+          },
+          "properties": {
+            "inherent": 9,
+            "residual": 9.0,
+            "elements": [
+              "coder"
+            ],
+            "reasons": [
+              "control 'rate-limiting' is not in place",
+              "agent 'coder' can call 5 tool(s)"
+            ],
+            "mitigationsPresent": [],
+            "mitigationsMissing": [
+              "rate-limiting",
+              "budget-caps",
+              "behavioural-monitoring"
+            ]
+          }
+        },
+        {
+          "ruleId": "supply-chain-unpinned",
+          "ruleIndex": 19,
+          "level": "warning",
+          "message": {
+            "text": "Unpinned model or tool versions: residual severity 8 (medium). agent 'coder' does not declare a pinned model version. Missing mitigations: tool-integrity-pinning, model-version-pinning, adversarial-testing."
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "examples/coding-agent.yaml",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 25,
+                  "startColumn": 1
+                }
+              },
+              "logicalLocations": [
+                {
+                  "name": "coder",
+                  "kind": "object"
+                }
+              ]
+            },
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "examples/coding-agent.yaml",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 74,
+                  "startColumn": 1
+                }
+              },
+              "logicalLocations": [
+                {
+                  "name": "fetch-url",
+                  "kind": "object"
+                }
+              ]
+            },
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "examples/coding-agent.yaml",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 80,
+                  "startColumn": 1
+                }
+              },
+              "logicalLocations": [
+                {
+                  "name": "git-push",
+                  "kind": "object"
+                }
+              ]
+            },
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "examples/coding-agent.yaml",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 66,
+                  "startColumn": 1
+                }
+              },
+              "logicalLocations": [
+                {
+                  "name": "package-install",
+                  "kind": "object"
+                }
+              ]
+            },
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "examples/coding-agent.yaml",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 53,
+                  "startColumn": 1
+                }
+              },
+              "logicalLocations": [
+                {
+                  "name": "read-repo",
+                  "kind": "object"
+                }
+              ]
+            }
+          ],
+          "partialFingerprints": {
+            "threatElements/v1": "cd5a0ae3e9ef1f4c11f3b35014b88c19"
+          },
+          "properties": {
+            "inherent": 8,
+            "residual": 8.0,
+            "elements": [
+              "coder",
+              "fetch-url",
+              "git-push",
+              "package-install",
+              "read-repo",
+              "shell"
+            ],
+            "reasons": [
+              "agent 'coder' does not declare a pinned model version",
+              "tool 'read-repo' (read) version or description is not pinned",
+              "tool 'shell' (exec) version or description is not pinned",
+              "tool 'package-install' (exec) version or description is not pinned",
+              "tool 'fetch-url' (network) version or description is not pinned",
+              "tool 'git-push' (write) version or description is not pinned"
+            ],
+            "mitigationsPresent": [],
+            "mitigationsMissing": [
+              "tool-integrity-pinning",
+              "model-version-pinning",
+              "adversarial-testing"
+            ]
+          }
+        },
+        {
+          "ruleId": "system-prompt-leakage",
+          "ruleIndex": 20,
+          "level": "warning",
+          "message": {
+            "text": "System prompt and configuration leakage: residual severity 8 (medium). agent 'coder' reads channel 'issue-tracker' with origin third-party. Missing mitigations: secrets-out-of-context, runtime-policy-enforcement, adversarial-testing."
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "examples/coding-agent.yaml",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 25,
+                  "startColumn": 1
+                }
+              },
+              "logicalLocations": [
+                {
+                  "name": "coder",
+                  "kind": "object"
+                }
+              ]
+            },
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "examples/coding-agent.yaml",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 33,
+                  "startColumn": 1
+                }
+              },
+              "logicalLocations": [
+                {
+                  "name": "issue-tracker",
+                  "kind": "object"
+                }
+              ]
+            },
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "examples/coding-agent.yaml",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 38,
+                  "startColumn": 1
+                }
+              },
+              "logicalLocations": [
+                {
+                  "name": "repo-files",
+                  "kind": "object"
+                }
+              ]
+            },
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "examples/coding-agent.yaml",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 43,
+                  "startColumn": 1
+                }
+              },
+              "logicalLocations": [
+                {
+                  "name": "web-docs",
+                  "kind": "object"
+                }
+              ]
+            }
+          ],
+          "partialFingerprints": {
+            "threatElements/v1": "a73bbbd46678f4273d105ce633099d2c"
+          },
+          "properties": {
+            "inherent": 8,
+            "residual": 8.0,
+            "elements": [
+              "coder",
+              "issue-tracker",
+              "repo-files",
+              "web-docs"
+            ],
+            "reasons": [
+              "agent 'coder' reads channel 'issue-tracker' with origin third-party",
+              "agent 'coder' reads channel 'repo-files' with origin third-party",
+              "agent 'coder' reads channel 'web-docs' with origin third-party"
+            ],
+            "mitigationsPresent": [],
+            "mitigationsMissing": [
+              "secrets-out-of-context",
+              "runtime-policy-enforcement",
+              "adversarial-testing"
+            ]
+          }
+        },
+        {
+          "ruleId": "agent-config-tampering",
+          "ruleIndex": 21,
+          "level": "warning",
+          "message": {
+            "text": "Agent configuration tampering: residual severity 6.9 (medium). agent 'coder' can call tool 'shell' (exec). Missing mitigations: runtime-policy-enforcement, tool-integrity-pinning, least-privilege-tool-scopes."
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "examples/coding-agent.yaml",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 25,
+                  "startColumn": 1
+                }
+              },
+              "logicalLocations": [
+                {
+                  "name": "coder",
+                  "kind": "object"
+                }
+              ]
+            },
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "examples/coding-agent.yaml",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 80,
+                  "startColumn": 1
+                }
+              },
+              "logicalLocations": [
+                {
+                  "name": "git-push",
+                  "kind": "object"
+                }
+              ]
+            },
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "examples/coding-agent.yaml",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 66,
+                  "startColumn": 1
+                }
+              },
+              "logicalLocations": [
+                {
+                  "name": "package-install",
+                  "kind": "object"
+                }
+              ]
+            },
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "examples/coding-agent.yaml",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 59,
+                  "startColumn": 1
+                }
+              },
+              "logicalLocations": [
+                {
+                  "name": "shell",
+                  "kind": "object"
+                }
+              ]
+            }
+          ],
+          "partialFingerprints": {
+            "threatElements/v1": "4fba938a827d5945cb014e3e7e59fcb0"
+          },
+          "properties": {
+            "inherent": 8,
+            "residual": 6.9,
+            "elements": [
+              "coder",
+              "git-push",
+              "package-install",
+              "shell"
+            ],
+            "reasons": [
+              "agent 'coder' can call tool 'shell' (exec)",
+              "agent 'coder' can call tool 'package-install' (exec)",
+              "agent 'coder' can call tool 'git-push' (write)",
+              "control 'runtime-policy-enforcement' is not in place"
+            ],
+            "mitigationsPresent": [
+              "audit-log"
+            ],
+            "mitigationsMissing": [
+              "runtime-policy-enforcement",
+              "tool-integrity-pinning",
+              "least-privilege-tool-scopes"
+            ]
+          }
+        }
+      ],
+      "properties": {
+        "residualRiskScore": 89,
+        "rating": "critical",
+        "systemName": "Repository coding agent"
+      }
+    }
+  ]
+}

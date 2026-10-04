@@ -1,0 +1,113 @@
+[build-system]
+requires = ["hatchling>=1.25"]
+build-backend = "hatchling.build"
+
+[project]
+name = "agent-threat-model"
+version = "0.1.0"
+description = "Deterministic, offline STRIDE and OWASP threat modelling for LLM-agent systems described in YAML."
+readme = "README.md"
+requires-python = ">=3.11"
+license = "MIT"
+license-files = ["LICENSE"]
+authors = [{ name = "Muhammad Basit Ali" }]
+keywords = [
+  "threat-modeling",
+  "threat-model",
+  "ai-security",
+  "llm-security",
+  "agent-security",
+  "ai-agents",
+  "llm-agents",
+  "agentic-ai",
+  "prompt-injection",
+  "stride",
+  "owasp",
+  "owasp-agentic",
+  "mitre-atlas",
+  "sarif",
+  "security-automation",
+  "github-action",
+  "devsecops",
+  "cli",
+]
+classifiers = [
+  "Development Status :: 3 - Alpha",
+  "Environment :: Console",
+  "Intended Audience :: Developers",
+  "Intended Audience :: Information Technology",
+  "Intended Audience :: Science/Research",
+  "License :: OSI Approved :: MIT License",
+  "Operating System :: OS Independent",
+  "Programming Language :: Python :: 3",
+  "Programming Language :: Python :: 3.11",
+  "Programming Language :: Python :: 3.12",
+  "Programming Language :: Python :: 3.13",
+  "Topic :: Security",
+  "Topic :: Software Development :: Quality Assurance",
+  "Topic :: Software Development :: Testing",
+  "Typing :: Typed",
+]
+dependencies = [
+  "pydantic>=2.0",
+  "pyyaml>=6.0",
+  "typer>=0.12",
+  "rich>=13.0",
+]
+
+[project.optional-dependencies]
+dev = [
+  "pytest>=8.0",
+  "ruff>=0.5",
+  "jsonschema>=4.0",
+]
+
+[project.scripts]
+atm = "agent_threat_model.cli:main"
+agent-threat-model = "agent_threat_model.cli:main"
+
+[project.urls]
+Homepage = "https://github.com/basitalisandhu/agent-threat-model"
+Repository = "https://github.com/basitalisandhu/agent-threat-model"
+Issues = "https://github.com/basitalisandhu/agent-threat-model/issues"
+Changelog = "https://github.com/basitalisandhu/agent-threat-model/blob/main/CHANGELOG.md"
+Documentation = "https://basitalisandhu.github.io/hisar/agent-threat-model.html"
+
+[tool.hatch.build.targets.wheel]
+packages = ["agent_threat_model"]
+
+[tool.hatch.build.targets.sdist]
+include = [
+  "agent_threat_model/**",
+  "schema/**",
+  "examples/*.yaml",
+  "tests/**",
+  "README.md",
+  "LICENSE",
+  "CHANGELOG.md",
+  "pyproject.toml",
+]
+
+[tool.uv]
+dev-dependencies = [
+  "pytest>=8.0",
+  "ruff>=0.5",
+  "jsonschema>=4.0",
+  "build>=1.2",
+]
+
+[tool.ruff]
+line-length = 100
+target-version = "py311"
+extend-exclude = ["examples/reports"]
+
+[tool.ruff.lint]
+select = ["E", "F", "W", "I", "UP", "B", "SIM", "RUF"]
+ignore = ["RUF012"]
+
+[tool.ruff.lint.per-file-ignores]
+"tests/*" = ["B011"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "-q"

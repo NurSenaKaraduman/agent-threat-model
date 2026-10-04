@@ -1,0 +1,362 @@
+# Control catalogue for agent-threat-model.
+# type: preventive | detective | corrective
+# effort: low | medium | high (rough implementation effort for a typical team)
+# references must be real, stable URLs.
+controls:
+  - id: input-provenance-tagging
+    title: Tag every input with its provenance and trust level
+    description: >-
+      Each span of text that enters the model context is labelled with its origin
+      (user, third party, internal) and trust level, and the runtime refuses
+      to let instructions from untrusted spans drive privileged tool calls.
+    type: preventive
+    effort: medium
+    references:
+      - https://atlas.mitre.org/mitigations/AML.M0030
+      - https://atlas.mitre.org/mitigations/AML.M0033
+      - https://github.com/basitalisandhu/llm-agent-control-plane
+      - https://github.com/OWASP/www-project-top-10-for-large-language-model-applications/blob/main/2_0_vulns/LLM01_PromptInjection.md
+
+  - id: prompt-injection-filtering
+    title: Detect injection attempts in untrusted content
+    description: >-
+      Untrusted content is scanned with heuristics or a classifier before it
+      reaches the model, and hits are logged and quarantined. This is a
+      detective layer, not a boundary; pair it with provenance tagging.
+    type: detective
+    effort: low
+    references:
+      - https://atlas.mitre.org/mitigations/AML.M0015
+      - https://atlas.mitre.org/mitigations/AML.M0020
+      - https://cheatsheetseries.owasp.org/cheatsheets/LLM_Prompt_Injection_Prevention_Cheat_Sheet.html
+
+  - id: untrusted-content-isolation
+    title: Isolate untrusted content from the privileged agent
+    description: >-
+      Untrusted documents are processed by a separate, tool-less model or a
+      capability-restricted flow whose output is treated as data by the
+      privileged agent (dual-model and CaMeL style designs).
+    type: preventive
+    effort: high
+    references:
+      - https://simonwillison.net/2023/Apr/25/dual-llm-pattern/
+      - https://arxiv.org/abs/2503.18813
+      - https://atlas.mitre.org/mitigations/AML.M0032
+
+  - id: least-privilege-tool-scopes
+    title: Least-privilege scopes on every tool
+    description: >-
+      Every tool is granted the narrowest scope that the task needs (specific
+      repositories, mailboxes, tables, amounts) and scopes are reviewed when the
+      task changes. Wildcard and admin scopes are not issued to agents.
+    type: preventive
+    effort: medium
+    references:
+      - https://atlas.mitre.org/mitigations/AML.M0028
+      - https://atlas.mitre.org/mitigations/AML.M0026
+      - https://github.com/OWASP/www-project-top-10-for-large-language-model-applications/blob/main/2_0_vulns/LLM06_ExcessiveAgency.md
+      - https://basitalisandhu.github.io/hisar/hisar-broker.html
+
+  - id: approval-gates
+    title: Human approval for high-impact actions
+    description: >-
+      Write, exec, payment and messaging actions above a defined threshold
+      require an explicit approval from an accountable human before they run.
+      Approval requests show the exact arguments and expected effect.
+    type: preventive
+    effort: medium
+    references:
+      - https://atlas.mitre.org/mitigations/AML.M0029
+      - https://basitalisandhu.github.io/hisar/hisar-broker.html
+      - https://github.com/OWASP/www-project-top-10-for-large-language-model-applications/blob/main/2_0_vulns/LLM06_ExcessiveAgency.md
+
+  - id: runtime-policy-enforcement
+    title: Enforce policy outside the model
+    description: >-
+      Tool calls pass through a deterministic policy enforcement point that
+      checks provenance, scope, approval state and limits before execution.
+      Rules written into the prompt are advice to the model, not a control.
+    type: preventive
+    effort: medium
+    references:
+      - https://github.com/basitalisandhu/llm-agent-control-plane
+      - https://atlas.mitre.org/mitigations/AML.M0033
+      - https://nvlpubs.nist.gov/nistpubs/ai/NIST.AI.100-1.pdf
+
+  - id: brokered-credentials
+    title: Short-lived, scoped, brokered credentials
+    description: >-
+      Agents never hold long-lived secrets. A broker issues per-task
+      credentials bound to a scope, a time limit and an audit record, and can
+      revoke them centrally.
+    type: preventive
+    effort: medium
+    references:
+      - https://basitalisandhu.github.io/hisar/hisar-broker.html
+      - https://cheatsheetseries.owasp.org/cheatsheets/Secrets_Management_Cheat_Sheet.html
+      - https://atlas.mitre.org/mitigations/AML.M0019
+
+  - id: secrets-out-of-context
+    title: Keep secrets out of the model context
+    description: >-
+      Credentials are injected by the tool runtime at call time and never appear
+      in prompts, tool descriptions, memory or logs the model can read, so an
+      injected instruction cannot ask the model to repeat them.
+    type: preventive
+    effort: low
+    references:
+      - https://cheatsheetseries.owasp.org/cheatsheets/Secrets_Management_Cheat_Sheet.html
+      - https://atlas.mitre.org/mitigations/AML.M0012
+      - https://atlas.mitre.org/techniques/AML.T0083
+
+  - id: egress-allowlist
+    title: Allowlist network egress and message recipients
+    description: >-
+      Tools that fetch URLs or send messages may only reach allowlisted
+      domains and recipients. Private address ranges, metadata endpoints and
+      redirects to them are blocked at the network layer, not in the prompt.
+    type: preventive
+    effort: low
+    references:
+      - https://cheatsheetseries.owasp.org/cheatsheets/Server_Side_Request_Forgery_Prevention_Cheat_Sheet.html
+      - https://atlas.mitre.org/mitigations/AML.M0032
+
+  - id: argument-validation
+    title: Strict schemas for tool arguments
+    description: >-
+      Every tool declares a strict argument schema (types, enums, ranges,
+      allowlisted paths) that the runtime validates before execution. Free-text
+      shell or SQL arguments are replaced with structured parameters.
+    type: preventive
+    effort: low
+    references:
+      - https://cheatsheetseries.owasp.org/cheatsheets/Input_Validation_Cheat_Sheet.html
+      - https://atlas.mitre.org/mitigations/AML.M0033
+
+  - id: sandboxed-execution
+    title: Run code and shell tools in an ephemeral sandbox
+    description: >-
+      Exec tools run in a throwaway container or micro-VM with no host
+      credentials, a read-only base image, resource limits and a default-deny
+      network policy.
+    type: preventive
+    effort: medium
+    references:
+      - https://cheatsheetseries.owasp.org/cheatsheets/Docker_Security_Cheat_Sheet.html
+      - https://atlas.mitre.org/mitigations/AML.M0032
+      - https://atlas.mitre.org/mitigations/AML.M0011
+
+  - id: output-encoding
+    title: Treat model output as untrusted data downstream
+    description: >-
+      Model output is encoded before it is rendered in a browser, parameterised
+      before it reaches a database or shell, and never interpreted as code
+      without a sandbox and a review step.
+    type: preventive
+    effort: low
+    references:
+      - https://cheatsheetseries.owasp.org/cheatsheets/Cross_Site_Scripting_Prevention_Cheat_Sheet.html
+      - https://github.com/OWASP/www-project-top-10-for-large-language-model-applications/blob/main/2_0_vulns/LLM05_ImproperOutputHandling.md
+
+  - id: audit-log
+    title: Tamper-evident audit log of every tool call
+    description: >-
+      Every tool call is recorded with the acting agent, principal, arguments,
+      result, approval decision and provenance of the triggering input, in a
+      hash-chained or append-only store that the agent cannot modify.
+    type: detective
+    effort: medium
+    references:
+      - https://atlas.mitre.org/mitigations/AML.M0024
+      - https://cheatsheetseries.owasp.org/cheatsheets/Logging_Cheat_Sheet.html
+      - https://basitalisandhu.github.io/hisar/hisar-broker.html
+
+  - id: behavioural-monitoring
+    title: Monitor agent behaviour for anomalies
+    description: >-
+      Tool-call sequences, volumes, recipients and spend are baselined and
+      alerts fire on deviations such as new destinations, bursts of writes or
+      repeated denied calls.
+    type: detective
+    effort: high
+    references:
+      - https://atlas.mitre.org/mitigations/AML.M0024
+      - https://nvlpubs.nist.gov/nistpubs/ai/NIST.AI.100-1.pdf
+
+  - id: kill-switch
+    title: Kill switch with credential revocation
+    description: >-
+      An operator can halt one agent or all agents immediately. Halting
+      revokes outstanding credentials and cancels queued tool calls, and the
+      switch is tested regularly.
+    type: corrective
+    effort: low
+    references:
+      - https://basitalisandhu.github.io/hisar/hisar-broker.html
+      - https://nvlpubs.nist.gov/nistpubs/ai/NIST.AI.100-1.pdf
+
+  - id: rate-limiting
+    title: Rate limits on tool calls and iterations
+    description: >-
+      Per-agent and per-principal limits on tool calls, loop iterations and
+      concurrent tasks stop runaway loops and amplification.
+    type: preventive
+    effort: low
+    references:
+      - https://atlas.mitre.org/mitigations/AML.M0004
+      - https://cheatsheetseries.owasp.org/cheatsheets/Denial_of_Service_Cheat_Sheet.html
+
+  - id: budget-caps
+    title: Hard budget caps on spend and tokens
+    description: >-
+      Each task carries a cap on model spend, payment amounts and paid API
+      calls. Reaching the cap stops the task and alerts an operator.
+    type: preventive
+    effort: low
+    references:
+      - https://github.com/OWASP/www-project-top-10-for-large-language-model-applications/blob/main/2_0_vulns/LLM10_UnboundedConsumption.md
+      - https://atlas.mitre.org/mitigations/AML.M0004
+
+  - id: memory-write-validation
+    title: Validate and expire writes to persistent memory
+    description: >-
+      Writes to long-term memory are schema-validated, tagged with provenance,
+      reviewed or rate limited, and expire by default so a single poisoned
+      interaction cannot steer every future session.
+    type: preventive
+    effort: medium
+    references:
+      - https://atlas.mitre.org/mitigations/AML.M0031
+      - https://atlas.mitre.org/techniques/AML.T0080
+
+  - id: session-isolation
+    title: Isolate memory and context per user and session
+    description: >-
+      Memory, caches and retrieval scopes are partitioned by user and session
+      so content from one principal is never visible to another.
+    type: preventive
+    effort: medium
+    references:
+      - https://atlas.mitre.org/mitigations/AML.M0027
+      - https://cheatsheetseries.owasp.org/cheatsheets/Session_Management_Cheat_Sheet.html
+
+  - id: rag-source-vetting
+    title: Vet, sign and scan retrieval sources
+    description: >-
+      Only approved sources are ingested into retrieval indexes, documents are
+      scanned for embedded instructions at ingest, and each chunk keeps its
+      provenance and access-control labels.
+    type: preventive
+    effort: medium
+    references:
+      - https://atlas.mitre.org/mitigations/AML.M0025
+      - https://atlas.mitre.org/mitigations/AML.M0007
+      - https://github.com/OWASP/www-project-top-10-for-large-language-model-applications/blob/main/2_0_vulns/LLM08_VectorAndEmbeddingWeaknesses.md
+
+  - id: per-user-authorisation
+    title: Access data with the end user's permissions
+    description: >-
+      Tools act with the permissions of the requesting principal, not a shared
+      service account, so the agent cannot return records its user may not see.
+    type: preventive
+    effort: medium
+    references:
+      - https://cheatsheetseries.owasp.org/cheatsheets/Authorization_Cheat_Sheet.html
+      - https://atlas.mitre.org/mitigations/AML.M0027
+      - https://atlas.mitre.org/mitigations/AML.M0019
+
+  - id: dlp-outbound
+    title: Data loss prevention on outbound messages
+    description: >-
+      Outgoing email, chat messages and uploads are scanned for classified
+      data and blocked or held for review when they contain it.
+    type: detective
+    effort: medium
+    references:
+      - https://github.com/OWASP/www-project-top-10-for-large-language-model-applications/blob/main/2_0_vulns/LLM02_SensitiveInformationDisclosure.md
+      - https://csrc.nist.gov/pubs/sp/800/53/r5/upd1/final
+
+  - id: tool-integrity-pinning
+    title: Pin tool versions and hash tool descriptions
+    description: >-
+      Tool servers and packages are pinned to reviewed versions, tool
+      descriptions are hashed at review time, and any change blocks the
+      agent until it is re-reviewed.
+    type: preventive
+    effort: low
+    references:
+      - https://atlas.mitre.org/mitigations/AML.M0013
+      - https://atlas.mitre.org/mitigations/AML.M0014
+      - https://atlas.mitre.org/mitigations/AML.M0023
+      - https://modelcontextprotocol.io/specification/2025-06-18/basic/security_best_practices
+
+  - id: model-version-pinning
+    title: Pin and change-control the model version
+    description: >-
+      The model version and provider are pinned, changes go through
+      evaluation before rollout, and the system records which version served
+      each request.
+    type: preventive
+    effort: low
+    references:
+      - https://atlas.mitre.org/mitigations/AML.M0023
+      - https://github.com/OWASP/www-project-top-10-for-large-language-model-applications/blob/main/2_0_vulns/LLM03_SupplyChain.md
+
+  - id: approval-fatigue-controls
+    title: Design approvals that people can actually review
+    description: >-
+      Approvals are risk-based rather than blanket, batched where safe, show a
+      diff of the intended effect, and repeated denials or time-outs stop the
+      task instead of retrying.
+    type: preventive
+    effort: medium
+    references:
+      - https://atlas.mitre.org/mitigations/AML.M0029
+      - https://basitalisandhu.github.io/hisar/hisar-broker.html
+
+  - id: agent-identity
+    title: Authenticated identities for agents and principals
+    description: >-
+      Each agent and principal has its own identity. Messages between agents
+      and calls to tools are authenticated and carry the originating
+      principal, so a downstream agent can apply its own policy.
+    type: preventive
+    effort: medium
+    references:
+      - https://atlas.mitre.org/mitigations/AML.M0032
+      - https://cheatsheetseries.owasp.org/cheatsheets/Microservices_Security_Cheat_Sheet.html
+      - https://basitalisandhu.github.io/hisar/hisar-broker.html
+
+  - id: backups-and-rollback
+    title: Backups and rollback for agent-writable data
+    description: >-
+      Data stores an agent can write to have point-in-time backups and a
+      tested rollback path, so a destructive action is recoverable.
+    type: corrective
+    effort: medium
+    references:
+      - https://csrc.nist.gov/pubs/sp/800/34/r1/upd1/final
+
+  - id: incident-response-playbook
+    title: Incident response playbook for agent incidents
+    description: >-
+      A written playbook covers how to pause agents, revoke credentials,
+      preserve audit evidence and notify affected users, and it is exercised.
+    type: corrective
+    effort: low
+    references:
+      - https://csrc.nist.gov/pubs/sp/800/61/r3/final
+      - https://github.com/basitalisandhu/ai-agent-incidents
+
+  - id: adversarial-testing
+    title: Adversarial testing before and after release
+    description: >-
+      The system is tested against injection, jailbreak and tool-abuse cases
+      in CI and periodically in production, and findings feed back into the
+      catalogue of controls.
+    type: detective
+    effort: medium
+    references:
+      - https://atlas.mitre.org/mitigations/AML.M0008
+      - https://atlas.mitre.org/mitigations/AML.M0016
+      - https://nvlpubs.nist.gov/nistpubs/ai/NIST.AI.600-1.pdf

@@ -1,0 +1,118 @@
+# The same accounts payable agent as finance-agent.yaml, run behind Hisar:
+# brokered short-lived credentials, approvals enforced by a policy point
+# outside the model, a tamper-evident audit log, kill switch and budget caps.
+# Compare with:  atm diff examples/finance-agent.yaml examples/hisar-governed.yaml
+system:
+  name: Accounts payable agent (Hisar governed)
+  description: >-
+    Reads supplier invoices from email and attachments, matches them against
+    purchase orders in the ERP, posts ledger entries, schedules payments and
+    emails suppliers about status. Credentials are brokered per task and
+    every side effect passes a policy enforcement point.
+  owner: finance-systems team
+
+principals:
+  - id: supplier
+    kind: human
+    trust: low
+    channels: [supplier-email, invoice-files]
+  - id: ap-clerk
+    kind: human
+    trust: high
+    channels: [approval-console]
+  - id: erp-system
+    kind: service
+    trust: medium
+    channels: [erp-api]
+
+agents:
+  - id: ap-agent
+    model_provider: hosted LLM
+    autonomy: act-with-approval
+    memory: session
+    model_pinned: true
+    inputs: [supplier-email, invoice-files, erp-api, approval-console]
+    tools: [read-invoices, match-po, update-ledger, schedule-payment, notify-supplier]
+
+channels:
+  - id: supplier-email
+    kind: email
+    trusted: false
+    origin: third-party
+  - id: invoice-files
+    kind: document
+    trusted: false
+    origin: third-party
+    description: PDF and image attachments from suppliers.
+  - id: erp-api
+    kind: api
+    trusted: true
+    origin: internal
+  - id: approval-console
+    kind: chat
+    trusted: true
+    origin: user
+
+tools:
+  - id: read-invoices
+    kind: read
+    target: invoice-archive
+    scope: read invoices in the accounts payable mailbox
+    auth: brokered
+    pinned: true
+    sandboxed: true
+  - id: match-po
+    kind: read
+    target: erp
+    scope: read purchase orders for the matched supplier
+    auth: brokered
+    pinned: true
+    sandboxed: true
+  - id: update-ledger
+    kind: write
+    target: erp
+    scope: post journal entries to the accounts payable sub-ledger
+    auth: brokered
+    approval: threshold
+    pinned: true
+  - id: schedule-payment
+    kind: payment
+    target: banking api
+    scope: schedule payments to approved suppliers up to the matched purchase order amount
+    auth: brokered
+    approval: threshold
+    pinned: true
+  - id: notify-supplier
+    kind: messaging
+    target: smtp relay
+    scope: email the supplier contact on the purchase order
+    auth: brokered
+    approval: none
+    pinned: true
+
+data_stores:
+  - id: erp
+    sensitivity: confidential
+  - id: invoice-archive
+    sensitivity: regulated
+    description: Invoices carry bank details and tax identifiers.
+
+controls:
+  - brokered-credentials
+  - secrets-out-of-context
+  - approval-gates
+  - approval-fatigue-controls
+  - runtime-policy-enforcement
+  - audit-log
+  - kill-switch
+  - rate-limiting
+  - budget-caps
+  - input-provenance-tagging
+  - egress-allowlist
+  - dlp-outbound
+  - least-privilege-tool-scopes
+  - argument-validation
+  - per-user-authorisation
+  - tool-integrity-pinning
+  - model-version-pinning
+  - incident-response-playbook

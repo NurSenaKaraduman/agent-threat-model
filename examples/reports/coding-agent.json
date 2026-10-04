@@ -1,0 +1,1526 @@
+{
+  "report_schema_version": "1",
+  "tool": {
+    "name": "agent-threat-model",
+    "version": "0.1.0"
+  },
+  "source": "examples/coding-agent.yaml",
+  "system": {
+    "system": {
+      "name": "Repository coding agent",
+      "description": "Takes issues from the tracker, reads the repository and documentation, runs build and test commands, installs packages and pushes branches.",
+      "owner": "developer-productivity team"
+    },
+    "principals": [
+      {
+        "id": "maintainer",
+        "kind": "human",
+        "trust": "high",
+        "channels": [
+          "issue-tracker"
+        ],
+        "description": ""
+      },
+      {
+        "id": "external-contributor",
+        "kind": "human",
+        "trust": "low",
+        "channels": [
+          "issue-tracker"
+        ],
+        "description": ""
+      },
+      {
+        "id": "ci-system",
+        "kind": "service",
+        "trust": "medium",
+        "channels": [
+          "ci-logs"
+        ],
+        "description": ""
+      }
+    ],
+    "agents": [
+      {
+        "id": "coder",
+        "model_provider": "hosted LLM",
+        "autonomy": "act",
+        "memory": "persistent",
+        "inputs": [
+          "issue-tracker",
+          "repo-files",
+          "web-docs",
+          "ci-logs"
+        ],
+        "tools": [
+          "read-repo",
+          "shell",
+          "package-install",
+          "fetch-url",
+          "git-push"
+        ],
+        "delegates_to": [],
+        "model_pinned": false,
+        "description": ""
+      }
+    ],
+    "channels": [
+      {
+        "id": "issue-tracker",
+        "kind": "api",
+        "trusted": false,
+        "origin": "third-party",
+        "description": "Anyone can open an issue."
+      },
+      {
+        "id": "repo-files",
+        "kind": "file",
+        "trusted": false,
+        "origin": "third-party",
+        "description": "Repository contents including contributed code and vendored dependencies."
+      },
+      {
+        "id": "web-docs",
+        "kind": "web",
+        "trusted": false,
+        "origin": "third-party",
+        "description": ""
+      },
+      {
+        "id": "ci-logs",
+        "kind": "cli",
+        "trusted": true,
+        "origin": "internal",
+        "description": ""
+      }
+    ],
+    "tools": [
+      {
+        "id": "read-repo",
+        "kind": "read",
+        "target": "source-code",
+        "scope": "read repository files",
+        "auth": "short-lived",
+        "approval": "none",
+        "sandboxed": true,
+        "provider": "first-party",
+        "pinned": false,
+        "data_stores": [],
+        "description": ""
+      },
+      {
+        "id": "shell",
+        "kind": "exec",
+        "target": "build host",
+        "scope": "run any command in the checkout",
+        "auth": "none",
+        "approval": "none",
+        "sandboxed": false,
+        "provider": "first-party",
+        "pinned": false,
+        "data_stores": [],
+        "description": ""
+      },
+      {
+        "id": "package-install",
+        "kind": "exec",
+        "target": "public package registries",
+        "scope": "install packages from public registries",
+        "auth": "none",
+        "approval": "none",
+        "sandboxed": false,
+        "provider": "third-party",
+        "pinned": false,
+        "data_stores": [],
+        "description": ""
+      },
+      {
+        "id": "fetch-url",
+        "kind": "network",
+        "target": "public internet",
+        "scope": "fetch documentation pages",
+        "auth": "none",
+        "approval": "none",
+        "sandboxed": false,
+        "provider": "first-party",
+        "pinned": false,
+        "data_stores": [],
+        "description": ""
+      },
+      {
+        "id": "git-push",
+        "kind": "write",
+        "target": "source-code",
+        "scope": "push to any branch of the repository",
+        "auth": "static-key",
+        "approval": "none",
+        "sandboxed": false,
+        "provider": "first-party",
+        "pinned": false,
+        "data_stores": [],
+        "description": ""
+      }
+    ],
+    "data_stores": [
+      {
+        "id": "source-code",
+        "sensitivity": "confidential",
+        "description": ""
+      }
+    ],
+    "controls": [
+      "audit-log"
+    ]
+  },
+  "summary": {
+    "findings": 22,
+    "residual_bands": {
+      "critical": 0,
+      "high": 9,
+      "medium": 13,
+      "low": 0
+    },
+    "inherent_bands": {
+      "critical": 1,
+      "high": 14,
+      "medium": 7,
+      "low": 0
+    },
+    "inherent_total": 259.0,
+    "residual_total": 241.1,
+    "baseline_total": 271.0,
+    "residual_risk_score": 89,
+    "rating": "critical",
+    "reduction_percent": 11
+  },
+  "findings": [
+    {
+      "threat_id": "unsandboxed-exec",
+      "title": "Unsandboxed code or shell execution",
+      "description": "An exec tool runs model-chosen commands on a host that holds credentials, source code or network access. Any injection or mistake becomes arbitrary code execution with the host's privileges.",
+      "stride": "elevation-of-privilege",
+      "owasp_llm": [
+        "LLM06",
+        "LLM05"
+      ],
+      "owasp_agentic": [
+        "ASI05"
+      ],
+      "mitre_atlas": [
+        "AML.T0050",
+        "AML.T0105",
+        "AML.T0072"
+      ],
+      "rule": "tool_kind_not_sandboxed(kinds=exec)",
+      "likelihood": 4,
+      "impact": 5,
+      "impact_adjusted": false,
+      "inherent": 20,
+      "elements": [
+        "coder",
+        "package-install",
+        "shell"
+      ],
+      "reasons": [
+        "tool 'shell' (exec) runs without a sandbox",
+        "tool 'package-install' (exec) runs without a sandbox"
+      ],
+      "mitigations_present": [
+        "audit-log"
+      ],
+      "mitigations_missing": [
+        "sandboxed-execution",
+        "approval-gates",
+        "egress-allowlist",
+        "kill-switch"
+      ],
+      "coverage": 0.146,
+      "residual": 17.7,
+      "references": [],
+      "rank": 1,
+      "inherent_band": "critical",
+      "residual_band": "high"
+    },
+    {
+      "threat_id": "indirect-prompt-injection",
+      "title": "Indirect prompt injection via untrusted channel",
+      "description": "Content the agent reads from an untrusted channel (email, web pages, documents, retrieved passages, API responses) carries instructions that the model follows as if they came from the operator. Every tool the agent can reach becomes available to whoever wrote that content.",
+      "stride": "tampering",
+      "owasp_llm": [
+        "LLM01"
+      ],
+      "owasp_agentic": [
+        "ASI01"
+      ],
+      "mitre_atlas": [
+        "AML.T0051.001"
+      ],
+      "rule": "untrusted_channel_in_agent_inputs",
+      "likelihood": 4,
+      "impact": 4,
+      "impact_adjusted": false,
+      "inherent": 16,
+      "elements": [
+        "coder",
+        "issue-tracker",
+        "repo-files",
+        "web-docs"
+      ],
+      "reasons": [
+        "agent 'coder' reads untrusted channel 'issue-tracker' (api, origin third-party)",
+        "agent 'coder' reads untrusted channel 'repo-files' (file, origin third-party)",
+        "agent 'coder' reads untrusted channel 'web-docs' (web, origin third-party)"
+      ],
+      "mitigations_present": [],
+      "mitigations_missing": [
+        "input-provenance-tagging",
+        "untrusted-content-isolation",
+        "prompt-injection-filtering",
+        "least-privilege-tool-scopes",
+        "approval-gates"
+      ],
+      "coverage": 0.0,
+      "residual": 16.0,
+      "references": [
+        "https://github.com/OWASP/www-project-top-10-for-large-language-model-applications/blob/main/2_0_vulns/LLM01_PromptInjection.md"
+      ],
+      "rank": 2,
+      "inherent_band": "high",
+      "residual_band": "high"
+    },
+    {
+      "threat_id": "excessive-agency",
+      "title": "Excessive agency on write, exec or payment tools",
+      "description": "An agent that may act on its own can call a tool with side effects without any approval step. One wrong inference, one injected instruction or one hallucinated argument becomes a real-world action.",
+      "stride": "elevation-of-privilege",
+      "owasp_llm": [
+        "LLM06"
+      ],
+      "owasp_agentic": [
+        "ASI02",
+        "ASI03"
+      ],
+      "mitre_atlas": [
+        "AML.T0053"
+      ],
+      "rule": "tool_kind_without_approval(kinds=write|exec|payment)",
+      "likelihood": 4,
+      "impact": 4,
+      "impact_adjusted": false,
+      "inherent": 16,
+      "elements": [
+        "coder",
+        "git-push",
+        "package-install",
+        "shell"
+      ],
+      "reasons": [
+        "agent 'coder' (act) can call tool 'shell' (exec) with approval: none",
+        "agent 'coder' (act) can call tool 'package-install' (exec) with approval: none",
+        "agent 'coder' (act) can call tool 'git-push' (write) with approval: none"
+      ],
+      "mitigations_present": [
+        "audit-log"
+      ],
+      "mitigations_missing": [
+        "approval-gates",
+        "runtime-policy-enforcement",
+        "least-privilege-tool-scopes",
+        "kill-switch"
+      ],
+      "coverage": 0.146,
+      "residual": 14.1,
+      "references": [
+        "https://github.com/OWASP/www-project-top-10-for-large-language-model-applications/blob/main/2_0_vulns/LLM06_ExcessiveAgency.md"
+      ],
+      "rank": 3,
+      "inherent_band": "high",
+      "residual_band": "high"
+    },
+    {
+      "threat_id": "credential-exfiltration-via-tool-args",
+      "title": "Credential exfiltration through tool call arguments",
+      "description": "A tool holds a static key that is visible to the model (in configuration, descriptions or memory) and another tool can send data outward. An injected instruction asks the model to place the secret into a URL, message body or file that leaves the system.",
+      "stride": "information-disclosure",
+      "owasp_llm": [
+        "LLM02",
+        "LLM01"
+      ],
+      "owasp_agentic": [
+        "ASI02",
+        "ASI03"
+      ],
+      "mitre_atlas": [
+        "AML.T0098",
+        "AML.T0086",
+        "AML.T0083"
+      ],
+      "rule": "all(tool_auth_in(auth=static-key), agent_has_tool_kind(kinds=network|messaging|write))",
+      "likelihood": 3,
+      "impact": 5,
+      "impact_adjusted": false,
+      "inherent": 15,
+      "elements": [
+        "coder",
+        "fetch-url",
+        "git-push"
+      ],
+      "reasons": [
+        "tool 'git-push' (write) uses auth: static-key",
+        "agent 'coder' can call tool 'fetch-url' (network)",
+        "agent 'coder' can call tool 'git-push' (write)"
+      ],
+      "mitigations_present": [
+        "audit-log"
+      ],
+      "mitigations_missing": [
+        "secrets-out-of-context",
+        "brokered-credentials",
+        "egress-allowlist",
+        "argument-validation"
+      ],
+      "coverage": 0.13,
+      "residual": 13.4,
+      "references": [],
+      "rank": 4,
+      "inherent_band": "high",
+      "residual_band": "high"
+    },
+    {
+      "threat_id": "denial-of-wallet",
+      "title": "Denial of wallet",
+      "description": "The agent can spend money or paid API quota and nothing caps the amount per task. A loop, an injection or a malicious user turns the agent into a bill.",
+      "stride": "denial-of-service",
+      "owasp_llm": [
+        "LLM10"
+      ],
+      "owasp_agentic": [
+        "ASI08"
+      ],
+      "mitre_atlas": [
+        "AML.T0034.002",
+        "AML.T0034"
+      ],
+      "rule": "all(control_missing(control=budget-caps), any(agent_has_tool_kind(kinds=payment|network), agent_autonomy_in(autonomy=act)))",
+      "likelihood": 3,
+      "impact": 4,
+      "impact_adjusted": false,
+      "inherent": 12,
+      "elements": [
+        "coder",
+        "fetch-url"
+      ],
+      "reasons": [
+        "control 'budget-caps' is not in place",
+        "agent 'coder' can call tool 'fetch-url' (network)",
+        "agent 'coder' has autonomy act"
+      ],
+      "mitigations_present": [],
+      "mitigations_missing": [
+        "budget-caps",
+        "rate-limiting",
+        "approval-gates",
+        "behavioural-monitoring"
+      ],
+      "coverage": 0.0,
+      "residual": 12.0,
+      "references": [
+        "https://github.com/OWASP/www-project-top-10-for-large-language-model-applications/blob/main/2_0_vulns/LLM10_UnboundedConsumption.md"
+      ],
+      "rank": 5,
+      "inherent_band": "high",
+      "residual_band": "high"
+    },
+    {
+      "threat_id": "low-trust-principal-drives-agent",
+      "title": "Low-trust principal drives an autonomous agent",
+      "description": "A principal the operator does not trust (anonymous users, external partners) can send instructions to an agent that acts without approval. The agent's tools are effectively exposed to the public.",
+      "stride": "spoofing",
+      "owasp_llm": [
+        "LLM06"
+      ],
+      "owasp_agentic": [
+        "ASI01",
+        "ASI03"
+      ],
+      "mitre_atlas": [
+        "AML.T0053"
+      ],
+      "rule": "all(low_trust_principal_feeds_agent, agent_autonomy_in(autonomy=act))",
+      "likelihood": 3,
+      "impact": 4,
+      "impact_adjusted": false,
+      "inherent": 12,
+      "elements": [
+        "coder",
+        "external-contributor",
+        "issue-tracker"
+      ],
+      "reasons": [
+        "low-trust principal 'external-contributor' reaches agent 'coder' through channel 'issue-tracker'",
+        "agent 'coder' has autonomy act"
+      ],
+      "mitigations_present": [],
+      "mitigations_missing": [
+        "approval-gates",
+        "agent-identity",
+        "least-privilege-tool-scopes",
+        "rate-limiting"
+      ],
+      "coverage": 0.0,
+      "residual": 12.0,
+      "references": [],
+      "rank": 6,
+      "inherent_band": "high",
+      "residual_band": "high"
+    },
+    {
+      "threat_id": "missing-kill-switch",
+      "title": "No kill switch or credential revocation",
+      "description": "An agent that acts in the world cannot be stopped quickly. When behaviour goes wrong the only options are to find the process and the keys by hand while actions keep happening.",
+      "stride": "elevation-of-privilege",
+      "owasp_llm": [
+        "LLM06"
+      ],
+      "owasp_agentic": [
+        "ASI10",
+        "ASI08"
+      ],
+      "mitre_atlas": [],
+      "rule": "all(control_missing(control=kill-switch), agent_autonomy_in(autonomy=act|act-with-approval))",
+      "likelihood": 3,
+      "impact": 4,
+      "impact_adjusted": false,
+      "inherent": 12,
+      "elements": [
+        "coder"
+      ],
+      "reasons": [
+        "control 'kill-switch' is not in place",
+        "agent 'coder' has autonomy act"
+      ],
+      "mitigations_present": [],
+      "mitigations_missing": [
+        "kill-switch",
+        "brokered-credentials",
+        "incident-response-playbook"
+      ],
+      "coverage": 0.0,
+      "residual": 12.0,
+      "references": [],
+      "rank": 7,
+      "inherent_band": "high",
+      "residual_band": "high"
+    },
+    {
+      "threat_id": "over-permissive-scopes",
+      "title": "Over-permissive tool scopes",
+      "description": "A tool is granted wildcard, admin or undeclared scope. Whatever goes wrong, the blast radius is the whole account rather than the one resource the task needed.",
+      "stride": "elevation-of-privilege",
+      "owasp_llm": [
+        "LLM06"
+      ],
+      "owasp_agentic": [
+        "ASI03"
+      ],
+      "mitre_atlas": [
+        "AML.T0053"
+      ],
+      "rule": "tool_scope_broad",
+      "likelihood": 3,
+      "impact": 4,
+      "impact_adjusted": false,
+      "inherent": 12,
+      "elements": [
+        "coder",
+        "git-push",
+        "shell"
+      ],
+      "reasons": [
+        "tool 'shell' (exec) has a broad scope: run any command in the checkout",
+        "tool 'git-push' (write) has a broad scope: push to any branch of the repository"
+      ],
+      "mitigations_present": [],
+      "mitigations_missing": [
+        "least-privilege-tool-scopes",
+        "brokered-credentials",
+        "approval-gates"
+      ],
+      "coverage": 0.0,
+      "residual": 12.0,
+      "references": [],
+      "rank": 8,
+      "inherent_band": "high",
+      "residual_band": "high"
+    },
+    {
+      "threat_id": "tool-poisoning",
+      "title": "Tool poisoning via third-party tool descriptions",
+      "description": "A third-party tool or tool server ships descriptions, schemas or results that contain hidden instructions. The model reads them as trusted configuration and can be steered to leak data or call other tools.",
+      "stride": "tampering",
+      "owasp_llm": [
+        "LLM01",
+        "LLM03"
+      ],
+      "owasp_agentic": [
+        "ASI04",
+        "ASI01"
+      ],
+      "mitre_atlas": [
+        "AML.T0110",
+        "AML.T0104",
+        "AML.T0099"
+      ],
+      "rule": "third_party_tool",
+      "likelihood": 3,
+      "impact": 4,
+      "impact_adjusted": false,
+      "inherent": 12,
+      "elements": [
+        "coder",
+        "package-install"
+      ],
+      "reasons": [
+        "tool 'package-install' (exec) and its description come from a third party"
+      ],
+      "mitigations_present": [],
+      "mitigations_missing": [
+        "tool-integrity-pinning",
+        "input-provenance-tagging",
+        "least-privilege-tool-scopes",
+        "approval-gates"
+      ],
+      "coverage": 0.0,
+      "residual": 12.0,
+      "references": [
+        "https://modelcontextprotocol.io/specification/2025-06-18/basic/security_best_practices"
+      ],
+      "rank": 9,
+      "inherent_band": "high",
+      "residual_band": "high"
+    },
+    {
+      "threat_id": "memory-poisoning",
+      "title": "Persistent memory poisoning",
+      "description": "The agent writes what it learns into long-term memory. Content from one interaction (possibly injected) is stored and later retrieved as trusted context, so a single poisoned message steers every future session.",
+      "stride": "tampering",
+      "owasp_llm": [
+        "LLM01",
+        "LLM04"
+      ],
+      "owasp_agentic": [
+        "ASI06"
+      ],
+      "mitre_atlas": [
+        "AML.T0080.000"
+      ],
+      "rule": "agent_memory_is(memory=persistent)",
+      "likelihood": 3,
+      "impact": 4,
+      "impact_adjusted": false,
+      "inherent": 12,
+      "elements": [
+        "coder"
+      ],
+      "reasons": [
+        "agent 'coder' keeps persistent memory"
+      ],
+      "mitigations_present": [
+        "audit-log"
+      ],
+      "mitigations_missing": [
+        "memory-write-validation",
+        "session-isolation",
+        "input-provenance-tagging"
+      ],
+      "coverage": 0.167,
+      "residual": 10.4,
+      "references": [],
+      "rank": 10,
+      "inherent_band": "high",
+      "residual_band": "medium"
+    },
+    {
+      "threat_id": "ssrf-via-url-tool",
+      "title": "Server-side request forgery through URL-accepting tools",
+      "description": "A tool fetches URLs chosen by the model. Attacker-influenced input makes it request internal services, cloud metadata endpoints or private address ranges, and the response flows back into the context.",
+      "stride": "information-disclosure",
+      "owasp_llm": [
+        "LLM06",
+        "LLM05"
+      ],
+      "owasp_agentic": [
+        "ASI02"
+      ],
+      "mitre_atlas": [
+        "AML.T0053"
+      ],
+      "rule": "agent_has_tool_kind(kinds=network)",
+      "likelihood": 3,
+      "impact": 4,
+      "impact_adjusted": false,
+      "inherent": 12,
+      "elements": [
+        "coder",
+        "fetch-url"
+      ],
+      "reasons": [
+        "agent 'coder' can call tool 'fetch-url' (network)"
+      ],
+      "mitigations_present": [
+        "audit-log"
+      ],
+      "mitigations_missing": [
+        "egress-allowlist",
+        "argument-validation",
+        "sandboxed-execution"
+      ],
+      "coverage": 0.167,
+      "residual": 10.4,
+      "references": [
+        "https://cheatsheetseries.owasp.org/cheatsheets/Server_Side_Request_Forgery_Prevention_Cheat_Sheet.html"
+      ],
+      "rank": 11,
+      "inherent_band": "high",
+      "residual_band": "medium"
+    },
+    {
+      "threat_id": "sensitive-data-disclosure",
+      "title": "Sensitive data reachable by the model",
+      "description": "The agent can read confidential or regulated records through a tool. Whatever enters the context can be summarised, quoted or exfiltrated, and a shared service account returns records the requesting user may not be entitled to.",
+      "stride": "information-disclosure",
+      "owasp_llm": [
+        "LLM02"
+      ],
+      "owasp_agentic": [
+        "ASI03",
+        "ASI02"
+      ],
+      "mitre_atlas": [
+        "AML.T0057",
+        "AML.T0085.000",
+        "AML.T0036"
+      ],
+      "rule": "agent_reaches_sensitive_store(min=confidential)",
+      "likelihood": 3,
+      "impact": 4,
+      "impact_adjusted": false,
+      "inherent": 12,
+      "elements": [
+        "coder",
+        "git-push",
+        "read-repo",
+        "source-code"
+      ],
+      "reasons": [
+        "agent 'coder' reaches confidential store 'source-code' through tool 'read-repo' (read)",
+        "agent 'coder' reaches confidential store 'source-code' through tool 'git-push' (write)"
+      ],
+      "mitigations_present": [
+        "audit-log"
+      ],
+      "mitigations_missing": [
+        "per-user-authorisation",
+        "least-privilege-tool-scopes",
+        "dlp-outbound"
+      ],
+      "coverage": 0.187,
+      "residual": 10.2,
+      "references": [
+        "https://github.com/OWASP/www-project-top-10-for-large-language-model-applications/blob/main/2_0_vulns/LLM02_SensitiveInformationDisclosure.md"
+      ],
+      "rank": 12,
+      "inherent_band": "high",
+      "residual_band": "medium"
+    },
+    {
+      "threat_id": "destructive-write-actions",
+      "title": "Destructive actions through write tools",
+      "description": "The agent can modify or delete data and reads untrusted content. An injected instruction (or a plain mistake) deletes records, overwrites files or force-pushes over history.",
+      "stride": "tampering",
+      "owasp_llm": [
+        "LLM06",
+        "LLM01"
+      ],
+      "owasp_agentic": [
+        "ASI02"
+      ],
+      "mitre_atlas": [
+        "AML.T0101"
+      ],
+      "rule": "all(agent_has_tool_kind(kinds=write), untrusted_channel_in_agent_inputs)",
+      "likelihood": 3,
+      "impact": 4,
+      "impact_adjusted": false,
+      "inherent": 12,
+      "elements": [
+        "coder",
+        "git-push",
+        "issue-tracker",
+        "repo-files",
+        "web-docs"
+      ],
+      "reasons": [
+        "agent 'coder' can call tool 'git-push' (write)",
+        "agent 'coder' reads untrusted channel 'issue-tracker' (api, origin third-party)",
+        "agent 'coder' reads untrusted channel 'repo-files' (file, origin third-party)",
+        "agent 'coder' reads untrusted channel 'web-docs' (web, origin third-party)"
+      ],
+      "mitigations_present": [
+        "audit-log"
+      ],
+      "mitigations_missing": [
+        "approval-gates",
+        "backups-and-rollback",
+        "least-privilege-tool-scopes"
+      ],
+      "coverage": 0.194,
+      "residual": 10.1,
+      "references": [],
+      "rank": 13,
+      "inherent_band": "high",
+      "residual_band": "medium"
+    },
+    {
+      "threat_id": "static-long-lived-credentials",
+      "title": "Static long-lived credentials held by the agent",
+      "description": "Tools authenticate with static keys that do not expire. If a key leaks through logs, prompts or an injected exfiltration it remains valid until someone notices, and it cannot be scoped to a single task.",
+      "stride": "information-disclosure",
+      "owasp_llm": [
+        "LLM02"
+      ],
+      "owasp_agentic": [
+        "ASI03"
+      ],
+      "mitre_atlas": [
+        "AML.T0055",
+        "AML.T0083"
+      ],
+      "rule": "tool_auth_in(auth=static-key)",
+      "likelihood": 3,
+      "impact": 4,
+      "impact_adjusted": false,
+      "inherent": 12,
+      "elements": [
+        "coder",
+        "git-push"
+      ],
+      "reasons": [
+        "tool 'git-push' (write) uses auth: static-key"
+      ],
+      "mitigations_present": [
+        "audit-log"
+      ],
+      "mitigations_missing": [
+        "brokered-credentials",
+        "secrets-out-of-context",
+        "kill-switch"
+      ],
+      "coverage": 0.194,
+      "residual": 10.1,
+      "references": [],
+      "rank": 14,
+      "inherent_band": "high",
+      "residual_band": "medium"
+    },
+    {
+      "threat_id": "unauthenticated-tool",
+      "title": "Side-effecting tool with no authentication",
+      "description": "A tool that writes, executes, pays, sends or fetches requires no authentication at all. Calls cannot be attributed to an agent or principal, and anything that can reach the endpoint can use it.",
+      "stride": "spoofing",
+      "owasp_llm": [
+        "LLM06"
+      ],
+      "owasp_agentic": [
+        "ASI03"
+      ],
+      "mitre_atlas": [
+        "AML.T0053"
+      ],
+      "rule": "tool_auth_in(auth=none, kinds=write|exec|payment|messaging|network)",
+      "likelihood": 3,
+      "impact": 4,
+      "impact_adjusted": false,
+      "inherent": 12,
+      "elements": [
+        "coder",
+        "fetch-url",
+        "package-install",
+        "shell"
+      ],
+      "reasons": [
+        "tool 'shell' (exec) uses auth: none",
+        "tool 'package-install' (exec) uses auth: none",
+        "tool 'fetch-url' (network) uses auth: none"
+      ],
+      "mitigations_present": [
+        "audit-log"
+      ],
+      "mitigations_missing": [
+        "agent-identity",
+        "brokered-credentials"
+      ],
+      "coverage": 0.231,
+      "residual": 9.8,
+      "references": [],
+      "rank": 15,
+      "inherent_band": "high",
+      "residual_band": "medium"
+    },
+    {
+      "threat_id": "hallucinated-actions",
+      "title": "Acting on hallucinated facts or identifiers",
+      "description": "The agent invents a package name, account id, file path or amount and a side-effecting tool executes it. Attackers register the names models tend to invent so the mistake resolves to something malicious.",
+      "stride": "tampering",
+      "owasp_llm": [
+        "LLM09",
+        "LLM06"
+      ],
+      "owasp_agentic": [
+        "ASI02",
+        "ASI04"
+      ],
+      "mitre_atlas": [
+        "AML.T0060",
+        "AML.T0053"
+      ],
+      "rule": "all(agent_autonomy_in(autonomy=act|act-with-approval), agent_has_tool_kind(kinds=exec|write|payment))",
+      "likelihood": 3,
+      "impact": 3,
+      "impact_adjusted": false,
+      "inherent": 9,
+      "elements": [
+        "coder",
+        "git-push",
+        "package-install",
+        "shell"
+      ],
+      "reasons": [
+        "agent 'coder' has autonomy act",
+        "agent 'coder' can call tool 'shell' (exec)",
+        "agent 'coder' can call tool 'package-install' (exec)",
+        "agent 'coder' can call tool 'git-push' (write)"
+      ],
+      "mitigations_present": [],
+      "mitigations_missing": [
+        "argument-validation",
+        "approval-gates",
+        "tool-integrity-pinning",
+        "adversarial-testing"
+      ],
+      "coverage": 0.0,
+      "residual": 9.0,
+      "references": [
+        "https://arxiv.org/abs/2406.10279"
+      ],
+      "rank": 16,
+      "inherent_band": "medium",
+      "residual_band": "medium"
+    },
+    {
+      "threat_id": "insecure-output-handling",
+      "title": "Model output consumed without validation",
+      "description": "Downstream components render model output in a browser, pass it to a shell or database, or execute it. Injected or malformed output becomes cross-site scripting, command injection or unintended writes.",
+      "stride": "tampering",
+      "owasp_llm": [
+        "LLM05"
+      ],
+      "owasp_agentic": [
+        "ASI05"
+      ],
+      "mitre_atlas": [
+        "AML.T0077",
+        "AML.T0067"
+      ],
+      "rule": "any(agent_has_tool_kind(kinds=exec|write), agent_has_channel_kind(kinds=web))",
+      "likelihood": 3,
+      "impact": 3,
+      "impact_adjusted": false,
+      "inherent": 9,
+      "elements": [
+        "coder",
+        "git-push",
+        "package-install",
+        "shell",
+        "web-docs"
+      ],
+      "reasons": [
+        "agent 'coder' can call tool 'shell' (exec)",
+        "agent 'coder' can call tool 'package-install' (exec)",
+        "agent 'coder' can call tool 'git-push' (write)",
+        "agent 'coder' reads untrusted web channel 'web-docs'"
+      ],
+      "mitigations_present": [],
+      "mitigations_missing": [
+        "output-encoding",
+        "argument-validation",
+        "sandboxed-execution"
+      ],
+      "coverage": 0.0,
+      "residual": 9.0,
+      "references": [
+        "https://github.com/OWASP/www-project-top-10-for-large-language-model-applications/blob/main/2_0_vulns/LLM05_ImproperOutputHandling.md"
+      ],
+      "rank": 17,
+      "inherent_band": "medium",
+      "residual_band": "medium"
+    },
+    {
+      "threat_id": "malicious-file-input",
+      "title": "Malicious files and documents as input",
+      "description": "The agent parses files or documents. Crafted files exploit parser bugs, hide instructions in metadata or invisible text, and carry macros or links that later tools act on.",
+      "stride": "tampering",
+      "owasp_llm": [
+        "LLM01"
+      ],
+      "owasp_agentic": [
+        "ASI01"
+      ],
+      "mitre_atlas": [
+        "AML.T0051.001",
+        "AML.T0011.000"
+      ],
+      "rule": "agent_has_channel_kind(kinds=file|document, untrusted=true)",
+      "likelihood": 3,
+      "impact": 3,
+      "impact_adjusted": false,
+      "inherent": 9,
+      "elements": [
+        "coder",
+        "repo-files"
+      ],
+      "reasons": [
+        "agent 'coder' reads untrusted file channel 'repo-files'"
+      ],
+      "mitigations_present": [],
+      "mitigations_missing": [
+        "untrusted-content-isolation",
+        "sandboxed-execution",
+        "prompt-injection-filtering",
+        "input-provenance-tagging"
+      ],
+      "coverage": 0.0,
+      "residual": 9.0,
+      "references": [],
+      "rank": 18,
+      "inherent_band": "medium",
+      "residual_band": "medium"
+    },
+    {
+      "threat_id": "no-rate-limits",
+      "title": "No rate limits on tool calls",
+      "description": "Nothing bounds how many tool calls or loop iterations an agent may make. A runaway loop or an attacker-driven burst exhausts quotas, floods downstream systems and amplifies every other threat.",
+      "stride": "denial-of-service",
+      "owasp_llm": [
+        "LLM10"
+      ],
+      "owasp_agentic": [
+        "ASI08"
+      ],
+      "mitre_atlas": [
+        "AML.T0029",
+        "AML.T0034"
+      ],
+      "rule": "all(control_missing(control=rate-limiting), agent_has_any_tool)",
+      "likelihood": 3,
+      "impact": 3,
+      "impact_adjusted": false,
+      "inherent": 9,
+      "elements": [
+        "coder"
+      ],
+      "reasons": [
+        "control 'rate-limiting' is not in place",
+        "agent 'coder' can call 5 tool(s)"
+      ],
+      "mitigations_present": [],
+      "mitigations_missing": [
+        "rate-limiting",
+        "budget-caps",
+        "behavioural-monitoring"
+      ],
+      "coverage": 0.0,
+      "residual": 9.0,
+      "references": [],
+      "rank": 19,
+      "inherent_band": "medium",
+      "residual_band": "medium"
+    },
+    {
+      "threat_id": "supply-chain-unpinned",
+      "title": "Unpinned model or tool versions",
+      "description": "The model version, tool packages or tool servers are not pinned. A silent upstream change (or a deliberate rug pull) alters behaviour and permissions without any review.",
+      "stride": "tampering",
+      "owasp_llm": [
+        "LLM03"
+      ],
+      "owasp_agentic": [
+        "ASI04"
+      ],
+      "mitre_atlas": [
+        "AML.T0010",
+        "AML.T0010.005",
+        "AML.T0109"
+      ],
+      "rule": "any(agent_model_unpinned, tool_unpinned)",
+      "likelihood": 2,
+      "impact": 4,
+      "impact_adjusted": false,
+      "inherent": 8,
+      "elements": [
+        "coder",
+        "fetch-url",
+        "git-push",
+        "package-install",
+        "read-repo",
+        "shell"
+      ],
+      "reasons": [
+        "agent 'coder' does not declare a pinned model version",
+        "tool 'read-repo' (read) version or description is not pinned",
+        "tool 'shell' (exec) version or description is not pinned",
+        "tool 'package-install' (exec) version or description is not pinned",
+        "tool 'fetch-url' (network) version or description is not pinned",
+        "tool 'git-push' (write) version or description is not pinned"
+      ],
+      "mitigations_present": [],
+      "mitigations_missing": [
+        "tool-integrity-pinning",
+        "model-version-pinning",
+        "adversarial-testing"
+      ],
+      "coverage": 0.0,
+      "residual": 8.0,
+      "references": [
+        "https://github.com/OWASP/www-project-top-10-for-large-language-model-applications/blob/main/2_0_vulns/LLM03_SupplyChain.md"
+      ],
+      "rank": 20,
+      "inherent_band": "medium",
+      "residual_band": "medium"
+    },
+    {
+      "threat_id": "system-prompt-leakage",
+      "title": "System prompt and configuration leakage",
+      "description": "Users or third-party content can coax the model into revealing its system prompt, tool list and configuration. On its own this is reconnaissance; it becomes serious when the prompt holds secrets or business rules.",
+      "stride": "information-disclosure",
+      "owasp_llm": [
+        "LLM07"
+      ],
+      "owasp_agentic": [],
+      "mitre_atlas": [
+        "AML.T0056",
+        "AML.T0069.002",
+        "AML.T0084",
+        "AML.T0084.001"
+      ],
+      "rule": "agent_has_input_of_origin(origin=user|third-party)",
+      "likelihood": 4,
+      "impact": 2,
+      "impact_adjusted": false,
+      "inherent": 8,
+      "elements": [
+        "coder",
+        "issue-tracker",
+        "repo-files",
+        "web-docs"
+      ],
+      "reasons": [
+        "agent 'coder' reads channel 'issue-tracker' with origin third-party",
+        "agent 'coder' reads channel 'repo-files' with origin third-party",
+        "agent 'coder' reads channel 'web-docs' with origin third-party"
+      ],
+      "mitigations_present": [],
+      "mitigations_missing": [
+        "secrets-out-of-context",
+        "runtime-policy-enforcement",
+        "adversarial-testing"
+      ],
+      "coverage": 0.0,
+      "residual": 8.0,
+      "references": [
+        "https://github.com/OWASP/www-project-top-10-for-large-language-model-applications/blob/main/2_0_vulns/LLM07_SystemPromptLeakage.md"
+      ],
+      "rank": 21,
+      "inherent_band": "medium",
+      "residual_band": "medium"
+    },
+    {
+      "threat_id": "agent-config-tampering",
+      "title": "Agent configuration tampering",
+      "description": "Prompts, tool lists and policies live in files or stores an agent can write to, or that lack change control. Modifying them silently changes what the agent is allowed to do.",
+      "stride": "tampering",
+      "owasp_llm": [
+        "LLM03",
+        "LLM06"
+      ],
+      "owasp_agentic": [
+        "ASI10",
+        "ASI04"
+      ],
+      "mitre_atlas": [
+        "AML.T0081"
+      ],
+      "rule": "all(agent_has_tool_kind(kinds=write|exec), control_missing(control=runtime-policy-enforcement))",
+      "likelihood": 2,
+      "impact": 4,
+      "impact_adjusted": false,
+      "inherent": 8,
+      "elements": [
+        "coder",
+        "git-push",
+        "package-install",
+        "shell"
+      ],
+      "reasons": [
+        "agent 'coder' can call tool 'shell' (exec)",
+        "agent 'coder' can call tool 'package-install' (exec)",
+        "agent 'coder' can call tool 'git-push' (write)",
+        "control 'runtime-policy-enforcement' is not in place"
+      ],
+      "mitigations_present": [
+        "audit-log"
+      ],
+      "mitigations_missing": [
+        "runtime-policy-enforcement",
+        "tool-integrity-pinning",
+        "least-privilege-tool-scopes"
+      ],
+      "coverage": 0.167,
+      "residual": 6.9,
+      "references": [],
+      "rank": 22,
+      "inherent_band": "medium",
+      "residual_band": "medium"
+    }
+  ],
+  "controls": [
+    {
+      "id": "adversarial-testing",
+      "title": "Adversarial testing before and after release",
+      "type": "detective",
+      "effort": "medium",
+      "present": false,
+      "threats": [
+        "hallucinated-actions",
+        "supply-chain-unpinned",
+        "system-prompt-leakage"
+      ]
+    },
+    {
+      "id": "agent-identity",
+      "title": "Authenticated identities for agents and principals",
+      "type": "preventive",
+      "effort": "medium",
+      "present": false,
+      "threats": [
+        "low-trust-principal-drives-agent",
+        "unauthenticated-tool"
+      ]
+    },
+    {
+      "id": "approval-gates",
+      "title": "Human approval for high-impact actions",
+      "type": "preventive",
+      "effort": "medium",
+      "present": false,
+      "threats": [
+        "unsandboxed-exec",
+        "indirect-prompt-injection",
+        "excessive-agency",
+        "denial-of-wallet",
+        "low-trust-principal-drives-agent",
+        "over-permissive-scopes",
+        "tool-poisoning",
+        "destructive-write-actions",
+        "hallucinated-actions"
+      ]
+    },
+    {
+      "id": "argument-validation",
+      "title": "Strict schemas for tool arguments",
+      "type": "preventive",
+      "effort": "low",
+      "present": false,
+      "threats": [
+        "credential-exfiltration-via-tool-args",
+        "ssrf-via-url-tool",
+        "hallucinated-actions",
+        "insecure-output-handling"
+      ]
+    },
+    {
+      "id": "audit-log",
+      "title": "Tamper-evident audit log of every tool call",
+      "type": "detective",
+      "effort": "medium",
+      "present": true,
+      "threats": [
+        "unsandboxed-exec",
+        "excessive-agency",
+        "credential-exfiltration-via-tool-args",
+        "memory-poisoning",
+        "ssrf-via-url-tool",
+        "sensitive-data-disclosure",
+        "destructive-write-actions",
+        "static-long-lived-credentials",
+        "unauthenticated-tool",
+        "agent-config-tampering"
+      ]
+    },
+    {
+      "id": "backups-and-rollback",
+      "title": "Backups and rollback for agent-writable data",
+      "type": "corrective",
+      "effort": "medium",
+      "present": false,
+      "threats": [
+        "destructive-write-actions"
+      ]
+    },
+    {
+      "id": "behavioural-monitoring",
+      "title": "Monitor agent behaviour for anomalies",
+      "type": "detective",
+      "effort": "high",
+      "present": false,
+      "threats": [
+        "denial-of-wallet",
+        "no-rate-limits"
+      ]
+    },
+    {
+      "id": "brokered-credentials",
+      "title": "Short-lived, scoped, brokered credentials",
+      "type": "preventive",
+      "effort": "medium",
+      "present": false,
+      "threats": [
+        "credential-exfiltration-via-tool-args",
+        "missing-kill-switch",
+        "over-permissive-scopes",
+        "static-long-lived-credentials",
+        "unauthenticated-tool"
+      ]
+    },
+    {
+      "id": "budget-caps",
+      "title": "Hard budget caps on spend and tokens",
+      "type": "preventive",
+      "effort": "low",
+      "present": false,
+      "threats": [
+        "denial-of-wallet",
+        "no-rate-limits"
+      ]
+    },
+    {
+      "id": "dlp-outbound",
+      "title": "Data loss prevention on outbound messages",
+      "type": "detective",
+      "effort": "medium",
+      "present": false,
+      "threats": [
+        "sensitive-data-disclosure"
+      ]
+    },
+    {
+      "id": "egress-allowlist",
+      "title": "Allowlist network egress and message recipients",
+      "type": "preventive",
+      "effort": "low",
+      "present": false,
+      "threats": [
+        "unsandboxed-exec",
+        "credential-exfiltration-via-tool-args",
+        "ssrf-via-url-tool"
+      ]
+    },
+    {
+      "id": "incident-response-playbook",
+      "title": "Incident response playbook for agent incidents",
+      "type": "corrective",
+      "effort": "low",
+      "present": false,
+      "threats": [
+        "missing-kill-switch"
+      ]
+    },
+    {
+      "id": "input-provenance-tagging",
+      "title": "Tag every input with its provenance and trust level",
+      "type": "preventive",
+      "effort": "medium",
+      "present": false,
+      "threats": [
+        "indirect-prompt-injection",
+        "tool-poisoning",
+        "memory-poisoning",
+        "malicious-file-input"
+      ]
+    },
+    {
+      "id": "kill-switch",
+      "title": "Kill switch with credential revocation",
+      "type": "corrective",
+      "effort": "low",
+      "present": false,
+      "threats": [
+        "unsandboxed-exec",
+        "excessive-agency",
+        "missing-kill-switch",
+        "static-long-lived-credentials"
+      ]
+    },
+    {
+      "id": "least-privilege-tool-scopes",
+      "title": "Least-privilege scopes on every tool",
+      "type": "preventive",
+      "effort": "medium",
+      "present": false,
+      "threats": [
+        "indirect-prompt-injection",
+        "excessive-agency",
+        "low-trust-principal-drives-agent",
+        "over-permissive-scopes",
+        "tool-poisoning",
+        "sensitive-data-disclosure",
+        "destructive-write-actions",
+        "agent-config-tampering"
+      ]
+    },
+    {
+      "id": "memory-write-validation",
+      "title": "Validate and expire writes to persistent memory",
+      "type": "preventive",
+      "effort": "medium",
+      "present": false,
+      "threats": [
+        "memory-poisoning"
+      ]
+    },
+    {
+      "id": "model-version-pinning",
+      "title": "Pin and change-control the model version",
+      "type": "preventive",
+      "effort": "low",
+      "present": false,
+      "threats": [
+        "supply-chain-unpinned"
+      ]
+    },
+    {
+      "id": "output-encoding",
+      "title": "Treat model output as untrusted data downstream",
+      "type": "preventive",
+      "effort": "low",
+      "present": false,
+      "threats": [
+        "insecure-output-handling"
+      ]
+    },
+    {
+      "id": "per-user-authorisation",
+      "title": "Access data with the end user's permissions",
+      "type": "preventive",
+      "effort": "medium",
+      "present": false,
+      "threats": [
+        "sensitive-data-disclosure"
+      ]
+    },
+    {
+      "id": "prompt-injection-filtering",
+      "title": "Detect injection attempts in untrusted content",
+      "type": "detective",
+      "effort": "low",
+      "present": false,
+      "threats": [
+        "indirect-prompt-injection",
+        "malicious-file-input"
+      ]
+    },
+    {
+      "id": "rate-limiting",
+      "title": "Rate limits on tool calls and iterations",
+      "type": "preventive",
+      "effort": "low",
+      "present": false,
+      "threats": [
+        "denial-of-wallet",
+        "low-trust-principal-drives-agent",
+        "no-rate-limits"
+      ]
+    },
+    {
+      "id": "runtime-policy-enforcement",
+      "title": "Enforce policy outside the model",
+      "type": "preventive",
+      "effort": "medium",
+      "present": false,
+      "threats": [
+        "excessive-agency",
+        "system-prompt-leakage",
+        "agent-config-tampering"
+      ]
+    },
+    {
+      "id": "sandboxed-execution",
+      "title": "Run code and shell tools in an ephemeral sandbox",
+      "type": "preventive",
+      "effort": "medium",
+      "present": false,
+      "threats": [
+        "unsandboxed-exec",
+        "ssrf-via-url-tool",
+        "insecure-output-handling",
+        "malicious-file-input"
+      ]
+    },
+    {
+      "id": "secrets-out-of-context",
+      "title": "Keep secrets out of the model context",
+      "type": "preventive",
+      "effort": "low",
+      "present": false,
+      "threats": [
+        "credential-exfiltration-via-tool-args",
+        "static-long-lived-credentials",
+        "system-prompt-leakage"
+      ]
+    },
+    {
+      "id": "session-isolation",
+      "title": "Isolate memory and context per user and session",
+      "type": "preventive",
+      "effort": "medium",
+      "present": false,
+      "threats": [
+        "memory-poisoning"
+      ]
+    },
+    {
+      "id": "tool-integrity-pinning",
+      "title": "Pin tool versions and hash tool descriptions",
+      "type": "preventive",
+      "effort": "low",
+      "present": false,
+      "threats": [
+        "tool-poisoning",
+        "hallucinated-actions",
+        "supply-chain-unpinned",
+        "agent-config-tampering"
+      ]
+    },
+    {
+      "id": "untrusted-content-isolation",
+      "title": "Isolate untrusted content from the privileged agent",
+      "type": "preventive",
+      "effort": "high",
+      "present": false,
+      "threats": [
+        "indirect-prompt-injection",
+        "malicious-file-input"
+      ]
+    }
+  ]
+}

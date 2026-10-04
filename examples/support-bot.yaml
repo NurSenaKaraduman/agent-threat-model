@@ -1,0 +1,85 @@
+# Customer support assistant: a retrieval-backed chatbot that also reads
+# inbound support email and can reply by email or open tickets.
+# Analyse with:  atm analyse examples/support-bot.yaml
+system:
+  name: Customer support assistant
+  description: >-
+    Answers customer questions from a knowledge base, reads inbound support
+    email, looks up customer records and can reply by email or create tickets.
+  owner: support-platform team
+
+principals:
+  - id: customer
+    kind: human
+    trust: low
+    channels: [web-chat, inbound-email]
+  - id: support-engineer
+    kind: human
+    trust: high
+    channels: [agent-console]
+
+agents:
+  - id: support-bot
+    model_provider: hosted LLM
+    autonomy: act
+    memory: session
+    inputs: [web-chat, inbound-email, knowledge-base, agent-console]
+    tools: [search-kb, lookup-customer, send-email, create-ticket]
+
+channels:
+  - id: web-chat
+    kind: chat
+    trusted: false
+    origin: user
+    description: Public chat widget on the website.
+  - id: inbound-email
+    kind: email
+    trusted: false
+    origin: third-party
+    description: Anything sent to support@ lands here.
+  - id: knowledge-base
+    kind: rag
+    trusted: true
+    origin: internal
+    description: Help-centre articles and runbooks, re-indexed nightly.
+  - id: agent-console
+    kind: chat
+    trusted: true
+    origin: user
+    description: Internal console used by support engineers.
+
+tools:
+  - id: search-kb
+    kind: read
+    target: kb-index
+    scope: read help-centre articles
+    auth: short-lived
+    approval: none
+    sandboxed: true
+  - id: lookup-customer
+    kind: read
+    target: crm
+    scope: read customer profile and order history
+    auth: static-key
+    approval: none
+  - id: send-email
+    kind: messaging
+    target: smtp relay
+    scope: send email from support@ to any address
+    auth: static-key
+    approval: none
+  - id: create-ticket
+    kind: write
+    target: ticketing
+    scope: create tickets in the support queue
+    auth: static-key
+    approval: none
+
+data_stores:
+  - id: crm
+    sensitivity: confidential
+  - id: kb-index
+    sensitivity: internal
+
+controls:
+  - output-encoding

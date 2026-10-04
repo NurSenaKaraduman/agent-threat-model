@@ -1,0 +1,91 @@
+# Accounts payable agent: reads supplier invoices, matches them to purchase
+# orders and schedules payments. Approval exists for payments but is enforced
+# in the prompt, credentials are static keys, and nothing is audited.
+system:
+  name: Accounts payable agent
+  description: >-
+    Reads supplier invoices from email and attachments, matches them against
+    purchase orders in the ERP, posts ledger entries, schedules payments and
+    emails suppliers about status.
+  owner: finance-systems team
+
+principals:
+  - id: supplier
+    kind: human
+    trust: low
+    channels: [supplier-email, invoice-files]
+  - id: ap-clerk
+    kind: human
+    trust: high
+    channels: [approval-console]
+  - id: erp-system
+    kind: service
+    trust: medium
+    channels: [erp-api]
+
+agents:
+  - id: ap-agent
+    model_provider: hosted LLM
+    autonomy: act-with-approval
+    memory: session
+    inputs: [supplier-email, invoice-files, erp-api, approval-console]
+    tools: [read-invoices, match-po, update-ledger, schedule-payment, notify-supplier]
+
+channels:
+  - id: supplier-email
+    kind: email
+    trusted: false
+    origin: third-party
+  - id: invoice-files
+    kind: document
+    trusted: false
+    origin: third-party
+    description: PDF and image attachments from suppliers.
+  - id: erp-api
+    kind: api
+    trusted: true
+    origin: internal
+  - id: approval-console
+    kind: chat
+    trusted: true
+    origin: user
+
+tools:
+  - id: read-invoices
+    kind: read
+    target: invoice-archive
+    scope: read invoices in the accounts payable mailbox
+    auth: static-key
+  - id: match-po
+    kind: read
+    target: erp
+    scope: read purchase orders
+    auth: static-key
+  - id: update-ledger
+    kind: write
+    target: erp
+    scope: post journal entries
+    auth: static-key
+    approval: none
+  - id: schedule-payment
+    kind: payment
+    target: banking api
+    scope: schedule payments up to the invoice amount
+    auth: static-key
+    approval: threshold
+  - id: notify-supplier
+    kind: messaging
+    target: smtp relay
+    scope: email suppliers on file
+    auth: static-key
+    approval: none
+
+data_stores:
+  - id: erp
+    sensitivity: confidential
+  - id: invoice-archive
+    sensitivity: regulated
+    description: Invoices carry bank details and tax identifiers.
+
+controls:
+  - approval-gates

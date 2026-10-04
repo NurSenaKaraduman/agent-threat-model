@@ -1,0 +1,1446 @@
+{
+  "report_schema_version": "1",
+  "tool": {
+    "name": "agent-threat-model",
+    "version": "0.1.0"
+  },
+  "source": "examples/support-bot.yaml",
+  "system": {
+    "system": {
+      "name": "Customer support assistant",
+      "description": "Answers customer questions from a knowledge base, reads inbound support email, looks up customer records and can reply by email or create tickets.",
+      "owner": "support-platform team"
+    },
+    "principals": [
+      {
+        "id": "customer",
+        "kind": "human",
+        "trust": "low",
+        "channels": [
+          "web-chat",
+          "inbound-email"
+        ],
+        "description": ""
+      },
+      {
+        "id": "support-engineer",
+        "kind": "human",
+        "trust": "high",
+        "channels": [
+          "agent-console"
+        ],
+        "description": ""
+      }
+    ],
+    "agents": [
+      {
+        "id": "support-bot",
+        "model_provider": "hosted LLM",
+        "autonomy": "act",
+        "memory": "session",
+        "inputs": [
+          "web-chat",
+          "inbound-email",
+          "knowledge-base",
+          "agent-console"
+        ],
+        "tools": [
+          "search-kb",
+          "lookup-customer",
+          "send-email",
+          "create-ticket"
+        ],
+        "delegates_to": [],
+        "model_pinned": false,
+        "description": ""
+      }
+    ],
+    "channels": [
+      {
+        "id": "web-chat",
+        "kind": "chat",
+        "trusted": false,
+        "origin": "user",
+        "description": "Public chat widget on the website."
+      },
+      {
+        "id": "inbound-email",
+        "kind": "email",
+        "trusted": false,
+        "origin": "third-party",
+        "description": "Anything sent to support@ lands here."
+      },
+      {
+        "id": "knowledge-base",
+        "kind": "rag",
+        "trusted": true,
+        "origin": "internal",
+        "description": "Help-centre articles and runbooks, re-indexed nightly."
+      },
+      {
+        "id": "agent-console",
+        "kind": "chat",
+        "trusted": true,
+        "origin": "user",
+        "description": "Internal console used by support engineers."
+      }
+    ],
+    "tools": [
+      {
+        "id": "search-kb",
+        "kind": "read",
+        "target": "kb-index",
+        "scope": "read help-centre articles",
+        "auth": "short-lived",
+        "approval": "none",
+        "sandboxed": true,
+        "provider": "first-party",
+        "pinned": false,
+        "data_stores": [],
+        "description": ""
+      },
+      {
+        "id": "lookup-customer",
+        "kind": "read",
+        "target": "crm",
+        "scope": "read customer profile and order history",
+        "auth": "static-key",
+        "approval": "none",
+        "sandboxed": false,
+        "provider": "first-party",
+        "pinned": false,
+        "data_stores": [],
+        "description": ""
+      },
+      {
+        "id": "send-email",
+        "kind": "messaging",
+        "target": "smtp relay",
+        "scope": "send email from support@ to any address",
+        "auth": "static-key",
+        "approval": "none",
+        "sandboxed": false,
+        "provider": "first-party",
+        "pinned": false,
+        "data_stores": [],
+        "description": ""
+      },
+      {
+        "id": "create-ticket",
+        "kind": "write",
+        "target": "ticketing",
+        "scope": "create tickets in the support queue",
+        "auth": "static-key",
+        "approval": "none",
+        "sandboxed": false,
+        "provider": "first-party",
+        "pinned": false,
+        "data_stores": [],
+        "description": ""
+      }
+    ],
+    "data_stores": [
+      {
+        "id": "crm",
+        "sensitivity": "confidential",
+        "description": ""
+      },
+      {
+        "id": "kb-index",
+        "sensitivity": "internal",
+        "description": ""
+      }
+    ],
+    "controls": [
+      "output-encoding"
+    ]
+  },
+  "summary": {
+    "findings": 21,
+    "residual_bands": {
+      "critical": 0,
+      "high": 14,
+      "medium": 7,
+      "low": 0
+    },
+    "inherent_bands": {
+      "critical": 0,
+      "high": 14,
+      "medium": 7,
+      "low": 0
+    },
+    "inherent_total": 241.0,
+    "residual_total": 238.6,
+    "baseline_total": 241.0,
+    "residual_risk_score": 99,
+    "rating": "critical",
+    "reduction_percent": 1
+  },
+  "findings": [
+    {
+      "threat_id": "excessive-agency",
+      "title": "Excessive agency on write, exec or payment tools",
+      "description": "An agent that may act on its own can call a tool with side effects without any approval step. One wrong inference, one injected instruction or one hallucinated argument becomes a real-world action.",
+      "stride": "elevation-of-privilege",
+      "owasp_llm": [
+        "LLM06"
+      ],
+      "owasp_agentic": [
+        "ASI02",
+        "ASI03"
+      ],
+      "mitre_atlas": [
+        "AML.T0053"
+      ],
+      "rule": "tool_kind_without_approval(kinds=write|exec|payment)",
+      "likelihood": 4,
+      "impact": 4,
+      "impact_adjusted": false,
+      "inherent": 16,
+      "elements": [
+        "create-ticket",
+        "support-bot"
+      ],
+      "reasons": [
+        "agent 'support-bot' (act) can call tool 'create-ticket' (write) with approval: none"
+      ],
+      "mitigations_present": [],
+      "mitigations_missing": [
+        "approval-gates",
+        "runtime-policy-enforcement",
+        "least-privilege-tool-scopes",
+        "audit-log",
+        "kill-switch"
+      ],
+      "coverage": 0.0,
+      "residual": 16.0,
+      "references": [
+        "https://github.com/OWASP/www-project-top-10-for-large-language-model-applications/blob/main/2_0_vulns/LLM06_ExcessiveAgency.md"
+      ],
+      "rank": 1,
+      "inherent_band": "high",
+      "residual_band": "high"
+    },
+    {
+      "threat_id": "indirect-prompt-injection",
+      "title": "Indirect prompt injection via untrusted channel",
+      "description": "Content the agent reads from an untrusted channel (email, web pages, documents, retrieved passages, API responses) carries instructions that the model follows as if they came from the operator. Every tool the agent can reach becomes available to whoever wrote that content.",
+      "stride": "tampering",
+      "owasp_llm": [
+        "LLM01"
+      ],
+      "owasp_agentic": [
+        "ASI01"
+      ],
+      "mitre_atlas": [
+        "AML.T0051.001"
+      ],
+      "rule": "untrusted_channel_in_agent_inputs",
+      "likelihood": 4,
+      "impact": 4,
+      "impact_adjusted": false,
+      "inherent": 16,
+      "elements": [
+        "inbound-email",
+        "support-bot",
+        "web-chat"
+      ],
+      "reasons": [
+        "agent 'support-bot' reads untrusted channel 'web-chat' (chat, origin user)",
+        "agent 'support-bot' reads untrusted channel 'inbound-email' (email, origin third-party)"
+      ],
+      "mitigations_present": [],
+      "mitigations_missing": [
+        "input-provenance-tagging",
+        "untrusted-content-isolation",
+        "prompt-injection-filtering",
+        "least-privilege-tool-scopes",
+        "approval-gates"
+      ],
+      "coverage": 0.0,
+      "residual": 16.0,
+      "references": [
+        "https://github.com/OWASP/www-project-top-10-for-large-language-model-applications/blob/main/2_0_vulns/LLM01_PromptInjection.md"
+      ],
+      "rank": 2,
+      "inherent_band": "high",
+      "residual_band": "high"
+    },
+    {
+      "threat_id": "credential-exfiltration-via-tool-args",
+      "title": "Credential exfiltration through tool call arguments",
+      "description": "A tool holds a static key that is visible to the model (in configuration, descriptions or memory) and another tool can send data outward. An injected instruction asks the model to place the secret into a URL, message body or file that leaves the system.",
+      "stride": "information-disclosure",
+      "owasp_llm": [
+        "LLM02",
+        "LLM01"
+      ],
+      "owasp_agentic": [
+        "ASI02",
+        "ASI03"
+      ],
+      "mitre_atlas": [
+        "AML.T0098",
+        "AML.T0086",
+        "AML.T0083"
+      ],
+      "rule": "all(tool_auth_in(auth=static-key), agent_has_tool_kind(kinds=network|messaging|write))",
+      "likelihood": 3,
+      "impact": 5,
+      "impact_adjusted": false,
+      "inherent": 15,
+      "elements": [
+        "create-ticket",
+        "lookup-customer",
+        "send-email",
+        "support-bot"
+      ],
+      "reasons": [
+        "tool 'lookup-customer' (read) uses auth: static-key",
+        "tool 'send-email' (messaging) uses auth: static-key",
+        "tool 'create-ticket' (write) uses auth: static-key",
+        "agent 'support-bot' can call tool 'send-email' (messaging)",
+        "agent 'support-bot' can call tool 'create-ticket' (write)"
+      ],
+      "mitigations_present": [],
+      "mitigations_missing": [
+        "secrets-out-of-context",
+        "brokered-credentials",
+        "egress-allowlist",
+        "argument-validation",
+        "audit-log"
+      ],
+      "coverage": 0.0,
+      "residual": 15.0,
+      "references": [],
+      "rank": 3,
+      "inherent_band": "high",
+      "residual_band": "high"
+    },
+    {
+      "threat_id": "data-exfiltration-via-messaging",
+      "title": "Data exfiltration through messaging tools",
+      "description": "The agent can send email or chat messages and also reads untrusted content or sensitive data. An injected instruction forwards that data to an attacker-chosen recipient in a message that looks routine.",
+      "stride": "information-disclosure",
+      "owasp_llm": [
+        "LLM02",
+        "LLM01"
+      ],
+      "owasp_agentic": [
+        "ASI02"
+      ],
+      "mitre_atlas": [
+        "AML.T0086",
+        "AML.T0025"
+      ],
+      "rule": "all(agent_has_tool_kind(kinds=messaging), any(untrusted_channel_in_agent_inputs, agent_reaches_sensitive_store(min=confidential)))",
+      "likelihood": 3,
+      "impact": 5,
+      "impact_adjusted": false,
+      "inherent": 15,
+      "elements": [
+        "crm",
+        "inbound-email",
+        "lookup-customer",
+        "send-email",
+        "support-bot",
+        "web-chat"
+      ],
+      "reasons": [
+        "agent 'support-bot' can call tool 'send-email' (messaging)",
+        "agent 'support-bot' reads untrusted channel 'web-chat' (chat, origin user)",
+        "agent 'support-bot' reads untrusted channel 'inbound-email' (email, origin third-party)",
+        "agent 'support-bot' reaches confidential store 'crm' through tool 'lookup-customer' (read)"
+      ],
+      "mitigations_present": [],
+      "mitigations_missing": [
+        "egress-allowlist",
+        "dlp-outbound",
+        "approval-gates",
+        "input-provenance-tagging",
+        "audit-log"
+      ],
+      "coverage": 0.0,
+      "residual": 15.0,
+      "references": [],
+      "rank": 4,
+      "inherent_band": "high",
+      "residual_band": "high"
+    },
+    {
+      "threat_id": "denial-of-wallet",
+      "title": "Denial of wallet",
+      "description": "The agent can spend money or paid API quota and nothing caps the amount per task. A loop, an injection or a malicious user turns the agent into a bill.",
+      "stride": "denial-of-service",
+      "owasp_llm": [
+        "LLM10"
+      ],
+      "owasp_agentic": [
+        "ASI08"
+      ],
+      "mitre_atlas": [
+        "AML.T0034.002",
+        "AML.T0034"
+      ],
+      "rule": "all(control_missing(control=budget-caps), any(agent_has_tool_kind(kinds=payment|network), agent_autonomy_in(autonomy=act)))",
+      "likelihood": 3,
+      "impact": 4,
+      "impact_adjusted": false,
+      "inherent": 12,
+      "elements": [
+        "support-bot"
+      ],
+      "reasons": [
+        "control 'budget-caps' is not in place",
+        "agent 'support-bot' has autonomy act"
+      ],
+      "mitigations_present": [],
+      "mitigations_missing": [
+        "budget-caps",
+        "rate-limiting",
+        "approval-gates",
+        "behavioural-monitoring"
+      ],
+      "coverage": 0.0,
+      "residual": 12.0,
+      "references": [
+        "https://github.com/OWASP/www-project-top-10-for-large-language-model-applications/blob/main/2_0_vulns/LLM10_UnboundedConsumption.md"
+      ],
+      "rank": 5,
+      "inherent_band": "high",
+      "residual_band": "high"
+    },
+    {
+      "threat_id": "destructive-write-actions",
+      "title": "Destructive actions through write tools",
+      "description": "The agent can modify or delete data and reads untrusted content. An injected instruction (or a plain mistake) deletes records, overwrites files or force-pushes over history.",
+      "stride": "tampering",
+      "owasp_llm": [
+        "LLM06",
+        "LLM01"
+      ],
+      "owasp_agentic": [
+        "ASI02"
+      ],
+      "mitre_atlas": [
+        "AML.T0101"
+      ],
+      "rule": "all(agent_has_tool_kind(kinds=write), untrusted_channel_in_agent_inputs)",
+      "likelihood": 3,
+      "impact": 4,
+      "impact_adjusted": false,
+      "inherent": 12,
+      "elements": [
+        "create-ticket",
+        "inbound-email",
+        "support-bot",
+        "web-chat"
+      ],
+      "reasons": [
+        "agent 'support-bot' can call tool 'create-ticket' (write)",
+        "agent 'support-bot' reads untrusted channel 'web-chat' (chat, origin user)",
+        "agent 'support-bot' reads untrusted channel 'inbound-email' (email, origin third-party)"
+      ],
+      "mitigations_present": [],
+      "mitigations_missing": [
+        "approval-gates",
+        "backups-and-rollback",
+        "least-privilege-tool-scopes",
+        "audit-log"
+      ],
+      "coverage": 0.0,
+      "residual": 12.0,
+      "references": [],
+      "rank": 6,
+      "inherent_band": "high",
+      "residual_band": "high"
+    },
+    {
+      "threat_id": "direct-prompt-injection",
+      "title": "Direct prompt injection and jailbreak by a user",
+      "description": "A user types instructions that override the system prompt or safety guidance, then uses the agent's tools for purposes the operator did not intend. Any agent that accepts user input and has tools is exposed.",
+      "stride": "tampering",
+      "owasp_llm": [
+        "LLM01"
+      ],
+      "owasp_agentic": [
+        "ASI01"
+      ],
+      "mitre_atlas": [
+        "AML.T0051.000",
+        "AML.T0054"
+      ],
+      "rule": "all(agent_has_input_of_origin(origin=user), agent_has_any_tool)",
+      "likelihood": 4,
+      "impact": 3,
+      "impact_adjusted": false,
+      "inherent": 12,
+      "elements": [
+        "agent-console",
+        "support-bot",
+        "web-chat"
+      ],
+      "reasons": [
+        "agent 'support-bot' reads channel 'web-chat' with origin user",
+        "agent 'support-bot' reads channel 'agent-console' with origin user",
+        "agent 'support-bot' can call 4 tool(s)"
+      ],
+      "mitigations_present": [],
+      "mitigations_missing": [
+        "least-privilege-tool-scopes",
+        "runtime-policy-enforcement",
+        "approval-gates",
+        "prompt-injection-filtering",
+        "adversarial-testing"
+      ],
+      "coverage": 0.0,
+      "residual": 12.0,
+      "references": [],
+      "rank": 7,
+      "inherent_band": "high",
+      "residual_band": "high"
+    },
+    {
+      "threat_id": "low-trust-principal-drives-agent",
+      "title": "Low-trust principal drives an autonomous agent",
+      "description": "A principal the operator does not trust (anonymous users, external partners) can send instructions to an agent that acts without approval. The agent's tools are effectively exposed to the public.",
+      "stride": "spoofing",
+      "owasp_llm": [
+        "LLM06"
+      ],
+      "owasp_agentic": [
+        "ASI01",
+        "ASI03"
+      ],
+      "mitre_atlas": [
+        "AML.T0053"
+      ],
+      "rule": "all(low_trust_principal_feeds_agent, agent_autonomy_in(autonomy=act))",
+      "likelihood": 3,
+      "impact": 4,
+      "impact_adjusted": false,
+      "inherent": 12,
+      "elements": [
+        "customer",
+        "inbound-email",
+        "support-bot",
+        "web-chat"
+      ],
+      "reasons": [
+        "low-trust principal 'customer' reaches agent 'support-bot' through channel 'web-chat'",
+        "low-trust principal 'customer' reaches agent 'support-bot' through channel 'inbound-email'",
+        "agent 'support-bot' has autonomy act"
+      ],
+      "mitigations_present": [],
+      "mitigations_missing": [
+        "approval-gates",
+        "agent-identity",
+        "least-privilege-tool-scopes",
+        "rate-limiting"
+      ],
+      "coverage": 0.0,
+      "residual": 12.0,
+      "references": [],
+      "rank": 8,
+      "inherent_band": "high",
+      "residual_band": "high"
+    },
+    {
+      "threat_id": "missing-audit-trail",
+      "title": "No tamper-evident audit trail of tool calls",
+      "description": "Tool calls are not recorded in a store the agent cannot modify. After an incident nobody can say which input triggered which action, and the agent's actions can be repudiated or quietly altered.",
+      "stride": "repudiation",
+      "owasp_llm": [],
+      "owasp_agentic": [
+        "ASI10"
+      ],
+      "mitre_atlas": [],
+      "rule": "all(control_missing(control=audit-log), agent_has_any_tool)",
+      "likelihood": 4,
+      "impact": 3,
+      "impact_adjusted": false,
+      "inherent": 12,
+      "elements": [
+        "support-bot"
+      ],
+      "reasons": [
+        "control 'audit-log' is not in place",
+        "agent 'support-bot' can call 4 tool(s)"
+      ],
+      "mitigations_present": [],
+      "mitigations_missing": [
+        "audit-log",
+        "behavioural-monitoring",
+        "incident-response-playbook"
+      ],
+      "coverage": 0.0,
+      "residual": 12.0,
+      "references": [
+        "https://atlas.mitre.org/mitigations/AML.M0024"
+      ],
+      "rank": 9,
+      "inherent_band": "high",
+      "residual_band": "high"
+    },
+    {
+      "threat_id": "missing-kill-switch",
+      "title": "No kill switch or credential revocation",
+      "description": "An agent that acts in the world cannot be stopped quickly. When behaviour goes wrong the only options are to find the process and the keys by hand while actions keep happening.",
+      "stride": "elevation-of-privilege",
+      "owasp_llm": [
+        "LLM06"
+      ],
+      "owasp_agentic": [
+        "ASI10",
+        "ASI08"
+      ],
+      "mitre_atlas": [],
+      "rule": "all(control_missing(control=kill-switch), agent_autonomy_in(autonomy=act|act-with-approval))",
+      "likelihood": 3,
+      "impact": 4,
+      "impact_adjusted": false,
+      "inherent": 12,
+      "elements": [
+        "support-bot"
+      ],
+      "reasons": [
+        "control 'kill-switch' is not in place",
+        "agent 'support-bot' has autonomy act"
+      ],
+      "mitigations_present": [],
+      "mitigations_missing": [
+        "kill-switch",
+        "brokered-credentials",
+        "incident-response-playbook"
+      ],
+      "coverage": 0.0,
+      "residual": 12.0,
+      "references": [],
+      "rank": 10,
+      "inherent_band": "high",
+      "residual_band": "high"
+    },
+    {
+      "threat_id": "over-permissive-scopes",
+      "title": "Over-permissive tool scopes",
+      "description": "A tool is granted wildcard, admin or undeclared scope. Whatever goes wrong, the blast radius is the whole account rather than the one resource the task needed.",
+      "stride": "elevation-of-privilege",
+      "owasp_llm": [
+        "LLM06"
+      ],
+      "owasp_agentic": [
+        "ASI03"
+      ],
+      "mitre_atlas": [
+        "AML.T0053"
+      ],
+      "rule": "tool_scope_broad",
+      "likelihood": 3,
+      "impact": 4,
+      "impact_adjusted": false,
+      "inherent": 12,
+      "elements": [
+        "send-email",
+        "support-bot"
+      ],
+      "reasons": [
+        "tool 'send-email' (messaging) has a broad scope: send email from support@ to any address"
+      ],
+      "mitigations_present": [],
+      "mitigations_missing": [
+        "least-privilege-tool-scopes",
+        "brokered-credentials",
+        "approval-gates"
+      ],
+      "coverage": 0.0,
+      "residual": 12.0,
+      "references": [],
+      "rank": 11,
+      "inherent_band": "high",
+      "residual_band": "high"
+    },
+    {
+      "threat_id": "rag-poisoning",
+      "title": "Retrieval corpus poisoning",
+      "description": "The agent retrieves passages from an index. Anyone who can get a document into that index (shared drives, ticket systems, public pages) can plant content that is retrieved as authoritative and acted on.",
+      "stride": "tampering",
+      "owasp_llm": [
+        "LLM08",
+        "LLM04",
+        "LLM01"
+      ],
+      "owasp_agentic": [
+        "ASI06"
+      ],
+      "mitre_atlas": [
+        "AML.T0070",
+        "AML.T0071",
+        "AML.T0066"
+      ],
+      "rule": "agent_has_channel_kind(kinds=rag)",
+      "likelihood": 3,
+      "impact": 4,
+      "impact_adjusted": false,
+      "inherent": 12,
+      "elements": [
+        "knowledge-base",
+        "support-bot"
+      ],
+      "reasons": [
+        "agent 'support-bot' reads trusted rag channel 'knowledge-base'"
+      ],
+      "mitigations_present": [],
+      "mitigations_missing": [
+        "rag-source-vetting",
+        "input-provenance-tagging",
+        "prompt-injection-filtering",
+        "audit-log"
+      ],
+      "coverage": 0.0,
+      "residual": 12.0,
+      "references": [
+        "https://github.com/OWASP/www-project-top-10-for-large-language-model-applications/blob/main/2_0_vulns/LLM08_VectorAndEmbeddingWeaknesses.md"
+      ],
+      "rank": 12,
+      "inherent_band": "high",
+      "residual_band": "high"
+    },
+    {
+      "threat_id": "sensitive-data-disclosure",
+      "title": "Sensitive data reachable by the model",
+      "description": "The agent can read confidential or regulated records through a tool. Whatever enters the context can be summarised, quoted or exfiltrated, and a shared service account returns records the requesting user may not be entitled to.",
+      "stride": "information-disclosure",
+      "owasp_llm": [
+        "LLM02"
+      ],
+      "owasp_agentic": [
+        "ASI03",
+        "ASI02"
+      ],
+      "mitre_atlas": [
+        "AML.T0057",
+        "AML.T0085.000",
+        "AML.T0036"
+      ],
+      "rule": "agent_reaches_sensitive_store(min=confidential)",
+      "likelihood": 3,
+      "impact": 4,
+      "impact_adjusted": false,
+      "inherent": 12,
+      "elements": [
+        "crm",
+        "lookup-customer",
+        "support-bot"
+      ],
+      "reasons": [
+        "agent 'support-bot' reaches confidential store 'crm' through tool 'lookup-customer' (read)"
+      ],
+      "mitigations_present": [],
+      "mitigations_missing": [
+        "per-user-authorisation",
+        "least-privilege-tool-scopes",
+        "dlp-outbound",
+        "audit-log"
+      ],
+      "coverage": 0.0,
+      "residual": 12.0,
+      "references": [
+        "https://github.com/OWASP/www-project-top-10-for-large-language-model-applications/blob/main/2_0_vulns/LLM02_SensitiveInformationDisclosure.md"
+      ],
+      "rank": 13,
+      "inherent_band": "high",
+      "residual_band": "high"
+    },
+    {
+      "threat_id": "static-long-lived-credentials",
+      "title": "Static long-lived credentials held by the agent",
+      "description": "Tools authenticate with static keys that do not expire. If a key leaks through logs, prompts or an injected exfiltration it remains valid until someone notices, and it cannot be scoped to a single task.",
+      "stride": "information-disclosure",
+      "owasp_llm": [
+        "LLM02"
+      ],
+      "owasp_agentic": [
+        "ASI03"
+      ],
+      "mitre_atlas": [
+        "AML.T0055",
+        "AML.T0083"
+      ],
+      "rule": "tool_auth_in(auth=static-key)",
+      "likelihood": 3,
+      "impact": 4,
+      "impact_adjusted": false,
+      "inherent": 12,
+      "elements": [
+        "create-ticket",
+        "lookup-customer",
+        "send-email",
+        "support-bot"
+      ],
+      "reasons": [
+        "tool 'lookup-customer' (read) uses auth: static-key",
+        "tool 'send-email' (messaging) uses auth: static-key",
+        "tool 'create-ticket' (write) uses auth: static-key"
+      ],
+      "mitigations_present": [],
+      "mitigations_missing": [
+        "brokered-credentials",
+        "secrets-out-of-context",
+        "audit-log",
+        "kill-switch"
+      ],
+      "coverage": 0.0,
+      "residual": 12.0,
+      "references": [],
+      "rank": 14,
+      "inherent_band": "high",
+      "residual_band": "high"
+    },
+    {
+      "threat_id": "hallucinated-actions",
+      "title": "Acting on hallucinated facts or identifiers",
+      "description": "The agent invents a package name, account id, file path or amount and a side-effecting tool executes it. Attackers register the names models tend to invent so the mistake resolves to something malicious.",
+      "stride": "tampering",
+      "owasp_llm": [
+        "LLM09",
+        "LLM06"
+      ],
+      "owasp_agentic": [
+        "ASI02",
+        "ASI04"
+      ],
+      "mitre_atlas": [
+        "AML.T0060",
+        "AML.T0053"
+      ],
+      "rule": "all(agent_autonomy_in(autonomy=act|act-with-approval), agent_has_tool_kind(kinds=exec|write|payment))",
+      "likelihood": 3,
+      "impact": 3,
+      "impact_adjusted": false,
+      "inherent": 9,
+      "elements": [
+        "create-ticket",
+        "support-bot"
+      ],
+      "reasons": [
+        "agent 'support-bot' has autonomy act",
+        "agent 'support-bot' can call tool 'create-ticket' (write)"
+      ],
+      "mitigations_present": [],
+      "mitigations_missing": [
+        "argument-validation",
+        "approval-gates",
+        "tool-integrity-pinning",
+        "adversarial-testing"
+      ],
+      "coverage": 0.0,
+      "residual": 9.0,
+      "references": [
+        "https://arxiv.org/abs/2406.10279"
+      ],
+      "rank": 15,
+      "inherent_band": "medium",
+      "residual_band": "medium"
+    },
+    {
+      "threat_id": "no-rate-limits",
+      "title": "No rate limits on tool calls",
+      "description": "Nothing bounds how many tool calls or loop iterations an agent may make. A runaway loop or an attacker-driven burst exhausts quotas, floods downstream systems and amplifies every other threat.",
+      "stride": "denial-of-service",
+      "owasp_llm": [
+        "LLM10"
+      ],
+      "owasp_agentic": [
+        "ASI08"
+      ],
+      "mitre_atlas": [
+        "AML.T0029",
+        "AML.T0034"
+      ],
+      "rule": "all(control_missing(control=rate-limiting), agent_has_any_tool)",
+      "likelihood": 3,
+      "impact": 3,
+      "impact_adjusted": false,
+      "inherent": 9,
+      "elements": [
+        "support-bot"
+      ],
+      "reasons": [
+        "control 'rate-limiting' is not in place",
+        "agent 'support-bot' can call 4 tool(s)"
+      ],
+      "mitigations_present": [],
+      "mitigations_missing": [
+        "rate-limiting",
+        "budget-caps",
+        "behavioural-monitoring"
+      ],
+      "coverage": 0.0,
+      "residual": 9.0,
+      "references": [],
+      "rank": 16,
+      "inherent_band": "medium",
+      "residual_band": "medium"
+    },
+    {
+      "threat_id": "agent-config-tampering",
+      "title": "Agent configuration tampering",
+      "description": "Prompts, tool lists and policies live in files or stores an agent can write to, or that lack change control. Modifying them silently changes what the agent is allowed to do.",
+      "stride": "tampering",
+      "owasp_llm": [
+        "LLM03",
+        "LLM06"
+      ],
+      "owasp_agentic": [
+        "ASI10",
+        "ASI04"
+      ],
+      "mitre_atlas": [
+        "AML.T0081"
+      ],
+      "rule": "all(agent_has_tool_kind(kinds=write|exec), control_missing(control=runtime-policy-enforcement))",
+      "likelihood": 2,
+      "impact": 4,
+      "impact_adjusted": false,
+      "inherent": 8,
+      "elements": [
+        "create-ticket",
+        "support-bot"
+      ],
+      "reasons": [
+        "agent 'support-bot' can call tool 'create-ticket' (write)",
+        "control 'runtime-policy-enforcement' is not in place"
+      ],
+      "mitigations_present": [],
+      "mitigations_missing": [
+        "runtime-policy-enforcement",
+        "tool-integrity-pinning",
+        "audit-log",
+        "least-privilege-tool-scopes"
+      ],
+      "coverage": 0.0,
+      "residual": 8.0,
+      "references": [],
+      "rank": 17,
+      "inherent_band": "medium",
+      "residual_band": "medium"
+    },
+    {
+      "threat_id": "session-cross-contamination",
+      "title": "Memory leaks between users or sessions",
+      "description": "The agent keeps memory and serves more than one user. Without strict partitioning, one user's data or instructions surface in another user's session.",
+      "stride": "information-disclosure",
+      "owasp_llm": [
+        "LLM02"
+      ],
+      "owasp_agentic": [
+        "ASI06"
+      ],
+      "mitre_atlas": [
+        "AML.T0057",
+        "AML.T0092"
+      ],
+      "rule": "all(agent_memory_is(memory=session|persistent), agent_has_input_of_origin(origin=user))",
+      "likelihood": 2,
+      "impact": 4,
+      "impact_adjusted": false,
+      "inherent": 8,
+      "elements": [
+        "agent-console",
+        "support-bot",
+        "web-chat"
+      ],
+      "reasons": [
+        "agent 'support-bot' keeps session memory",
+        "agent 'support-bot' reads channel 'web-chat' with origin user",
+        "agent 'support-bot' reads channel 'agent-console' with origin user"
+      ],
+      "mitigations_present": [],
+      "mitigations_missing": [
+        "session-isolation",
+        "per-user-authorisation",
+        "memory-write-validation"
+      ],
+      "coverage": 0.0,
+      "residual": 8.0,
+      "references": [],
+      "rank": 18,
+      "inherent_band": "medium",
+      "residual_band": "medium"
+    },
+    {
+      "threat_id": "supply-chain-unpinned",
+      "title": "Unpinned model or tool versions",
+      "description": "The model version, tool packages or tool servers are not pinned. A silent upstream change (or a deliberate rug pull) alters behaviour and permissions without any review.",
+      "stride": "tampering",
+      "owasp_llm": [
+        "LLM03"
+      ],
+      "owasp_agentic": [
+        "ASI04"
+      ],
+      "mitre_atlas": [
+        "AML.T0010",
+        "AML.T0010.005",
+        "AML.T0109"
+      ],
+      "rule": "any(agent_model_unpinned, tool_unpinned)",
+      "likelihood": 2,
+      "impact": 4,
+      "impact_adjusted": false,
+      "inherent": 8,
+      "elements": [
+        "create-ticket",
+        "lookup-customer",
+        "search-kb",
+        "send-email",
+        "support-bot"
+      ],
+      "reasons": [
+        "agent 'support-bot' does not declare a pinned model version",
+        "tool 'search-kb' (read) version or description is not pinned",
+        "tool 'lookup-customer' (read) version or description is not pinned",
+        "tool 'send-email' (messaging) version or description is not pinned",
+        "tool 'create-ticket' (write) version or description is not pinned"
+      ],
+      "mitigations_present": [],
+      "mitigations_missing": [
+        "tool-integrity-pinning",
+        "model-version-pinning",
+        "adversarial-testing"
+      ],
+      "coverage": 0.0,
+      "residual": 8.0,
+      "references": [
+        "https://github.com/OWASP/www-project-top-10-for-large-language-model-applications/blob/main/2_0_vulns/LLM03_SupplyChain.md"
+      ],
+      "rank": 19,
+      "inherent_band": "medium",
+      "residual_band": "medium"
+    },
+    {
+      "threat_id": "system-prompt-leakage",
+      "title": "System prompt and configuration leakage",
+      "description": "Users or third-party content can coax the model into revealing its system prompt, tool list and configuration. On its own this is reconnaissance; it becomes serious when the prompt holds secrets or business rules.",
+      "stride": "information-disclosure",
+      "owasp_llm": [
+        "LLM07"
+      ],
+      "owasp_agentic": [],
+      "mitre_atlas": [
+        "AML.T0056",
+        "AML.T0069.002",
+        "AML.T0084",
+        "AML.T0084.001"
+      ],
+      "rule": "agent_has_input_of_origin(origin=user|third-party)",
+      "likelihood": 4,
+      "impact": 2,
+      "impact_adjusted": false,
+      "inherent": 8,
+      "elements": [
+        "agent-console",
+        "inbound-email",
+        "support-bot",
+        "web-chat"
+      ],
+      "reasons": [
+        "agent 'support-bot' reads channel 'web-chat' with origin user",
+        "agent 'support-bot' reads channel 'inbound-email' with origin third-party",
+        "agent 'support-bot' reads channel 'agent-console' with origin user"
+      ],
+      "mitigations_present": [],
+      "mitigations_missing": [
+        "secrets-out-of-context",
+        "runtime-policy-enforcement",
+        "adversarial-testing"
+      ],
+      "coverage": 0.0,
+      "residual": 8.0,
+      "references": [
+        "https://github.com/OWASP/www-project-top-10-for-large-language-model-applications/blob/main/2_0_vulns/LLM07_SystemPromptLeakage.md"
+      ],
+      "rank": 20,
+      "inherent_band": "medium",
+      "residual_band": "medium"
+    },
+    {
+      "threat_id": "insecure-output-handling",
+      "title": "Model output consumed without validation",
+      "description": "Downstream components render model output in a browser, pass it to a shell or database, or execute it. Injected or malformed output becomes cross-site scripting, command injection or unintended writes.",
+      "stride": "tampering",
+      "owasp_llm": [
+        "LLM05"
+      ],
+      "owasp_agentic": [
+        "ASI05"
+      ],
+      "mitre_atlas": [
+        "AML.T0077",
+        "AML.T0067"
+      ],
+      "rule": "any(agent_has_tool_kind(kinds=exec|write), agent_has_channel_kind(kinds=web))",
+      "likelihood": 3,
+      "impact": 3,
+      "impact_adjusted": false,
+      "inherent": 9,
+      "elements": [
+        "create-ticket",
+        "support-bot"
+      ],
+      "reasons": [
+        "agent 'support-bot' can call tool 'create-ticket' (write)"
+      ],
+      "mitigations_present": [
+        "output-encoding"
+      ],
+      "mitigations_missing": [
+        "argument-validation",
+        "sandboxed-execution"
+      ],
+      "coverage": 0.333,
+      "residual": 6.6,
+      "references": [
+        "https://github.com/OWASP/www-project-top-10-for-large-language-model-applications/blob/main/2_0_vulns/LLM05_ImproperOutputHandling.md"
+      ],
+      "rank": 21,
+      "inherent_band": "medium",
+      "residual_band": "medium"
+    }
+  ],
+  "controls": [
+    {
+      "id": "adversarial-testing",
+      "title": "Adversarial testing before and after release",
+      "type": "detective",
+      "effort": "medium",
+      "present": false,
+      "threats": [
+        "direct-prompt-injection",
+        "hallucinated-actions",
+        "supply-chain-unpinned",
+        "system-prompt-leakage"
+      ]
+    },
+    {
+      "id": "agent-identity",
+      "title": "Authenticated identities for agents and principals",
+      "type": "preventive",
+      "effort": "medium",
+      "present": false,
+      "threats": [
+        "low-trust-principal-drives-agent"
+      ]
+    },
+    {
+      "id": "approval-gates",
+      "title": "Human approval for high-impact actions",
+      "type": "preventive",
+      "effort": "medium",
+      "present": false,
+      "threats": [
+        "excessive-agency",
+        "indirect-prompt-injection",
+        "data-exfiltration-via-messaging",
+        "denial-of-wallet",
+        "destructive-write-actions",
+        "direct-prompt-injection",
+        "low-trust-principal-drives-agent",
+        "over-permissive-scopes",
+        "hallucinated-actions"
+      ]
+    },
+    {
+      "id": "argument-validation",
+      "title": "Strict schemas for tool arguments",
+      "type": "preventive",
+      "effort": "low",
+      "present": false,
+      "threats": [
+        "credential-exfiltration-via-tool-args",
+        "hallucinated-actions",
+        "insecure-output-handling"
+      ]
+    },
+    {
+      "id": "audit-log",
+      "title": "Tamper-evident audit log of every tool call",
+      "type": "detective",
+      "effort": "medium",
+      "present": false,
+      "threats": [
+        "excessive-agency",
+        "credential-exfiltration-via-tool-args",
+        "data-exfiltration-via-messaging",
+        "destructive-write-actions",
+        "missing-audit-trail",
+        "rag-poisoning",
+        "sensitive-data-disclosure",
+        "static-long-lived-credentials",
+        "agent-config-tampering"
+      ]
+    },
+    {
+      "id": "backups-and-rollback",
+      "title": "Backups and rollback for agent-writable data",
+      "type": "corrective",
+      "effort": "medium",
+      "present": false,
+      "threats": [
+        "destructive-write-actions"
+      ]
+    },
+    {
+      "id": "behavioural-monitoring",
+      "title": "Monitor agent behaviour for anomalies",
+      "type": "detective",
+      "effort": "high",
+      "present": false,
+      "threats": [
+        "denial-of-wallet",
+        "missing-audit-trail",
+        "no-rate-limits"
+      ]
+    },
+    {
+      "id": "brokered-credentials",
+      "title": "Short-lived, scoped, brokered credentials",
+      "type": "preventive",
+      "effort": "medium",
+      "present": false,
+      "threats": [
+        "credential-exfiltration-via-tool-args",
+        "missing-kill-switch",
+        "over-permissive-scopes",
+        "static-long-lived-credentials"
+      ]
+    },
+    {
+      "id": "budget-caps",
+      "title": "Hard budget caps on spend and tokens",
+      "type": "preventive",
+      "effort": "low",
+      "present": false,
+      "threats": [
+        "denial-of-wallet",
+        "no-rate-limits"
+      ]
+    },
+    {
+      "id": "dlp-outbound",
+      "title": "Data loss prevention on outbound messages",
+      "type": "detective",
+      "effort": "medium",
+      "present": false,
+      "threats": [
+        "data-exfiltration-via-messaging",
+        "sensitive-data-disclosure"
+      ]
+    },
+    {
+      "id": "egress-allowlist",
+      "title": "Allowlist network egress and message recipients",
+      "type": "preventive",
+      "effort": "low",
+      "present": false,
+      "threats": [
+        "credential-exfiltration-via-tool-args",
+        "data-exfiltration-via-messaging"
+      ]
+    },
+    {
+      "id": "incident-response-playbook",
+      "title": "Incident response playbook for agent incidents",
+      "type": "corrective",
+      "effort": "low",
+      "present": false,
+      "threats": [
+        "missing-audit-trail",
+        "missing-kill-switch"
+      ]
+    },
+    {
+      "id": "input-provenance-tagging",
+      "title": "Tag every input with its provenance and trust level",
+      "type": "preventive",
+      "effort": "medium",
+      "present": false,
+      "threats": [
+        "indirect-prompt-injection",
+        "data-exfiltration-via-messaging",
+        "rag-poisoning"
+      ]
+    },
+    {
+      "id": "kill-switch",
+      "title": "Kill switch with credential revocation",
+      "type": "corrective",
+      "effort": "low",
+      "present": false,
+      "threats": [
+        "excessive-agency",
+        "missing-kill-switch",
+        "static-long-lived-credentials"
+      ]
+    },
+    {
+      "id": "least-privilege-tool-scopes",
+      "title": "Least-privilege scopes on every tool",
+      "type": "preventive",
+      "effort": "medium",
+      "present": false,
+      "threats": [
+        "excessive-agency",
+        "indirect-prompt-injection",
+        "destructive-write-actions",
+        "direct-prompt-injection",
+        "low-trust-principal-drives-agent",
+        "over-permissive-scopes",
+        "sensitive-data-disclosure",
+        "agent-config-tampering"
+      ]
+    },
+    {
+      "id": "memory-write-validation",
+      "title": "Validate and expire writes to persistent memory",
+      "type": "preventive",
+      "effort": "medium",
+      "present": false,
+      "threats": [
+        "session-cross-contamination"
+      ]
+    },
+    {
+      "id": "model-version-pinning",
+      "title": "Pin and change-control the model version",
+      "type": "preventive",
+      "effort": "low",
+      "present": false,
+      "threats": [
+        "supply-chain-unpinned"
+      ]
+    },
+    {
+      "id": "output-encoding",
+      "title": "Treat model output as untrusted data downstream",
+      "type": "preventive",
+      "effort": "low",
+      "present": true,
+      "threats": [
+        "insecure-output-handling"
+      ]
+    },
+    {
+      "id": "per-user-authorisation",
+      "title": "Access data with the end user's permissions",
+      "type": "preventive",
+      "effort": "medium",
+      "present": false,
+      "threats": [
+        "sensitive-data-disclosure",
+        "session-cross-contamination"
+      ]
+    },
+    {
+      "id": "prompt-injection-filtering",
+      "title": "Detect injection attempts in untrusted content",
+      "type": "detective",
+      "effort": "low",
+      "present": false,
+      "threats": [
+        "indirect-prompt-injection",
+        "direct-prompt-injection",
+        "rag-poisoning"
+      ]
+    },
+    {
+      "id": "rag-source-vetting",
+      "title": "Vet, sign and scan retrieval sources",
+      "type": "preventive",
+      "effort": "medium",
+      "present": false,
+      "threats": [
+        "rag-poisoning"
+      ]
+    },
+    {
+      "id": "rate-limiting",
+      "title": "Rate limits on tool calls and iterations",
+      "type": "preventive",
+      "effort": "low",
+      "present": false,
+      "threats": [
+        "denial-of-wallet",
+        "low-trust-principal-drives-agent",
+        "no-rate-limits"
+      ]
+    },
+    {
+      "id": "runtime-policy-enforcement",
+      "title": "Enforce policy outside the model",
+      "type": "preventive",
+      "effort": "medium",
+      "present": false,
+      "threats": [
+        "excessive-agency",
+        "direct-prompt-injection",
+        "agent-config-tampering",
+        "system-prompt-leakage"
+      ]
+    },
+    {
+      "id": "sandboxed-execution",
+      "title": "Run code and shell tools in an ephemeral sandbox",
+      "type": "preventive",
+      "effort": "medium",
+      "present": false,
+      "threats": [
+        "insecure-output-handling"
+      ]
+    },
+    {
+      "id": "secrets-out-of-context",
+      "title": "Keep secrets out of the model context",
+      "type": "preventive",
+      "effort": "low",
+      "present": false,
+      "threats": [
+        "credential-exfiltration-via-tool-args",
+        "static-long-lived-credentials",
+        "system-prompt-leakage"
+      ]
+    },
+    {
+      "id": "session-isolation",
+      "title": "Isolate memory and context per user and session",
+      "type": "preventive",
+      "effort": "medium",
+      "present": false,
+      "threats": [
+        "session-cross-contamination"
+      ]
+    },
+    {
+      "id": "tool-integrity-pinning",
+      "title": "Pin tool versions and hash tool descriptions",
+      "type": "preventive",
+      "effort": "low",
+      "present": false,
+      "threats": [
+        "hallucinated-actions",
+        "agent-config-tampering",
+        "supply-chain-unpinned"
+      ]
+    },
+    {
+      "id": "untrusted-content-isolation",
+      "title": "Isolate untrusted content from the privileged agent",
+      "type": "preventive",
+      "effort": "high",
+      "present": false,
+      "threats": [
+        "indirect-prompt-injection"
+      ]
+    }
+  ]
+}

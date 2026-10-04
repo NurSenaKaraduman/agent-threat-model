@@ -1,0 +1,92 @@
+# Repository coding agent: picks up issues, edits code, runs commands and
+# pushes branches. Shell and package installation are not sandboxed.
+system:
+  name: Repository coding agent
+  description: >-
+    Takes issues from the tracker, reads the repository and documentation,
+    runs build and test commands, installs packages and pushes branches.
+  owner: developer-productivity team
+
+principals:
+  - id: maintainer
+    kind: human
+    trust: high
+    channels: [issue-tracker]
+  - id: external-contributor
+    kind: human
+    trust: low
+    channels: [issue-tracker]
+  - id: ci-system
+    kind: service
+    trust: medium
+    channels: [ci-logs]
+
+agents:
+  - id: coder
+    model_provider: hosted LLM
+    autonomy: act
+    memory: persistent
+    inputs: [issue-tracker, repo-files, web-docs, ci-logs]
+    tools: [read-repo, shell, package-install, fetch-url, git-push]
+
+channels:
+  - id: issue-tracker
+    kind: api
+    trusted: false
+    origin: third-party
+    description: Anyone can open an issue.
+  - id: repo-files
+    kind: file
+    trusted: false
+    origin: third-party
+    description: Repository contents including contributed code and vendored dependencies.
+  - id: web-docs
+    kind: web
+    trusted: false
+    origin: third-party
+  - id: ci-logs
+    kind: cli
+    trusted: true
+    origin: internal
+
+tools:
+  - id: read-repo
+    kind: read
+    target: source-code
+    scope: read repository files
+    auth: short-lived
+    sandboxed: true
+  - id: shell
+    kind: exec
+    target: build host
+    scope: run any command in the checkout
+    auth: none
+    approval: none
+    sandboxed: false
+  - id: package-install
+    kind: exec
+    target: public package registries
+    scope: install packages from public registries
+    auth: none
+    approval: none
+    sandboxed: false
+    provider: third-party
+  - id: fetch-url
+    kind: network
+    target: public internet
+    scope: fetch documentation pages
+    auth: none
+    approval: none
+  - id: git-push
+    kind: write
+    target: source-code
+    scope: push to any branch of the repository
+    auth: static-key
+    approval: none
+
+data_stores:
+  - id: source-code
+    sensitivity: confidential
+
+controls:
+  - audit-log

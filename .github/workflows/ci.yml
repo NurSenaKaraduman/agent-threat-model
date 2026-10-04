@@ -1,0 +1,61 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    name: Test (Python ${{ matrix.python-version }})
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        python-version: ["3.11", "3.12"]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+          cache: pip
+      - name: Install
+        run: python -m pip install -e ".[dev]" build
+      - name: Lint
+        run: |
+          ruff check .
+          ruff format --check .
+      - name: Generated files are current
+        run: |
+          python scripts/gen_schema.py --check
+          python scripts/gen_catalogue_doc.py --check
+      - name: Test
+        run: python -m pytest -q
+      - name: Build and smoke-test the wheel
+        run: |
+          python -m build
+          python -m pip install --force-reinstall dist/*.whl
+          atm --help
+          atm analyse examples/support-bot.yaml --format sarif --output /tmp/atm.sarif
+          python -c "import json; d=json.load(open('/tmp/atm.sarif')); assert d['version']=='2.1.0'"
+
+  action:
+    name: Run the action on an example
+    runs-on: ubuntu-latest
+    needs: test
+    permissions:
+      contents: read
+      security-events: write
+    steps:
+      - uses: actions/checkout@v4
+      - uses: ./
+        id: atm
+        with:
+          system-file: examples/coding-agent.yaml
+          upload: ${{ github.event_name != 'pull_request' }}
+          fail-on: none
+      - name: Show outputs
+        run: echo "score=${{ steps.atm.outputs.residual-risk-score }} rating=${{ steps.atm.outputs.rating }}"

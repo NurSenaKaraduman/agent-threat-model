@@ -1,0 +1,2429 @@
+{
+  "$schema": "https://json.schemastore.org/sarif-2.1.0.json",
+  "version": "2.1.0",
+  "runs": [
+    {
+      "tool": {
+        "driver": {
+          "name": "agent-threat-model",
+          "version": "0.1.0",
+          "semanticVersion": "0.1.0",
+          "informationUri": "https://github.com/basitalisandhu/agent-threat-model",
+          "rules": [
+            {
+              "id": "excessive-agency",
+              "name": "ExcessiveAgency",
+              "shortDescription": {
+                "text": "Excessive agency on write, exec or payment tools"
+              },
+              "fullDescription": {
+                "text": "An agent that may act on its own can call a tool with side effects without any approval step. One wrong inference, one injected instruction or one hallucinated argument becomes a real-world action."
+              },
+              "help": {
+                "text": "An agent that may act on its own can call a tool with side effects without any approval step. One wrong inference, one injected instruction or one hallucinated argument becomes a real-world action.",
+                "markdown": "**Excessive agency on write, exec or payment tools**\n\nAn agent that may act on its own can call a tool with side effects without any approval step. One wrong inference, one injected instruction or one hallucinated argument becomes a real-world action.\n\nSTRIDE: Elevation of privilege\nOWASP LLM Top 10 (2025): LLM06 Excessive Agency\nOWASP Top 10 for Agentic Applications (2026): ASI02 Tool Misuse and Exploitation, ASI03 Identity and Privilege Abuse\nMITRE ATLAS: [AML.T0053](https://atlas.mitre.org/techniques/AML.T0053)\n\nMitigations: approval-gates, runtime-policy-enforcement, least-privilege-tool-scopes, audit-log, kill-switch"
+              },
+              "helpUri": "https://github.com/OWASP/www-project-top-10-for-large-language-model-applications/blob/main/2_0_vulns/LLM06_ExcessiveAgency.md",
+              "defaultConfiguration": {
+                "level": "error"
+              },
+              "properties": {
+                "tags": [
+                  "security",
+                  "stride/elevation-of-privilege",
+                  "owasp-llm/LLM06",
+                  "owasp-agentic/ASI02",
+                  "owasp-agentic/ASI03",
+                  "mitre-atlas/AML.T0053"
+                ],
+                "security-severity": "6.4",
+                "precision": "medium",
+                "problem.severity": "error"
+              }
+            },
+            {
+              "id": "indirect-prompt-injection",
+              "name": "IndirectPromptInjection",
+              "shortDescription": {
+                "text": "Indirect prompt injection via untrusted channel"
+              },
+              "fullDescription": {
+                "text": "Content the agent reads from an untrusted channel (email, web pages, documents, retrieved passages, API responses) carries instructions that the model follows as if they came from the operator. Every tool the agent can reach becomes available to whoever wrote that content."
+              },
+              "help": {
+                "text": "Content the agent reads from an untrusted channel (email, web pages, documents, retrieved passages, API responses) carries instructions that the model follows as if they came from the operator. Every tool the agent can reach becomes available to whoever wrote that content.",
+                "markdown": "**Indirect prompt injection via untrusted channel**\n\nContent the agent reads from an untrusted channel (email, web pages, documents, retrieved passages, API responses) carries instructions that the model follows as if they came from the operator. Every tool the agent can reach becomes available to whoever wrote that content.\n\nSTRIDE: Tampering\nOWASP LLM Top 10 (2025): LLM01 Prompt Injection\nOWASP Top 10 for Agentic Applications (2026): ASI01 Agent Goal Hijack\nMITRE ATLAS: [AML.T0051.001](https://atlas.mitre.org/techniques/AML.T0051.001)\n\nMitigations: input-provenance-tagging, untrusted-content-isolation, prompt-injection-filtering, least-privilege-tool-scopes, approval-gates"
+              },
+              "helpUri": "https://github.com/OWASP/www-project-top-10-for-large-language-model-applications/blob/main/2_0_vulns/LLM01_PromptInjection.md",
+              "defaultConfiguration": {
+                "level": "error"
+              },
+              "properties": {
+                "tags": [
+                  "security",
+                  "stride/tampering",
+                  "owasp-llm/LLM01",
+                  "owasp-agentic/ASI01",
+                  "mitre-atlas/AML.T0051.001"
+                ],
+                "security-severity": "6.4",
+                "precision": "medium",
+                "problem.severity": "error"
+              }
+            },
+            {
+              "id": "credential-exfiltration-via-tool-args",
+              "name": "CredentialExfiltrationViaToolArgs",
+              "shortDescription": {
+                "text": "Credential exfiltration through tool call arguments"
+              },
+              "fullDescription": {
+                "text": "A tool holds a static key that is visible to the model (in configuration, descriptions or memory) and another tool can send data outward. An injected instruction asks the model to place the secret into a URL, message body or file that leaves the system."
+              },
+              "help": {
+                "text": "A tool holds a static key that is visible to the model (in configuration, descriptions or memory) and another tool can send data outward. An injected instruction asks the model to place the secret into a URL, message body or file that leaves the system.",
+                "markdown": "**Credential exfiltration through tool call arguments**\n\nA tool holds a static key that is visible to the model (in configuration, descriptions or memory) and another tool can send data outward. An injected instruction asks the model to place the secret into a URL, message body or file that leaves the system.\n\nSTRIDE: Information disclosure\nOWASP LLM Top 10 (2025): LLM02 Sensitive Information Disclosure, LLM01 Prompt Injection\nOWASP Top 10 for Agentic Applications (2026): ASI02 Tool Misuse and Exploitation, ASI03 Identity and Privilege Abuse\nMITRE ATLAS: [AML.T0098](https://atlas.mitre.org/techniques/AML.T0098), [AML.T0086](https://atlas.mitre.org/techniques/AML.T0086), [AML.T0083](https://atlas.mitre.org/techniques/AML.T0083)\n\nMitigations: secrets-out-of-context, brokered-credentials, egress-allowlist, argument-validation, audit-log"
+              },
+              "helpUri": "https://genai.owasp.org/llm-top-10/",
+              "defaultConfiguration": {
+                "level": "error"
+              },
+              "properties": {
+                "tags": [
+                  "security",
+                  "stride/information-disclosure",
+                  "owasp-llm/LLM02",
+                  "owasp-llm/LLM01",
+                  "owasp-agentic/ASI02",
+                  "owasp-agentic/ASI03",
+                  "mitre-atlas/AML.T0098",
+                  "mitre-atlas/AML.T0086",
+                  "mitre-atlas/AML.T0083"
+                ],
+                "security-severity": "6.0",
+                "precision": "medium",
+                "problem.severity": "error"
+              }
+            },
+            {
+              "id": "data-exfiltration-via-messaging",
+              "name": "DataExfiltrationViaMessaging",
+              "shortDescription": {
+                "text": "Data exfiltration through messaging tools"
+              },
+              "fullDescription": {
+                "text": "The agent can send email or chat messages and also reads untrusted content or sensitive data. An injected instruction forwards that data to an attacker-chosen recipient in a message that looks routine."
+              },
+              "help": {
+                "text": "The agent can send email or chat messages and also reads untrusted content or sensitive data. An injected instruction forwards that data to an attacker-chosen recipient in a message that looks routine.",
+                "markdown": "**Data exfiltration through messaging tools**\n\nThe agent can send email or chat messages and also reads untrusted content or sensitive data. An injected instruction forwards that data to an attacker-chosen recipient in a message that looks routine.\n\nSTRIDE: Information disclosure\nOWASP LLM Top 10 (2025): LLM02 Sensitive Information Disclosure, LLM01 Prompt Injection\nOWASP Top 10 for Agentic Applications (2026): ASI02 Tool Misuse and Exploitation\nMITRE ATLAS: [AML.T0086](https://atlas.mitre.org/techniques/AML.T0086), [AML.T0025](https://atlas.mitre.org/techniques/AML.T0025)\n\nMitigations: egress-allowlist, dlp-outbound, approval-gates, input-provenance-tagging, audit-log"
+              },
+              "helpUri": "https://genai.owasp.org/llm-top-10/",
+              "defaultConfiguration": {
+                "level": "error"
+              },
+              "properties": {
+                "tags": [
+                  "security",
+                  "stride/information-disclosure",
+                  "owasp-llm/LLM02",
+                  "owasp-llm/LLM01",
+                  "owasp-agentic/ASI02",
+                  "mitre-atlas/AML.T0086",
+                  "mitre-atlas/AML.T0025"
+                ],
+                "security-severity": "6.0",
+                "precision": "medium",
+                "problem.severity": "error"
+              }
+            },
+            {
+              "id": "denial-of-wallet",
+              "name": "DenialOfWallet",
+              "shortDescription": {
+                "text": "Denial of wallet"
+              },
+              "fullDescription": {
+                "text": "The agent can spend money or paid API quota and nothing caps the amount per task. A loop, an injection or a malicious user turns the agent into a bill."
+              },
+              "help": {
+                "text": "The agent can spend money or paid API quota and nothing caps the amount per task. A loop, an injection or a malicious user turns the agent into a bill.",
+                "markdown": "**Denial of wallet**\n\nThe agent can spend money or paid API quota and nothing caps the amount per task. A loop, an injection or a malicious user turns the agent into a bill.\n\nSTRIDE: Denial of service\nOWASP LLM Top 10 (2025): LLM10 Unbounded Consumption\nOWASP Top 10 for Agentic Applications (2026): ASI08 Cascading Agent Failures\nMITRE ATLAS: [AML.T0034.002](https://atlas.mitre.org/techniques/AML.T0034.002), [AML.T0034](https://atlas.mitre.org/techniques/AML.T0034)\n\nMitigations: budget-caps, rate-limiting, approval-gates, behavioural-monitoring"
+              },
+              "helpUri": "https://github.com/OWASP/www-project-top-10-for-large-language-model-applications/blob/main/2_0_vulns/LLM10_UnboundedConsumption.md",
+              "defaultConfiguration": {
+                "level": "error"
+              },
+              "properties": {
+                "tags": [
+                  "security",
+                  "stride/denial-of-service",
+                  "owasp-llm/LLM10",
+                  "owasp-agentic/ASI08",
+                  "mitre-atlas/AML.T0034.002",
+                  "mitre-atlas/AML.T0034"
+                ],
+                "security-severity": "4.8",
+                "precision": "medium",
+                "problem.severity": "error"
+              }
+            },
+            {
+              "id": "destructive-write-actions",
+              "name": "DestructiveWriteActions",
+              "shortDescription": {
+                "text": "Destructive actions through write tools"
+              },
+              "fullDescription": {
+                "text": "The agent can modify or delete data and reads untrusted content. An injected instruction (or a plain mistake) deletes records, overwrites files or force-pushes over history."
+              },
+              "help": {
+                "text": "The agent can modify or delete data and reads untrusted content. An injected instruction (or a plain mistake) deletes records, overwrites files or force-pushes over history.",
+                "markdown": "**Destructive actions through write tools**\n\nThe agent can modify or delete data and reads untrusted content. An injected instruction (or a plain mistake) deletes records, overwrites files or force-pushes over history.\n\nSTRIDE: Tampering\nOWASP LLM Top 10 (2025): LLM06 Excessive Agency, LLM01 Prompt Injection\nOWASP Top 10 for Agentic Applications (2026): ASI02 Tool Misuse and Exploitation\nMITRE ATLAS: [AML.T0101](https://atlas.mitre.org/techniques/AML.T0101)\n\nMitigations: approval-gates, backups-and-rollback, least-privilege-tool-scopes, audit-log"
+              },
+              "helpUri": "https://genai.owasp.org/llm-top-10/",
+              "defaultConfiguration": {
+                "level": "error"
+              },
+              "properties": {
+                "tags": [
+                  "security",
+                  "stride/tampering",
+                  "owasp-llm/LLM06",
+                  "owasp-llm/LLM01",
+                  "owasp-agentic/ASI02",
+                  "mitre-atlas/AML.T0101"
+                ],
+                "security-severity": "4.8",
+                "precision": "medium",
+                "problem.severity": "error"
+              }
+            },
+            {
+              "id": "direct-prompt-injection",
+              "name": "DirectPromptInjection",
+              "shortDescription": {
+                "text": "Direct prompt injection and jailbreak by a user"
+              },
+              "fullDescription": {
+                "text": "A user types instructions that override the system prompt or safety guidance, then uses the agent's tools for purposes the operator did not intend. Any agent that accepts user input and has tools is exposed."
+              },
+              "help": {
+                "text": "A user types instructions that override the system prompt or safety guidance, then uses the agent's tools for purposes the operator did not intend. Any agent that accepts user input and has tools is exposed.",
+                "markdown": "**Direct prompt injection and jailbreak by a user**\n\nA user types instructions that override the system prompt or safety guidance, then uses the agent's tools for purposes the operator did not intend. Any agent that accepts user input and has tools is exposed.\n\nSTRIDE: Tampering\nOWASP LLM Top 10 (2025): LLM01 Prompt Injection\nOWASP Top 10 for Agentic Applications (2026): ASI01 Agent Goal Hijack\nMITRE ATLAS: [AML.T0051.000](https://atlas.mitre.org/techniques/AML.T0051.000), [AML.T0054](https://atlas.mitre.org/techniques/AML.T0054)\n\nMitigations: least-privilege-tool-scopes, runtime-policy-enforcement, approval-gates, prompt-injection-filtering, adversarial-testing"
+              },
+              "helpUri": "https://genai.owasp.org/llm-top-10/",
+              "defaultConfiguration": {
+                "level": "error"
+              },
+              "properties": {
+                "tags": [
+                  "security",
+                  "stride/tampering",
+                  "owasp-llm/LLM01",
+                  "owasp-agentic/ASI01",
+                  "mitre-atlas/AML.T0051.000",
+                  "mitre-atlas/AML.T0054"
+                ],
+                "security-severity": "4.8",
+                "precision": "medium",
+                "problem.severity": "error"
+              }
+            },
+            {
+              "id": "low-trust-principal-drives-agent",
+              "name": "LowTrustPrincipalDrivesAgent",
+              "shortDescription": {
+                "text": "Low-trust principal drives an autonomous agent"
+              },
+              "fullDescription": {
+                "text": "A principal the operator does not trust (anonymous users, external partners) can send instructions to an agent that acts without approval. The agent's tools are effectively exposed to the public."
+              },
+              "help": {
+                "text": "A principal the operator does not trust (anonymous users, external partners) can send instructions to an agent that acts without approval. The agent's tools are effectively exposed to the public.",
+                "markdown": "**Low-trust principal drives an autonomous agent**\n\nA principal the operator does not trust (anonymous users, external partners) can send instructions to an agent that acts without approval. The agent's tools are effectively exposed to the public.\n\nSTRIDE: Spoofing\nOWASP LLM Top 10 (2025): LLM06 Excessive Agency\nOWASP Top 10 for Agentic Applications (2026): ASI01 Agent Goal Hijack, ASI03 Identity and Privilege Abuse\nMITRE ATLAS: [AML.T0053](https://atlas.mitre.org/techniques/AML.T0053)\n\nMitigations: approval-gates, agent-identity, least-privilege-tool-scopes, rate-limiting"
+              },
+              "helpUri": "https://genai.owasp.org/llm-top-10/",
+              "defaultConfiguration": {
+                "level": "error"
+              },
+              "properties": {
+                "tags": [
+                  "security",
+                  "stride/spoofing",
+                  "owasp-llm/LLM06",
+                  "owasp-agentic/ASI01",
+                  "owasp-agentic/ASI03",
+                  "mitre-atlas/AML.T0053"
+                ],
+                "security-severity": "4.8",
+                "precision": "medium",
+                "problem.severity": "error"
+              }
+            },
+            {
+              "id": "missing-audit-trail",
+              "name": "MissingAuditTrail",
+              "shortDescription": {
+                "text": "No tamper-evident audit trail of tool calls"
+              },
+              "fullDescription": {
+                "text": "Tool calls are not recorded in a store the agent cannot modify. After an incident nobody can say which input triggered which action, and the agent's actions can be repudiated or quietly altered."
+              },
+              "help": {
+                "text": "Tool calls are not recorded in a store the agent cannot modify. After an incident nobody can say which input triggered which action, and the agent's actions can be repudiated or quietly altered.",
+                "markdown": "**No tamper-evident audit trail of tool calls**\n\nTool calls are not recorded in a store the agent cannot modify. After an incident nobody can say which input triggered which action, and the agent's actions can be repudiated or quietly altered.\n\nSTRIDE: Repudiation\nOWASP Top 10 for Agentic Applications (2026): ASI10 Rogue Agents\n\nMitigations: audit-log, behavioural-monitoring, incident-response-playbook"
+              },
+              "helpUri": "https://atlas.mitre.org/mitigations/AML.M0024",
+              "defaultConfiguration": {
+                "level": "error"
+              },
+              "properties": {
+                "tags": [
+                  "security",
+                  "stride/repudiation",
+                  "owasp-agentic/ASI10"
+                ],
+                "security-severity": "4.8",
+                "precision": "medium",
+                "problem.severity": "error"
+              }
+            },
+            {
+              "id": "missing-kill-switch",
+              "name": "MissingKillSwitch",
+              "shortDescription": {
+                "text": "No kill switch or credential revocation"
+              },
+              "fullDescription": {
+                "text": "An agent that acts in the world cannot be stopped quickly. When behaviour goes wrong the only options are to find the process and the keys by hand while actions keep happening."
+              },
+              "help": {
+                "text": "An agent that acts in the world cannot be stopped quickly. When behaviour goes wrong the only options are to find the process and the keys by hand while actions keep happening.",
+                "markdown": "**No kill switch or credential revocation**\n\nAn agent that acts in the world cannot be stopped quickly. When behaviour goes wrong the only options are to find the process and the keys by hand while actions keep happening.\n\nSTRIDE: Elevation of privilege\nOWASP LLM Top 10 (2025): LLM06 Excessive Agency\nOWASP Top 10 for Agentic Applications (2026): ASI10 Rogue Agents, ASI08 Cascading Agent Failures\n\nMitigations: kill-switch, brokered-credentials, incident-response-playbook"
+              },
+              "helpUri": "https://genai.owasp.org/llm-top-10/",
+              "defaultConfiguration": {
+                "level": "error"
+              },
+              "properties": {
+                "tags": [
+                  "security",
+                  "stride/elevation-of-privilege",
+                  "owasp-llm/LLM06",
+                  "owasp-agentic/ASI10",
+                  "owasp-agentic/ASI08"
+                ],
+                "security-severity": "4.8",
+                "precision": "medium",
+                "problem.severity": "error"
+              }
+            },
+            {
+              "id": "over-permissive-scopes",
+              "name": "OverPermissiveScopes",
+              "shortDescription": {
+                "text": "Over-permissive tool scopes"
+              },
+              "fullDescription": {
+                "text": "A tool is granted wildcard, admin or undeclared scope. Whatever goes wrong, the blast radius is the whole account rather than the one resource the task needed."
+              },
+              "help": {
+                "text": "A tool is granted wildcard, admin or undeclared scope. Whatever goes wrong, the blast radius is the whole account rather than the one resource the task needed.",
+                "markdown": "**Over-permissive tool scopes**\n\nA tool is granted wildcard, admin or undeclared scope. Whatever goes wrong, the blast radius is the whole account rather than the one resource the task needed.\n\nSTRIDE: Elevation of privilege\nOWASP LLM Top 10 (2025): LLM06 Excessive Agency\nOWASP Top 10 for Agentic Applications (2026): ASI03 Identity and Privilege Abuse\nMITRE ATLAS: [AML.T0053](https://atlas.mitre.org/techniques/AML.T0053)\n\nMitigations: least-privilege-tool-scopes, brokered-credentials, approval-gates"
+              },
+              "helpUri": "https://genai.owasp.org/llm-top-10/",
+              "defaultConfiguration": {
+                "level": "error"
+              },
+              "properties": {
+                "tags": [
+                  "security",
+                  "stride/elevation-of-privilege",
+                  "owasp-llm/LLM06",
+                  "owasp-agentic/ASI03",
+                  "mitre-atlas/AML.T0053"
+                ],
+                "security-severity": "4.8",
+                "precision": "medium",
+                "problem.severity": "error"
+              }
+            },
+            {
+              "id": "rag-poisoning",
+              "name": "RagPoisoning",
+              "shortDescription": {
+                "text": "Retrieval corpus poisoning"
+              },
+              "fullDescription": {
+                "text": "The agent retrieves passages from an index. Anyone who can get a document into that index (shared drives, ticket systems, public pages) can plant content that is retrieved as authoritative and acted on."
+              },
+              "help": {
+                "text": "The agent retrieves passages from an index. Anyone who can get a document into that index (shared drives, ticket systems, public pages) can plant content that is retrieved as authoritative and acted on.",
+                "markdown": "**Retrieval corpus poisoning**\n\nThe agent retrieves passages from an index. Anyone who can get a document into that index (shared drives, ticket systems, public pages) can plant content that is retrieved as authoritative and acted on.\n\nSTRIDE: Tampering\nOWASP LLM Top 10 (2025): LLM08 Vector and Embedding Weaknesses, LLM04 Data and Model Poisoning, LLM01 Prompt Injection\nOWASP Top 10 for Agentic Applications (2026): ASI06 Memory and Context Poisoning\nMITRE ATLAS: [AML.T0070](https://atlas.mitre.org/techniques/AML.T0070), [AML.T0071](https://atlas.mitre.org/techniques/AML.T0071), [AML.T0066](https://atlas.mitre.org/techniques/AML.T0066)\n\nMitigations: rag-source-vetting, input-provenance-tagging, prompt-injection-filtering, audit-log"
+              },
+              "helpUri": "https://github.com/OWASP/www-project-top-10-for-large-language-model-applications/blob/main/2_0_vulns/LLM08_VectorAndEmbeddingWeaknesses.md",
+              "defaultConfiguration": {
+                "level": "error"
+              },
+              "properties": {
+                "tags": [
+                  "security",
+                  "stride/tampering",
+                  "owasp-llm/LLM08",
+                  "owasp-llm/LLM04",
+                  "owasp-llm/LLM01",
+                  "owasp-agentic/ASI06",
+                  "mitre-atlas/AML.T0070",
+                  "mitre-atlas/AML.T0071",
+                  "mitre-atlas/AML.T0066"
+                ],
+                "security-severity": "4.8",
+                "precision": "medium",
+                "problem.severity": "error"
+              }
+            },
+            {
+              "id": "sensitive-data-disclosure",
+              "name": "SensitiveDataDisclosure",
+              "shortDescription": {
+                "text": "Sensitive data reachable by the model"
+              },
+              "fullDescription": {
+                "text": "The agent can read confidential or regulated records through a tool. Whatever enters the context can be summarised, quoted or exfiltrated, and a shared service account returns records the requesting user may not be entitled to."
+              },
+              "help": {
+                "text": "The agent can read confidential or regulated records through a tool. Whatever enters the context can be summarised, quoted or exfiltrated, and a shared service account returns records the requesting user may not be entitled to.",
+                "markdown": "**Sensitive data reachable by the model**\n\nThe agent can read confidential or regulated records through a tool. Whatever enters the context can be summarised, quoted or exfiltrated, and a shared service account returns records the requesting user may not be entitled to.\n\nSTRIDE: Information disclosure\nOWASP LLM Top 10 (2025): LLM02 Sensitive Information Disclosure\nOWASP Top 10 for Agentic Applications (2026): ASI03 Identity and Privilege Abuse, ASI02 Tool Misuse and Exploitation\nMITRE ATLAS: [AML.T0057](https://atlas.mitre.org/techniques/AML.T0057), [AML.T0085.000](https://atlas.mitre.org/techniques/AML.T0085.000), [AML.T0036](https://atlas.mitre.org/techniques/AML.T0036)\n\nMitigations: per-user-authorisation, least-privilege-tool-scopes, dlp-outbound, audit-log"
+              },
+              "helpUri": "https://github.com/OWASP/www-project-top-10-for-large-language-model-applications/blob/main/2_0_vulns/LLM02_SensitiveInformationDisclosure.md",
+              "defaultConfiguration": {
+                "level": "error"
+              },
+              "properties": {
+                "tags": [
+                  "security",
+                  "stride/information-disclosure",
+                  "owasp-llm/LLM02",
+                  "owasp-agentic/ASI03",
+                  "owasp-agentic/ASI02",
+                  "mitre-atlas/AML.T0057",
+                  "mitre-atlas/AML.T0085.000",
+                  "mitre-atlas/AML.T0036"
+                ],
+                "security-severity": "4.8",
+                "precision": "medium",
+                "problem.severity": "error"
+              }
+            },
+            {
+              "id": "static-long-lived-credentials",
+              "name": "StaticLongLivedCredentials",
+              "shortDescription": {
+                "text": "Static long-lived credentials held by the agent"
+              },
+              "fullDescription": {
+                "text": "Tools authenticate with static keys that do not expire. If a key leaks through logs, prompts or an injected exfiltration it remains valid until someone notices, and it cannot be scoped to a single task."
+              },
+              "help": {
+                "text": "Tools authenticate with static keys that do not expire. If a key leaks through logs, prompts or an injected exfiltration it remains valid until someone notices, and it cannot be scoped to a single task.",
+                "markdown": "**Static long-lived credentials held by the agent**\n\nTools authenticate with static keys that do not expire. If a key leaks through logs, prompts or an injected exfiltration it remains valid until someone notices, and it cannot be scoped to a single task.\n\nSTRIDE: Information disclosure\nOWASP LLM Top 10 (2025): LLM02 Sensitive Information Disclosure\nOWASP Top 10 for Agentic Applications (2026): ASI03 Identity and Privilege Abuse\nMITRE ATLAS: [AML.T0055](https://atlas.mitre.org/techniques/AML.T0055), [AML.T0083](https://atlas.mitre.org/techniques/AML.T0083)\n\nMitigations: brokered-credentials, secrets-out-of-context, audit-log, kill-switch"
+              },
+              "helpUri": "https://genai.owasp.org/llm-top-10/",
+              "defaultConfiguration": {
+                "level": "error"
+              },
+              "properties": {
+                "tags": [
+                  "security",
+                  "stride/information-disclosure",
+                  "owasp-llm/LLM02",
+                  "owasp-agentic/ASI03",
+                  "mitre-atlas/AML.T0055",
+                  "mitre-atlas/AML.T0083"
+                ],
+                "security-severity": "4.8",
+                "precision": "medium",
+                "problem.severity": "error"
+              }
+            },
+            {
+              "id": "hallucinated-actions",
+              "name": "HallucinatedActions",
+              "shortDescription": {
+                "text": "Acting on hallucinated facts or identifiers"
+              },
+              "fullDescription": {
+                "text": "The agent invents a package name, account id, file path or amount and a side-effecting tool executes it. Attackers register the names models tend to invent so the mistake resolves to something malicious."
+              },
+              "help": {
+                "text": "The agent invents a package name, account id, file path or amount and a side-effecting tool executes it. Attackers register the names models tend to invent so the mistake resolves to something malicious.",
+                "markdown": "**Acting on hallucinated facts or identifiers**\n\nThe agent invents a package name, account id, file path or amount and a side-effecting tool executes it. Attackers register the names models tend to invent so the mistake resolves to something malicious.\n\nSTRIDE: Tampering\nOWASP LLM Top 10 (2025): LLM09 Misinformation, LLM06 Excessive Agency\nOWASP Top 10 for Agentic Applications (2026): ASI02 Tool Misuse and Exploitation, ASI04 Agentic Supply Chain Vulnerabilities\nMITRE ATLAS: [AML.T0060](https://atlas.mitre.org/techniques/AML.T0060), [AML.T0053](https://atlas.mitre.org/techniques/AML.T0053)\n\nMitigations: argument-validation, approval-gates, tool-integrity-pinning, adversarial-testing"
+              },
+              "helpUri": "https://arxiv.org/abs/2406.10279",
+              "defaultConfiguration": {
+                "level": "warning"
+              },
+              "properties": {
+                "tags": [
+                  "security",
+                  "stride/tampering",
+                  "owasp-llm/LLM09",
+                  "owasp-llm/LLM06",
+                  "owasp-agentic/ASI02",
+                  "owasp-agentic/ASI04",
+                  "mitre-atlas/AML.T0060",
+                  "mitre-atlas/AML.T0053"
+                ],
+                "security-severity": "3.6",
+                "precision": "medium",
+                "problem.severity": "warning"
+              }
+            },
+            {
+              "id": "no-rate-limits",
+              "name": "NoRateLimits",
+              "shortDescription": {
+                "text": "No rate limits on tool calls"
+              },
+              "fullDescription": {
+                "text": "Nothing bounds how many tool calls or loop iterations an agent may make. A runaway loop or an attacker-driven burst exhausts quotas, floods downstream systems and amplifies every other threat."
+              },
+              "help": {
+                "text": "Nothing bounds how many tool calls or loop iterations an agent may make. A runaway loop or an attacker-driven burst exhausts quotas, floods downstream systems and amplifies every other threat.",
+                "markdown": "**No rate limits on tool calls**\n\nNothing bounds how many tool calls or loop iterations an agent may make. A runaway loop or an attacker-driven burst exhausts quotas, floods downstream systems and amplifies every other threat.\n\nSTRIDE: Denial of service\nOWASP LLM Top 10 (2025): LLM10 Unbounded Consumption\nOWASP Top 10 for Agentic Applications (2026): ASI08 Cascading Agent Failures\nMITRE ATLAS: [AML.T0029](https://atlas.mitre.org/techniques/AML.T0029), [AML.T0034](https://atlas.mitre.org/techniques/AML.T0034)\n\nMitigations: rate-limiting, budget-caps, behavioural-monitoring"
+              },
+              "helpUri": "https://genai.owasp.org/llm-top-10/",
+              "defaultConfiguration": {
+                "level": "warning"
+              },
+              "properties": {
+                "tags": [
+                  "security",
+                  "stride/denial-of-service",
+                  "owasp-llm/LLM10",
+                  "owasp-agentic/ASI08",
+                  "mitre-atlas/AML.T0029",
+                  "mitre-atlas/AML.T0034"
+                ],
+                "security-severity": "3.6",
+                "precision": "medium",
+                "problem.severity": "warning"
+              }
+            },
+            {
+              "id": "agent-config-tampering",
+              "name": "AgentConfigTampering",
+              "shortDescription": {
+                "text": "Agent configuration tampering"
+              },
+              "fullDescription": {
+                "text": "Prompts, tool lists and policies live in files or stores an agent can write to, or that lack change control. Modifying them silently changes what the agent is allowed to do."
+              },
+              "help": {
+                "text": "Prompts, tool lists and policies live in files or stores an agent can write to, or that lack change control. Modifying them silently changes what the agent is allowed to do.",
+                "markdown": "**Agent configuration tampering**\n\nPrompts, tool lists and policies live in files or stores an agent can write to, or that lack change control. Modifying them silently changes what the agent is allowed to do.\n\nSTRIDE: Tampering\nOWASP LLM Top 10 (2025): LLM03 Supply Chain, LLM06 Excessive Agency\nOWASP Top 10 for Agentic Applications (2026): ASI10 Rogue Agents, ASI04 Agentic Supply Chain Vulnerabilities\nMITRE ATLAS: [AML.T0081](https://atlas.mitre.org/techniques/AML.T0081)\n\nMitigations: runtime-policy-enforcement, tool-integrity-pinning, audit-log, least-privilege-tool-scopes"
+              },
+              "helpUri": "https://genai.owasp.org/llm-top-10/",
+              "defaultConfiguration": {
+                "level": "warning"
+              },
+              "properties": {
+                "tags": [
+                  "security",
+                  "stride/tampering",
+                  "owasp-llm/LLM03",
+                  "owasp-llm/LLM06",
+                  "owasp-agentic/ASI10",
+                  "owasp-agentic/ASI04",
+                  "mitre-atlas/AML.T0081"
+                ],
+                "security-severity": "3.2",
+                "precision": "medium",
+                "problem.severity": "warning"
+              }
+            },
+            {
+              "id": "session-cross-contamination",
+              "name": "SessionCrossContamination",
+              "shortDescription": {
+                "text": "Memory leaks between users or sessions"
+              },
+              "fullDescription": {
+                "text": "The agent keeps memory and serves more than one user. Without strict partitioning, one user's data or instructions surface in another user's session."
+              },
+              "help": {
+                "text": "The agent keeps memory and serves more than one user. Without strict partitioning, one user's data or instructions surface in another user's session.",
+                "markdown": "**Memory leaks between users or sessions**\n\nThe agent keeps memory and serves more than one user. Without strict partitioning, one user's data or instructions surface in another user's session.\n\nSTRIDE: Information disclosure\nOWASP LLM Top 10 (2025): LLM02 Sensitive Information Disclosure\nOWASP Top 10 for Agentic Applications (2026): ASI06 Memory and Context Poisoning\nMITRE ATLAS: [AML.T0057](https://atlas.mitre.org/techniques/AML.T0057), [AML.T0092](https://atlas.mitre.org/techniques/AML.T0092)\n\nMitigations: session-isolation, per-user-authorisation, memory-write-validation"
+              },
+              "helpUri": "https://genai.owasp.org/llm-top-10/",
+              "defaultConfiguration": {
+                "level": "warning"
+              },
+              "properties": {
+                "tags": [
+                  "security",
+                  "stride/information-disclosure",
+                  "owasp-llm/LLM02",
+                  "owasp-agentic/ASI06",
+                  "mitre-atlas/AML.T0057",
+                  "mitre-atlas/AML.T0092"
+                ],
+                "security-severity": "3.2",
+                "precision": "medium",
+                "problem.severity": "warning"
+              }
+            },
+            {
+              "id": "supply-chain-unpinned",
+              "name": "SupplyChainUnpinned",
+              "shortDescription": {
+                "text": "Unpinned model or tool versions"
+              },
+              "fullDescription": {
+                "text": "The model version, tool packages or tool servers are not pinned. A silent upstream change (or a deliberate rug pull) alters behaviour and permissions without any review."
+              },
+              "help": {
+                "text": "The model version, tool packages or tool servers are not pinned. A silent upstream change (or a deliberate rug pull) alters behaviour and permissions without any review.",
+                "markdown": "**Unpinned model or tool versions**\n\nThe model version, tool packages or tool servers are not pinned. A silent upstream change (or a deliberate rug pull) alters behaviour and permissions without any review.\n\nSTRIDE: Tampering\nOWASP LLM Top 10 (2025): LLM03 Supply Chain\nOWASP Top 10 for Agentic Applications (2026): ASI04 Agentic Supply Chain Vulnerabilities\nMITRE ATLAS: [AML.T0010](https://atlas.mitre.org/techniques/AML.T0010), [AML.T0010.005](https://atlas.mitre.org/techniques/AML.T0010.005), [AML.T0109](https://atlas.mitre.org/techniques/AML.T0109)\n\nMitigations: tool-integrity-pinning, model-version-pinning, adversarial-testing"
+              },
+              "helpUri": "https://github.com/OWASP/www-project-top-10-for-large-language-model-applications/blob/main/2_0_vulns/LLM03_SupplyChain.md",
+              "defaultConfiguration": {
+                "level": "warning"
+              },
+              "properties": {
+                "tags": [
+                  "security",
+                  "stride/tampering",
+                  "owasp-llm/LLM03",
+                  "owasp-agentic/ASI04",
+                  "mitre-atlas/AML.T0010",
+                  "mitre-atlas/AML.T0010.005",
+                  "mitre-atlas/AML.T0109"
+                ],
+                "security-severity": "3.2",
+                "precision": "medium",
+                "problem.severity": "warning"
+              }
+            },
+            {
+              "id": "system-prompt-leakage",
+              "name": "SystemPromptLeakage",
+              "shortDescription": {
+                "text": "System prompt and configuration leakage"
+              },
+              "fullDescription": {
+                "text": "Users or third-party content can coax the model into revealing its system prompt, tool list and configuration. On its own this is reconnaissance; it becomes serious when the prompt holds secrets or business rules."
+              },
+              "help": {
+                "text": "Users or third-party content can coax the model into revealing its system prompt, tool list and configuration. On its own this is reconnaissance; it becomes serious when the prompt holds secrets or business rules.",
+                "markdown": "**System prompt and configuration leakage**\n\nUsers or third-party content can coax the model into revealing its system prompt, tool list and configuration. On its own this is reconnaissance; it becomes serious when the prompt holds secrets or business rules.\n\nSTRIDE: Information disclosure\nOWASP LLM Top 10 (2025): LLM07 System Prompt Leakage\nMITRE ATLAS: [AML.T0056](https://atlas.mitre.org/techniques/AML.T0056), [AML.T0069.002](https://atlas.mitre.org/techniques/AML.T0069.002), [AML.T0084](https://atlas.mitre.org/techniques/AML.T0084), [AML.T0084.001](https://atlas.mitre.org/techniques/AML.T0084.001)\n\nMitigations: secrets-out-of-context, runtime-policy-enforcement, adversarial-testing"
+              },
+              "helpUri": "https://github.com/OWASP/www-project-top-10-for-large-language-model-applications/blob/main/2_0_vulns/LLM07_SystemPromptLeakage.md",
+              "defaultConfiguration": {
+                "level": "warning"
+              },
+              "properties": {
+                "tags": [
+                  "security",
+                  "stride/information-disclosure",
+                  "owasp-llm/LLM07",
+                  "mitre-atlas/AML.T0056",
+                  "mitre-atlas/AML.T0069.002",
+                  "mitre-atlas/AML.T0084",
+                  "mitre-atlas/AML.T0084.001"
+                ],
+                "security-severity": "3.2",
+                "precision": "medium",
+                "problem.severity": "warning"
+              }
+            },
+            {
+              "id": "insecure-output-handling",
+              "name": "InsecureOutputHandling",
+              "shortDescription": {
+                "text": "Model output consumed without validation"
+              },
+              "fullDescription": {
+                "text": "Downstream components render model output in a browser, pass it to a shell or database, or execute it. Injected or malformed output becomes cross-site scripting, command injection or unintended writes."
+              },
+              "help": {
+                "text": "Downstream components render model output in a browser, pass it to a shell or database, or execute it. Injected or malformed output becomes cross-site scripting, command injection or unintended writes.",
+                "markdown": "**Model output consumed without validation**\n\nDownstream components render model output in a browser, pass it to a shell or database, or execute it. Injected or malformed output becomes cross-site scripting, command injection or unintended writes.\n\nSTRIDE: Tampering\nOWASP LLM Top 10 (2025): LLM05 Improper Output Handling\nOWASP Top 10 for Agentic Applications (2026): ASI05 Unexpected Code Execution\nMITRE ATLAS: [AML.T0077](https://atlas.mitre.org/techniques/AML.T0077), [AML.T0067](https://atlas.mitre.org/techniques/AML.T0067)\n\nMitigations: output-encoding, argument-validation, sandboxed-execution"
+              },
+              "helpUri": "https://github.com/OWASP/www-project-top-10-for-large-language-model-applications/blob/main/2_0_vulns/LLM05_ImproperOutputHandling.md",
+              "defaultConfiguration": {
+                "level": "warning"
+              },
+              "properties": {
+                "tags": [
+                  "security",
+                  "stride/tampering",
+                  "owasp-llm/LLM05",
+                  "owasp-agentic/ASI05",
+                  "mitre-atlas/AML.T0077",
+                  "mitre-atlas/AML.T0067"
+                ],
+                "security-severity": "2.6",
+                "precision": "medium",
+                "problem.severity": "warning"
+              }
+            }
+          ]
+        }
+      },
+      "invocations": [
+        {
+          "executionSuccessful": true
+        }
+      ],
+      "results": [
+        {
+          "ruleId": "excessive-agency",
+          "ruleIndex": 0,
+          "level": "error",
+          "message": {
+            "text": "Excessive agency on write, exec or payment tools: residual severity 16 (high). agent 'support-bot' (act) can call tool 'create-ticket' (write) with approval: none. Missing mitigations: approval-gates, runtime-policy-enforcement, least-privilege-tool-scopes, audit-log, kill-switch."
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "examples/support-bot.yaml",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 71,
+                  "startColumn": 1
+                }
+              },
+              "logicalLocations": [
+                {
+                  "name": "create-ticket",
+                  "kind": "object"
+                }
+              ]
+            },
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "examples/support-bot.yaml",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 22,
+                  "startColumn": 1
+                }
+              },
+              "logicalLocations": [
+                {
+                  "name": "support-bot",
+                  "kind": "object"
+                }
+              ]
+            }
+          ],
+          "partialFingerprints": {
+            "threatElements/v1": "efbe1dce2c29c501e8dc8a0e0d6ab143"
+          },
+          "properties": {
+            "inherent": 16,
+            "residual": 16.0,
+            "elements": [
+              "create-ticket",
+              "support-bot"
+            ],
+            "reasons": [
+              "agent 'support-bot' (act) can call tool 'create-ticket' (write) with approval: none"
+            ],
+            "mitigationsPresent": [],
+            "mitigationsMissing": [
+              "approval-gates",
+              "runtime-policy-enforcement",
+              "least-privilege-tool-scopes",
+              "audit-log",
+              "kill-switch"
+            ]
+          }
+        },
+        {
+          "ruleId": "indirect-prompt-injection",
+          "ruleIndex": 1,
+          "level": "error",
+          "message": {
+            "text": "Indirect prompt injection via untrusted channel: residual severity 16 (high). agent 'support-bot' reads untrusted channel 'web-chat' (chat, origin user). Missing mitigations: input-provenance-tagging, untrusted-content-isolation, prompt-injection-filtering, least-privilege-tool-scopes, approval-gates."
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "examples/support-bot.yaml",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 35,
+                  "startColumn": 1
+                }
+              },
+              "logicalLocations": [
+                {
+                  "name": "inbound-email",
+                  "kind": "object"
+                }
+              ]
+            },
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "examples/support-bot.yaml",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 22,
+                  "startColumn": 1
+                }
+              },
+              "logicalLocations": [
+                {
+                  "name": "support-bot",
+                  "kind": "object"
+                }
+              ]
+            },
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "examples/support-bot.yaml",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 30,
+                  "startColumn": 1
+                }
+              },
+              "logicalLocations": [
+                {
+                  "name": "web-chat",
+                  "kind": "object"
+                }
+              ]
+            }
+          ],
+          "partialFingerprints": {
+            "threatElements/v1": "67b691f47a1693623658bb14724b2141"
+          },
+          "properties": {
+            "inherent": 16,
+            "residual": 16.0,
+            "elements": [
+              "inbound-email",
+              "support-bot",
+              "web-chat"
+            ],
+            "reasons": [
+              "agent 'support-bot' reads untrusted channel 'web-chat' (chat, origin user)",
+              "agent 'support-bot' reads untrusted channel 'inbound-email' (email, origin third-party)"
+            ],
+            "mitigationsPresent": [],
+            "mitigationsMissing": [
+              "input-provenance-tagging",
+              "untrusted-content-isolation",
+              "prompt-injection-filtering",
+              "least-privilege-tool-scopes",
+              "approval-gates"
+            ]
+          }
+        },
+        {
+          "ruleId": "credential-exfiltration-via-tool-args",
+          "ruleIndex": 2,
+          "level": "error",
+          "message": {
+            "text": "Credential exfiltration through tool call arguments: residual severity 15 (high). tool 'lookup-customer' (read) uses auth: static-key. Missing mitigations: secrets-out-of-context, brokered-credentials, egress-allowlist, argument-validation, audit-log."
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "examples/support-bot.yaml",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 71,
+                  "startColumn": 1
+                }
+              },
+              "logicalLocations": [
+                {
+                  "name": "create-ticket",
+                  "kind": "object"
+                }
+              ]
+            },
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "examples/support-bot.yaml",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 59,
+                  "startColumn": 1
+                }
+              },
+              "logicalLocations": [
+                {
+                  "name": "lookup-customer",
+                  "kind": "object"
+                }
+              ]
+            },
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "examples/support-bot.yaml",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 65,
+                  "startColumn": 1
+                }
+              },
+              "logicalLocations": [
+                {
+                  "name": "send-email",
+                  "kind": "object"
+                }
+              ]
+            },
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "examples/support-bot.yaml",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 22,
+                  "startColumn": 1
+                }
+              },
+              "logicalLocations": [
+                {
+                  "name": "support-bot",
+                  "kind": "object"
+                }
+              ]
+            }
+          ],
+          "partialFingerprints": {
+            "threatElements/v1": "37f37cac4523c606b01336cd83db6d2c"
+          },
+          "properties": {
+            "inherent": 15,
+            "residual": 15.0,
+            "elements": [
+              "create-ticket",
+              "lookup-customer",
+              "send-email",
+              "support-bot"
+            ],
+            "reasons": [
+              "tool 'lookup-customer' (read) uses auth: static-key",
+              "tool 'send-email' (messaging) uses auth: static-key",
+              "tool 'create-ticket' (write) uses auth: static-key",
+              "agent 'support-bot' can call tool 'send-email' (messaging)",
+              "agent 'support-bot' can call tool 'create-ticket' (write)"
+            ],
+            "mitigationsPresent": [],
+            "mitigationsMissing": [
+              "secrets-out-of-context",
+              "brokered-credentials",
+              "egress-allowlist",
+              "argument-validation",
+              "audit-log"
+            ]
+          }
+        },
+        {
+          "ruleId": "data-exfiltration-via-messaging",
+          "ruleIndex": 3,
+          "level": "error",
+          "message": {
+            "text": "Data exfiltration through messaging tools: residual severity 15 (high). agent 'support-bot' can call tool 'send-email' (messaging). Missing mitigations: egress-allowlist, dlp-outbound, approval-gates, input-provenance-tagging, audit-log."
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "examples/support-bot.yaml",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 79,
+                  "startColumn": 1
+                }
+              },
+              "logicalLocations": [
+                {
+                  "name": "crm",
+                  "kind": "object"
+                }
+              ]
+            },
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "examples/support-bot.yaml",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 35,
+                  "startColumn": 1
+                }
+              },
+              "logicalLocations": [
+                {
+                  "name": "inbound-email",
+                  "kind": "object"
+                }
+              ]
+            },
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "examples/support-bot.yaml",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 59,
+                  "startColumn": 1
+                }
+              },
+              "logicalLocations": [
+                {
+                  "name": "lookup-customer",
+                  "kind": "object"
+                }
+              ]
+            },
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "examples/support-bot.yaml",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 65,
+                  "startColumn": 1
+                }
+              },
+              "logicalLocations": [
+                {
+                  "name": "send-email",
+                  "kind": "object"
+                }
+              ]
+            },
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "examples/support-bot.yaml",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 22,
+                  "startColumn": 1
+                }
+              },
+              "logicalLocations": [
+                {
+                  "name": "support-bot",
+                  "kind": "object"
+                }
+              ]
+            }
+          ],
+          "partialFingerprints": {
+            "threatElements/v1": "7fb00e07bcdaf3ffc6d86bc93d73447a"
+          },
+          "properties": {
+            "inherent": 15,
+            "residual": 15.0,
+            "elements": [
+              "crm",
+              "inbound-email",
+              "lookup-customer",
+              "send-email",
+              "support-bot",
+              "web-chat"
+            ],
+            "reasons": [
+              "agent 'support-bot' can call tool 'send-email' (messaging)",
+              "agent 'support-bot' reads untrusted channel 'web-chat' (chat, origin user)",
+              "agent 'support-bot' reads untrusted channel 'inbound-email' (email, origin third-party)",
+              "agent 'support-bot' reaches confidential store 'crm' through tool 'lookup-customer' (read)"
+            ],
+            "mitigationsPresent": [],
+            "mitigationsMissing": [
+              "egress-allowlist",
+              "dlp-outbound",
+              "approval-gates",
+              "input-provenance-tagging",
+              "audit-log"
+            ]
+          }
+        },
+        {
+          "ruleId": "denial-of-wallet",
+          "ruleIndex": 4,
+          "level": "error",
+          "message": {
+            "text": "Denial of wallet: residual severity 12 (high). control 'budget-caps' is not in place. Missing mitigations: budget-caps, rate-limiting, approval-gates, behavioural-monitoring."
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "examples/support-bot.yaml",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 22,
+                  "startColumn": 1
+                }
+              },
+              "logicalLocations": [
+                {
+                  "name": "support-bot",
+                  "kind": "object"
+                }
+              ]
+            }
+          ],
+          "partialFingerprints": {
+            "threatElements/v1": "7fc8c85d85f799d57387f06b932d3ce6"
+          },
+          "properties": {
+            "inherent": 12,
+            "residual": 12.0,
+            "elements": [
+              "support-bot"
+            ],
+            "reasons": [
+              "control 'budget-caps' is not in place",
+              "agent 'support-bot' has autonomy act"
+            ],
+            "mitigationsPresent": [],
+            "mitigationsMissing": [
+              "budget-caps",
+              "rate-limiting",
+              "approval-gates",
+              "behavioural-monitoring"
+            ]
+          }
+        },
+        {
+          "ruleId": "destructive-write-actions",
+          "ruleIndex": 5,
+          "level": "error",
+          "message": {
+            "text": "Destructive actions through write tools: residual severity 12 (high). agent 'support-bot' can call tool 'create-ticket' (write). Missing mitigations: approval-gates, backups-and-rollback, least-privilege-tool-scopes, audit-log."
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "examples/support-bot.yaml",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 71,
+                  "startColumn": 1
+                }
+              },
+              "logicalLocations": [
+                {
+                  "name": "create-ticket",
+                  "kind": "object"
+                }
+              ]
+            },
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "examples/support-bot.yaml",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 35,
+                  "startColumn": 1
+                }
+              },
+              "logicalLocations": [
+                {
+                  "name": "inbound-email",
+                  "kind": "object"
+                }
+              ]
+            },
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "examples/support-bot.yaml",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 22,
+                  "startColumn": 1
+                }
+              },
+              "logicalLocations": [
+                {
+                  "name": "support-bot",
+                  "kind": "object"
+                }
+              ]
+            },
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "examples/support-bot.yaml",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 30,
+                  "startColumn": 1
+                }
+              },
+              "logicalLocations": [
+                {
+                  "name": "web-chat",
+                  "kind": "object"
+                }
+              ]
+            }
+          ],
+          "partialFingerprints": {
+            "threatElements/v1": "3ce65181cccd197a1dedf9820b959685"
+          },
+          "properties": {
+            "inherent": 12,
+            "residual": 12.0,
+            "elements": [
+              "create-ticket",
+              "inbound-email",
+              "support-bot",
+              "web-chat"
+            ],
+            "reasons": [
+              "agent 'support-bot' can call tool 'create-ticket' (write)",
+              "agent 'support-bot' reads untrusted channel 'web-chat' (chat, origin user)",
+              "agent 'support-bot' reads untrusted channel 'inbound-email' (email, origin third-party)"
+            ],
+            "mitigationsPresent": [],
+            "mitigationsMissing": [
+              "approval-gates",
+              "backups-and-rollback",
+              "least-privilege-tool-scopes",
+              "audit-log"
+            ]
+          }
+        },
+        {
+          "ruleId": "direct-prompt-injection",
+          "ruleIndex": 6,
+          "level": "error",
+          "message": {
+            "text": "Direct prompt injection and jailbreak by a user: residual severity 12 (high). agent 'support-bot' reads channel 'web-chat' with origin user. Missing mitigations: least-privilege-tool-scopes, runtime-policy-enforcement, approval-gates, prompt-injection-filtering, adversarial-testing."
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "examples/support-bot.yaml",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 45,
+                  "startColumn": 1
+                }
+              },
+              "logicalLocations": [
+                {
+                  "name": "agent-console",
+                  "kind": "object"
+                }
+              ]
+            },
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "examples/support-bot.yaml",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 22,
+                  "startColumn": 1
+                }
+              },
+              "logicalLocations": [
+                {
+                  "name": "support-bot",
+                  "kind": "object"
+                }
+              ]
+            },
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "examples/support-bot.yaml",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 30,
+                  "startColumn": 1
+                }
+              },
+              "logicalLocations": [
+                {
+                  "name": "web-chat",
+                  "kind": "object"
+                }
+              ]
+            }
+          ],
+          "partialFingerprints": {
+            "threatElements/v1": "8719e2b2708ef64f1db4c9134ab424db"
+          },
+          "properties": {
+            "inherent": 12,
+            "residual": 12.0,
+            "elements": [
+              "agent-console",
+              "support-bot",
+              "web-chat"
+            ],
+            "reasons": [
+              "agent 'support-bot' reads channel 'web-chat' with origin user",
+              "agent 'support-bot' reads channel 'agent-console' with origin user",
+              "agent 'support-bot' can call 4 tool(s)"
+            ],
+            "mitigationsPresent": [],
+            "mitigationsMissing": [
+              "least-privilege-tool-scopes",
+              "runtime-policy-enforcement",
+              "approval-gates",
+              "prompt-injection-filtering",
+              "adversarial-testing"
+            ]
+          }
+        },
+        {
+          "ruleId": "low-trust-principal-drives-agent",
+          "ruleIndex": 7,
+          "level": "error",
+          "message": {
+            "text": "Low-trust principal drives an autonomous agent: residual severity 12 (high). low-trust principal 'customer' reaches agent 'support-bot' through channel 'web-chat'. Missing mitigations: approval-gates, agent-identity, least-privilege-tool-scopes, rate-limiting."
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "examples/support-bot.yaml",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 12,
+                  "startColumn": 1
+                }
+              },
+              "logicalLocations": [
+                {
+                  "name": "customer",
+                  "kind": "object"
+                }
+              ]
+            },
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "examples/support-bot.yaml",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 35,
+                  "startColumn": 1
+                }
+              },
+              "logicalLocations": [
+                {
+                  "name": "inbound-email",
+                  "kind": "object"
+                }
+              ]
+            },
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "examples/support-bot.yaml",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 22,
+                  "startColumn": 1
+                }
+              },
+              "logicalLocations": [
+                {
+                  "name": "support-bot",
+                  "kind": "object"
+                }
+              ]
+            },
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "examples/support-bot.yaml",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 30,
+                  "startColumn": 1
+                }
+              },
+              "logicalLocations": [
+                {
+                  "name": "web-chat",
+                  "kind": "object"
+                }
+              ]
+            }
+          ],
+          "partialFingerprints": {
+            "threatElements/v1": "4045dbfacb267de3e55655f19bae315f"
+          },
+          "properties": {
+            "inherent": 12,
+            "residual": 12.0,
+            "elements": [
+              "customer",
+              "inbound-email",
+              "support-bot",
+              "web-chat"
+            ],
+            "reasons": [
+              "low-trust principal 'customer' reaches agent 'support-bot' through channel 'web-chat'",
+              "low-trust principal 'customer' reaches agent 'support-bot' through channel 'inbound-email'",
+              "agent 'support-bot' has autonomy act"
+            ],
+            "mitigationsPresent": [],
+            "mitigationsMissing": [
+              "approval-gates",
+              "agent-identity",
+              "least-privilege-tool-scopes",
+              "rate-limiting"
+            ]
+          }
+        },
+        {
+          "ruleId": "missing-audit-trail",
+          "ruleIndex": 8,
+          "level": "error",
+          "message": {
+            "text": "No tamper-evident audit trail of tool calls: residual severity 12 (high). control 'audit-log' is not in place. Missing mitigations: audit-log, behavioural-monitoring, incident-response-playbook."
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "examples/support-bot.yaml",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 22,
+                  "startColumn": 1
+                }
+              },
+              "logicalLocations": [
+                {
+                  "name": "support-bot",
+                  "kind": "object"
+                }
+              ]
+            }
+          ],
+          "partialFingerprints": {
+            "threatElements/v1": "944a4b3f00c986c781718415ccc383f0"
+          },
+          "properties": {
+            "inherent": 12,
+            "residual": 12.0,
+            "elements": [
+              "support-bot"
+            ],
+            "reasons": [
+              "control 'audit-log' is not in place",
+              "agent 'support-bot' can call 4 tool(s)"
+            ],
+            "mitigationsPresent": [],
+            "mitigationsMissing": [
+              "audit-log",
+              "behavioural-monitoring",
+              "incident-response-playbook"
+            ]
+          }
+        },
+        {
+          "ruleId": "missing-kill-switch",
+          "ruleIndex": 9,
+          "level": "error",
+          "message": {
+            "text": "No kill switch or credential revocation: residual severity 12 (high). control 'kill-switch' is not in place. Missing mitigations: kill-switch, brokered-credentials, incident-response-playbook."
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "examples/support-bot.yaml",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 22,
+                  "startColumn": 1
+                }
+              },
+              "logicalLocations": [
+                {
+                  "name": "support-bot",
+                  "kind": "object"
+                }
+              ]
+            }
+          ],
+          "partialFingerprints": {
+            "threatElements/v1": "e730fe8fe409ac07f5ca3f66173ff4fc"
+          },
+          "properties": {
+            "inherent": 12,
+            "residual": 12.0,
+            "elements": [
+              "support-bot"
+            ],
+            "reasons": [
+              "control 'kill-switch' is not in place",
+              "agent 'support-bot' has autonomy act"
+            ],
+            "mitigationsPresent": [],
+            "mitigationsMissing": [
+              "kill-switch",
+              "brokered-credentials",
+              "incident-response-playbook"
+            ]
+          }
+        },
+        {
+          "ruleId": "over-permissive-scopes",
+          "ruleIndex": 10,
+          "level": "error",
+          "message": {
+            "text": "Over-permissive tool scopes: residual severity 12 (high). tool 'send-email' (messaging) has a broad scope: send email from support@ to any address. Missing mitigations: least-privilege-tool-scopes, brokered-credentials, approval-gates."
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "examples/support-bot.yaml",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 65,
+                  "startColumn": 1
+                }
+              },
+              "logicalLocations": [
+                {
+                  "name": "send-email",
+                  "kind": "object"
+                }
+              ]
+            },
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "examples/support-bot.yaml",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 22,
+                  "startColumn": 1
+                }
+              },
+              "logicalLocations": [
+                {
+                  "name": "support-bot",
+                  "kind": "object"
+                }
+              ]
+            }
+          ],
+          "partialFingerprints": {
+            "threatElements/v1": "08ea92e0fba5cf0dc5c933fc74caa3ec"
+          },
+          "properties": {
+            "inherent": 12,
+            "residual": 12.0,
+            "elements": [
+              "send-email",
+              "support-bot"
+            ],
+            "reasons": [
+              "tool 'send-email' (messaging) has a broad scope: send email from support@ to any address"
+            ],
+            "mitigationsPresent": [],
+            "mitigationsMissing": [
+              "least-privilege-tool-scopes",
+              "brokered-credentials",
+              "approval-gates"
+            ]
+          }
+        },
+        {
+          "ruleId": "rag-poisoning",
+          "ruleIndex": 11,
+          "level": "error",
+          "message": {
+            "text": "Retrieval corpus poisoning: residual severity 12 (high). agent 'support-bot' reads trusted rag channel 'knowledge-base'. Missing mitigations: rag-source-vetting, input-provenance-tagging, prompt-injection-filtering, audit-log."
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "examples/support-bot.yaml",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 40,
+                  "startColumn": 1
+                }
+              },
+              "logicalLocations": [
+                {
+                  "name": "knowledge-base",
+                  "kind": "object"
+                }
+              ]
+            },
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "examples/support-bot.yaml",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 22,
+                  "startColumn": 1
+                }
+              },
+              "logicalLocations": [
+                {
+                  "name": "support-bot",
+                  "kind": "object"
+                }
+              ]
+            }
+          ],
+          "partialFingerprints": {
+            "threatElements/v1": "711b5a3d98afb7802725d4e902e37ac3"
+          },
+          "properties": {
+            "inherent": 12,
+            "residual": 12.0,
+            "elements": [
+              "knowledge-base",
+              "support-bot"
+            ],
+            "reasons": [
+              "agent 'support-bot' reads trusted rag channel 'knowledge-base'"
+            ],
+            "mitigationsPresent": [],
+            "mitigationsMissing": [
+              "rag-source-vetting",
+              "input-provenance-tagging",
+              "prompt-injection-filtering",
+              "audit-log"
+            ]
+          }
+        },
+        {
+          "ruleId": "sensitive-data-disclosure",
+          "ruleIndex": 12,
+          "level": "error",
+          "message": {
+            "text": "Sensitive data reachable by the model: residual severity 12 (high). agent 'support-bot' reaches confidential store 'crm' through tool 'lookup-customer' (read). Missing mitigations: per-user-authorisation, least-privilege-tool-scopes, dlp-outbound, audit-log."
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "examples/support-bot.yaml",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 79,
+                  "startColumn": 1
+                }
+              },
+              "logicalLocations": [
+                {
+                  "name": "crm",
+                  "kind": "object"
+                }
+              ]
+            },
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "examples/support-bot.yaml",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 59,
+                  "startColumn": 1
+                }
+              },
+              "logicalLocations": [
+                {
+                  "name": "lookup-customer",
+                  "kind": "object"
+                }
+              ]
+            },
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "examples/support-bot.yaml",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 22,
+                  "startColumn": 1
+                }
+              },
+              "logicalLocations": [
+                {
+                  "name": "support-bot",
+                  "kind": "object"
+                }
+              ]
+            }
+          ],
+          "partialFingerprints": {
+            "threatElements/v1": "f4bcae1acee2ac258fb94cbded14b288"
+          },
+          "properties": {
+            "inherent": 12,
+            "residual": 12.0,
+            "elements": [
+              "crm",
+              "lookup-customer",
+              "support-bot"
+            ],
+            "reasons": [
+              "agent 'support-bot' reaches confidential store 'crm' through tool 'lookup-customer' (read)"
+            ],
+            "mitigationsPresent": [],
+            "mitigationsMissing": [
+              "per-user-authorisation",
+              "least-privilege-tool-scopes",
+              "dlp-outbound",
+              "audit-log"
+            ]
+          }
+        },
+        {
+          "ruleId": "static-long-lived-credentials",
+          "ruleIndex": 13,
+          "level": "error",
+          "message": {
+            "text": "Static long-lived credentials held by the agent: residual severity 12 (high). tool 'lookup-customer' (read) uses auth: static-key. Missing mitigations: brokered-credentials, secrets-out-of-context, audit-log, kill-switch."
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "examples/support-bot.yaml",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 71,
+                  "startColumn": 1
+                }
+              },
+              "logicalLocations": [
+                {
+                  "name": "create-ticket",
+                  "kind": "object"
+                }
+              ]
+            },
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "examples/support-bot.yaml",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 59,
+                  "startColumn": 1
+                }
+              },
+              "logicalLocations": [
+                {
+                  "name": "lookup-customer",
+                  "kind": "object"
+                }
+              ]
+            },
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "examples/support-bot.yaml",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 65,
+                  "startColumn": 1
+                }
+              },
+              "logicalLocations": [
+                {
+                  "name": "send-email",
+                  "kind": "object"
+                }
+              ]
+            },
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "examples/support-bot.yaml",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 22,
+                  "startColumn": 1
+                }
+              },
+              "logicalLocations": [
+                {
+                  "name": "support-bot",
+                  "kind": "object"
+                }
+              ]
+            }
+          ],
+          "partialFingerprints": {
+            "threatElements/v1": "72dcaf769cc6ca6b1a5d389cd37f09f7"
+          },
+          "properties": {
+            "inherent": 12,
+            "residual": 12.0,
+            "elements": [
+              "create-ticket",
+              "lookup-customer",
+              "send-email",
+              "support-bot"
+            ],
+            "reasons": [
+              "tool 'lookup-customer' (read) uses auth: static-key",
+              "tool 'send-email' (messaging) uses auth: static-key",
+              "tool 'create-ticket' (write) uses auth: static-key"
+            ],
+            "mitigationsPresent": [],
+            "mitigationsMissing": [
+              "brokered-credentials",
+              "secrets-out-of-context",
+              "audit-log",
+              "kill-switch"
+            ]
+          }
+        },
+        {
+          "ruleId": "hallucinated-actions",
+          "ruleIndex": 14,
+          "level": "warning",
+          "message": {
+            "text": "Acting on hallucinated facts or identifiers: residual severity 9 (medium). agent 'support-bot' has autonomy act. Missing mitigations: argument-validation, approval-gates, tool-integrity-pinning, adversarial-testing."
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "examples/support-bot.yaml",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 71,
+                  "startColumn": 1
+                }
+              },
+              "logicalLocations": [
+                {
+                  "name": "create-ticket",
+                  "kind": "object"
+                }
+              ]
+            },
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "examples/support-bot.yaml",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 22,
+                  "startColumn": 1
+                }
+              },
+              "logicalLocations": [
+                {
+                  "name": "support-bot",
+                  "kind": "object"
+                }
+              ]
+            }
+          ],
+          "partialFingerprints": {
+            "threatElements/v1": "0d80f210d9e2751a714795319e978114"
+          },
+          "properties": {
+            "inherent": 9,
+            "residual": 9.0,
+            "elements": [
+              "create-ticket",
+              "support-bot"
+            ],
+            "reasons": [
+              "agent 'support-bot' has autonomy act",
+              "agent 'support-bot' can call tool 'create-ticket' (write)"
+            ],
+            "mitigationsPresent": [],
+            "mitigationsMissing": [
+              "argument-validation",
+              "approval-gates",
+              "tool-integrity-pinning",
+              "adversarial-testing"
+            ]
+          }
+        },
+        {
+          "ruleId": "no-rate-limits",
+          "ruleIndex": 15,
+          "level": "warning",
+          "message": {
+            "text": "No rate limits on tool calls: residual severity 9 (medium). control 'rate-limiting' is not in place. Missing mitigations: rate-limiting, budget-caps, behavioural-monitoring."
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "examples/support-bot.yaml",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 22,
+                  "startColumn": 1
+                }
+              },
+              "logicalLocations": [
+                {
+                  "name": "support-bot",
+                  "kind": "object"
+                }
+              ]
+            }
+          ],
+          "partialFingerprints": {
+            "threatElements/v1": "8f88f5e05d4647018fcb378838768cf7"
+          },
+          "properties": {
+            "inherent": 9,
+            "residual": 9.0,
+            "elements": [
+              "support-bot"
+            ],
+            "reasons": [
+              "control 'rate-limiting' is not in place",
+              "agent 'support-bot' can call 4 tool(s)"
+            ],
+            "mitigationsPresent": [],
+            "mitigationsMissing": [
+              "rate-limiting",
+              "budget-caps",
+              "behavioural-monitoring"
+            ]
+          }
+        },
+        {
+          "ruleId": "agent-config-tampering",
+          "ruleIndex": 16,
+          "level": "warning",
+          "message": {
+            "text": "Agent configuration tampering: residual severity 8 (medium). agent 'support-bot' can call tool 'create-ticket' (write). Missing mitigations: runtime-policy-enforcement, tool-integrity-pinning, audit-log, least-privilege-tool-scopes."
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "examples/support-bot.yaml",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 71,
+                  "startColumn": 1
+                }
+              },
+              "logicalLocations": [
+                {
+                  "name": "create-ticket",
+                  "kind": "object"
+                }
+              ]
+            },
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "examples/support-bot.yaml",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 22,
+                  "startColumn": 1
+                }
+              },
+              "logicalLocations": [
+                {
+                  "name": "support-bot",
+                  "kind": "object"
+                }
+              ]
+            }
+          ],
+          "partialFingerprints": {
+            "threatElements/v1": "b0d1140e1244bde03ec8e7800da05be6"
+          },
+          "properties": {
+            "inherent": 8,
+            "residual": 8.0,
+            "elements": [
+              "create-ticket",
+              "support-bot"
+            ],
+            "reasons": [
+              "agent 'support-bot' can call tool 'create-ticket' (write)",
+              "control 'runtime-policy-enforcement' is not in place"
+            ],
+            "mitigationsPresent": [],
+            "mitigationsMissing": [
+              "runtime-policy-enforcement",
+              "tool-integrity-pinning",
+              "audit-log",
+              "least-privilege-tool-scopes"
+            ]
+          }
+        },
+        {
+          "ruleId": "session-cross-contamination",
+          "ruleIndex": 17,
+          "level": "warning",
+          "message": {
+            "text": "Memory leaks between users or sessions: residual severity 8 (medium). agent 'support-bot' keeps session memory. Missing mitigations: session-isolation, per-user-authorisation, memory-write-validation."
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "examples/support-bot.yaml",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 45,
+                  "startColumn": 1
+                }
+              },
+              "logicalLocations": [
+                {
+                  "name": "agent-console",
+                  "kind": "object"
+                }
+              ]
+            },
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "examples/support-bot.yaml",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 22,
+                  "startColumn": 1
+                }
+              },
+              "logicalLocations": [
+                {
+                  "name": "support-bot",
+                  "kind": "object"
+                }
+              ]
+            },
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "examples/support-bot.yaml",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 30,
+                  "startColumn": 1
+                }
+              },
+              "logicalLocations": [
+                {
+                  "name": "web-chat",
+                  "kind": "object"
+                }
+              ]
+            }
+          ],
+          "partialFingerprints": {
+            "threatElements/v1": "34fd37df8c19d30e49a02764b7dee6cd"
+          },
+          "properties": {
+            "inherent": 8,
+            "residual": 8.0,
+            "elements": [
+              "agent-console",
+              "support-bot",
+              "web-chat"
+            ],
+            "reasons": [
+              "agent 'support-bot' keeps session memory",
+              "agent 'support-bot' reads channel 'web-chat' with origin user",
+              "agent 'support-bot' reads channel 'agent-console' with origin user"
+            ],
+            "mitigationsPresent": [],
+            "mitigationsMissing": [
+              "session-isolation",
+              "per-user-authorisation",
+              "memory-write-validation"
+            ]
+          }
+        },
+        {
+          "ruleId": "supply-chain-unpinned",
+          "ruleIndex": 18,
+          "level": "warning",
+          "message": {
+            "text": "Unpinned model or tool versions: residual severity 8 (medium). agent 'support-bot' does not declare a pinned model version. Missing mitigations: tool-integrity-pinning, model-version-pinning, adversarial-testing."
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "examples/support-bot.yaml",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 71,
+                  "startColumn": 1
+                }
+              },
+              "logicalLocations": [
+                {
+                  "name": "create-ticket",
+                  "kind": "object"
+                }
+              ]
+            },
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "examples/support-bot.yaml",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 59,
+                  "startColumn": 1
+                }
+              },
+              "logicalLocations": [
+                {
+                  "name": "lookup-customer",
+                  "kind": "object"
+                }
+              ]
+            },
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "examples/support-bot.yaml",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 52,
+                  "startColumn": 1
+                }
+              },
+              "logicalLocations": [
+                {
+                  "name": "search-kb",
+                  "kind": "object"
+                }
+              ]
+            },
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "examples/support-bot.yaml",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 65,
+                  "startColumn": 1
+                }
+              },
+              "logicalLocations": [
+                {
+                  "name": "send-email",
+                  "kind": "object"
+                }
+              ]
+            },
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "examples/support-bot.yaml",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 22,
+                  "startColumn": 1
+                }
+              },
+              "logicalLocations": [
+                {
+                  "name": "support-bot",
+                  "kind": "object"
+                }
+              ]
+            }
+          ],
+          "partialFingerprints": {
+            "threatElements/v1": "8285b37d2a6348d2f4b0f93aa9592e49"
+          },
+          "properties": {
+            "inherent": 8,
+            "residual": 8.0,
+            "elements": [
+              "create-ticket",
+              "lookup-customer",
+              "search-kb",
+              "send-email",
+              "support-bot"
+            ],
+            "reasons": [
+              "agent 'support-bot' does not declare a pinned model version",
+              "tool 'search-kb' (read) version or description is not pinned",
+              "tool 'lookup-customer' (read) version or description is not pinned",
+              "tool 'send-email' (messaging) version or description is not pinned",
+              "tool 'create-ticket' (write) version or description is not pinned"
+            ],
+            "mitigationsPresent": [],
+            "mitigationsMissing": [
+              "tool-integrity-pinning",
+              "model-version-pinning",
+              "adversarial-testing"
+            ]
+          }
+        },
+        {
+          "ruleId": "system-prompt-leakage",
+          "ruleIndex": 19,
+          "level": "warning",
+          "message": {
+            "text": "System prompt and configuration leakage: residual severity 8 (medium). agent 'support-bot' reads channel 'web-chat' with origin user. Missing mitigations: secrets-out-of-context, runtime-policy-enforcement, adversarial-testing."
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "examples/support-bot.yaml",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 45,
+                  "startColumn": 1
+                }
+              },
+              "logicalLocations": [
+                {
+                  "name": "agent-console",
+                  "kind": "object"
+                }
+              ]
+            },
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "examples/support-bot.yaml",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 35,
+                  "startColumn": 1
+                }
+              },
+              "logicalLocations": [
+                {
+                  "name": "inbound-email",
+                  "kind": "object"
+                }
+              ]
+            },
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "examples/support-bot.yaml",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 22,
+                  "startColumn": 1
+                }
+              },
+              "logicalLocations": [
+                {
+                  "name": "support-bot",
+                  "kind": "object"
+                }
+              ]
+            },
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "examples/support-bot.yaml",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 30,
+                  "startColumn": 1
+                }
+              },
+              "logicalLocations": [
+                {
+                  "name": "web-chat",
+                  "kind": "object"
+                }
+              ]
+            }
+          ],
+          "partialFingerprints": {
+            "threatElements/v1": "a273e26070aa892af7cb50d99ae423dc"
+          },
+          "properties": {
+            "inherent": 8,
+            "residual": 8.0,
+            "elements": [
+              "agent-console",
+              "inbound-email",
+              "support-bot",
+              "web-chat"
+            ],
+            "reasons": [
+              "agent 'support-bot' reads channel 'web-chat' with origin user",
+              "agent 'support-bot' reads channel 'inbound-email' with origin third-party",
+              "agent 'support-bot' reads channel 'agent-console' with origin user"
+            ],
+            "mitigationsPresent": [],
+            "mitigationsMissing": [
+              "secrets-out-of-context",
+              "runtime-policy-enforcement",
+              "adversarial-testing"
+            ]
+          }
+        },
+        {
+          "ruleId": "insecure-output-handling",
+          "ruleIndex": 20,
+          "level": "warning",
+          "message": {
+            "text": "Model output consumed without validation: residual severity 6.6 (medium). agent 'support-bot' can call tool 'create-ticket' (write). Missing mitigations: argument-validation, sandboxed-execution."
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "examples/support-bot.yaml",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 71,
+                  "startColumn": 1
+                }
+              },
+              "logicalLocations": [
+                {
+                  "name": "create-ticket",
+                  "kind": "object"
+                }
+              ]
+            },
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "examples/support-bot.yaml",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 22,
+                  "startColumn": 1
+                }
+              },
+              "logicalLocations": [
+                {
+                  "name": "support-bot",
+                  "kind": "object"
+                }
+              ]
+            }
+          ],
+          "partialFingerprints": {
+            "threatElements/v1": "fbbff184d0d5511a138500afde8562fd"
+          },
+          "properties": {
+            "inherent": 9,
+            "residual": 6.6,
+            "elements": [
+              "create-ticket",
+              "support-bot"
+            ],
+            "reasons": [
+              "agent 'support-bot' can call tool 'create-ticket' (write)"
+            ],
+            "mitigationsPresent": [
+              "output-encoding"
+            ],
+            "mitigationsMissing": [
+              "argument-validation",
+              "sandboxed-execution"
+            ]
+          }
+        }
+      ],
+      "properties": {
+        "residualRiskScore": 99,
+        "rating": "critical",
+        "systemName": "Customer support assistant"
+      }
+    }
+  ]
+}

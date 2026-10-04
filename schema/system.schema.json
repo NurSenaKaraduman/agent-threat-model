@@ -1,0 +1,459 @@
+{
+  "$defs": {
+    "Agent": {
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "maxLength": 64,
+          "minLength": 1,
+          "pattern": "^[a-z0-9][a-z0-9._-]*$",
+          "title": "Id",
+          "type": "string"
+        },
+        "model_provider": {
+          "default": "",
+          "description": "Free text, for example 'hosted LLM' or 'self-hosted model'.",
+          "title": "Model Provider",
+          "type": "string"
+        },
+        "autonomy": {
+          "$ref": "#/$defs/Autonomy",
+          "description": "suggest, act-with-approval or act"
+        },
+        "memory": {
+          "$ref": "#/$defs/Memory",
+          "default": "none",
+          "description": "none, session or persistent"
+        },
+        "inputs": {
+          "description": "Channel ids the agent reads.",
+          "items": {
+            "maxLength": 64,
+            "minLength": 1,
+            "pattern": "^[a-z0-9][a-z0-9._-]*$",
+            "type": "string"
+          },
+          "title": "Inputs",
+          "type": "array"
+        },
+        "tools": {
+          "description": "Tool ids the agent may call.",
+          "items": {
+            "maxLength": 64,
+            "minLength": 1,
+            "pattern": "^[a-z0-9][a-z0-9._-]*$",
+            "type": "string"
+          },
+          "title": "Tools",
+          "type": "array"
+        },
+        "delegates_to": {
+          "description": "Other agent ids this agent can send tasks to.",
+          "items": {
+            "maxLength": 64,
+            "minLength": 1,
+            "pattern": "^[a-z0-9][a-z0-9._-]*$",
+            "type": "string"
+          },
+          "title": "Delegates To",
+          "type": "array"
+        },
+        "model_pinned": {
+          "default": false,
+          "description": "True when the model version is pinned and change-controlled.",
+          "title": "Model Pinned",
+          "type": "boolean"
+        },
+        "description": {
+          "default": "",
+          "title": "Description",
+          "type": "string"
+        }
+      },
+      "required": [
+        "id",
+        "autonomy"
+      ],
+      "title": "Agent",
+      "type": "object"
+    },
+    "Approval": {
+      "enum": [
+        "none",
+        "threshold",
+        "always"
+      ],
+      "title": "Approval",
+      "type": "string"
+    },
+    "Autonomy": {
+      "enum": [
+        "suggest",
+        "act-with-approval",
+        "act"
+      ],
+      "title": "Autonomy",
+      "type": "string"
+    },
+    "Channel": {
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "maxLength": 64,
+          "minLength": 1,
+          "pattern": "^[a-z0-9][a-z0-9._-]*$",
+          "title": "Id",
+          "type": "string"
+        },
+        "kind": {
+          "$ref": "#/$defs/ChannelKind"
+        },
+        "trusted": {
+          "description": "False when content may be attacker controlled.",
+          "title": "Trusted",
+          "type": "boolean"
+        },
+        "origin": {
+          "$ref": "#/$defs/ChannelOrigin",
+          "description": "user, third-party or internal"
+        },
+        "description": {
+          "default": "",
+          "title": "Description",
+          "type": "string"
+        }
+      },
+      "required": [
+        "id",
+        "kind",
+        "trusted",
+        "origin"
+      ],
+      "title": "Channel",
+      "type": "object"
+    },
+    "ChannelKind": {
+      "enum": [
+        "chat",
+        "email",
+        "web",
+        "document",
+        "rag",
+        "api",
+        "file",
+        "cli"
+      ],
+      "title": "ChannelKind",
+      "type": "string"
+    },
+    "ChannelOrigin": {
+      "enum": [
+        "user",
+        "third-party",
+        "internal"
+      ],
+      "title": "ChannelOrigin",
+      "type": "string"
+    },
+    "DataStore": {
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "maxLength": 64,
+          "minLength": 1,
+          "pattern": "^[a-z0-9][a-z0-9._-]*$",
+          "title": "Id",
+          "type": "string"
+        },
+        "sensitivity": {
+          "$ref": "#/$defs/Sensitivity"
+        },
+        "description": {
+          "default": "",
+          "title": "Description",
+          "type": "string"
+        }
+      },
+      "required": [
+        "id",
+        "sensitivity"
+      ],
+      "title": "DataStore",
+      "type": "object"
+    },
+    "Memory": {
+      "enum": [
+        "none",
+        "session",
+        "persistent"
+      ],
+      "title": "Memory",
+      "type": "string"
+    },
+    "Principal": {
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "maxLength": 64,
+          "minLength": 1,
+          "pattern": "^[a-z0-9][a-z0-9._-]*$",
+          "title": "Id",
+          "type": "string"
+        },
+        "kind": {
+          "$ref": "#/$defs/PrincipalKind",
+          "description": "human or service"
+        },
+        "trust": {
+          "$ref": "#/$defs/TrustLevel",
+          "description": "How much the system trusts instructions from this principal."
+        },
+        "channels": {
+          "description": "Channels this principal speaks through (used for diagrams and rules).",
+          "items": {
+            "maxLength": 64,
+            "minLength": 1,
+            "pattern": "^[a-z0-9][a-z0-9._-]*$",
+            "type": "string"
+          },
+          "title": "Channels",
+          "type": "array"
+        },
+        "description": {
+          "default": "",
+          "title": "Description",
+          "type": "string"
+        }
+      },
+      "required": [
+        "id",
+        "kind",
+        "trust"
+      ],
+      "title": "Principal",
+      "type": "object"
+    },
+    "PrincipalKind": {
+      "enum": [
+        "human",
+        "service"
+      ],
+      "title": "PrincipalKind",
+      "type": "string"
+    },
+    "Sensitivity": {
+      "enum": [
+        "public",
+        "internal",
+        "confidential",
+        "regulated"
+      ],
+      "title": "Sensitivity",
+      "type": "string"
+    },
+    "SystemInfo": {
+      "additionalProperties": false,
+      "properties": {
+        "name": {
+          "description": "Human readable name of the system.",
+          "minLength": 1,
+          "title": "Name",
+          "type": "string"
+        },
+        "description": {
+          "default": "",
+          "description": "What the system does, in one paragraph.",
+          "title": "Description",
+          "type": "string"
+        },
+        "owner": {
+          "default": "",
+          "description": "Team or person accountable for the system.",
+          "title": "Owner",
+          "type": "string"
+        }
+      },
+      "required": [
+        "name"
+      ],
+      "title": "SystemInfo",
+      "type": "object"
+    },
+    "Tool": {
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "maxLength": 64,
+          "minLength": 1,
+          "pattern": "^[a-z0-9][a-z0-9._-]*$",
+          "title": "Id",
+          "type": "string"
+        },
+        "kind": {
+          "$ref": "#/$defs/ToolKind"
+        },
+        "target": {
+          "default": "",
+          "description": "What the tool touches. A data store id here links the tool to that store.",
+          "title": "Target",
+          "type": "string"
+        },
+        "scope": {
+          "default": "",
+          "description": "Free text describing the permission scope.",
+          "title": "Scope",
+          "type": "string"
+        },
+        "auth": {
+          "$ref": "#/$defs/ToolAuth",
+          "description": "none, static-key, short-lived or brokered"
+        },
+        "approval": {
+          "$ref": "#/$defs/Approval",
+          "default": "none",
+          "description": "none, threshold or always"
+        },
+        "sandboxed": {
+          "default": false,
+          "title": "Sandboxed",
+          "type": "boolean"
+        },
+        "provider": {
+          "$ref": "#/$defs/ToolProvider",
+          "default": "first-party",
+          "description": "third-party when the tool and its description come from an external source."
+        },
+        "pinned": {
+          "default": false,
+          "description": "True when the tool version or description hash is pinned.",
+          "title": "Pinned",
+          "type": "boolean"
+        },
+        "data_stores": {
+          "description": "Data store ids this tool can reach.",
+          "items": {
+            "maxLength": 64,
+            "minLength": 1,
+            "pattern": "^[a-z0-9][a-z0-9._-]*$",
+            "type": "string"
+          },
+          "title": "Data Stores",
+          "type": "array"
+        },
+        "description": {
+          "default": "",
+          "title": "Description",
+          "type": "string"
+        }
+      },
+      "required": [
+        "id",
+        "kind",
+        "auth"
+      ],
+      "title": "Tool",
+      "type": "object"
+    },
+    "ToolAuth": {
+      "enum": [
+        "none",
+        "static-key",
+        "short-lived",
+        "brokered"
+      ],
+      "title": "ToolAuth",
+      "type": "string"
+    },
+    "ToolKind": {
+      "enum": [
+        "read",
+        "write",
+        "exec",
+        "network",
+        "payment",
+        "messaging"
+      ],
+      "title": "ToolKind",
+      "type": "string"
+    },
+    "ToolProvider": {
+      "enum": [
+        "first-party",
+        "third-party"
+      ],
+      "title": "ToolProvider",
+      "type": "string"
+    },
+    "TrustLevel": {
+      "enum": [
+        "low",
+        "medium",
+        "high"
+      ],
+      "title": "TrustLevel",
+      "type": "string"
+    }
+  },
+  "additionalProperties": false,
+  "description": "Root document.",
+  "properties": {
+    "system": {
+      "$ref": "#/$defs/SystemInfo"
+    },
+    "principals": {
+      "items": {
+        "$ref": "#/$defs/Principal"
+      },
+      "title": "Principals",
+      "type": "array"
+    },
+    "agents": {
+      "items": {
+        "$ref": "#/$defs/Agent"
+      },
+      "minItems": 1,
+      "title": "Agents",
+      "type": "array"
+    },
+    "channels": {
+      "items": {
+        "$ref": "#/$defs/Channel"
+      },
+      "title": "Channels",
+      "type": "array"
+    },
+    "tools": {
+      "items": {
+        "$ref": "#/$defs/Tool"
+      },
+      "title": "Tools",
+      "type": "array"
+    },
+    "data_stores": {
+      "items": {
+        "$ref": "#/$defs/DataStore"
+      },
+      "title": "Data Stores",
+      "type": "array"
+    },
+    "controls": {
+      "description": "Ids of catalogue controls already in place.",
+      "items": {
+        "maxLength": 64,
+        "minLength": 1,
+        "pattern": "^[a-z0-9][a-z0-9._-]*$",
+        "type": "string"
+      },
+      "title": "Controls",
+      "type": "array"
+    }
+  },
+  "required": [
+    "system",
+    "agents"
+  ],
+  "title": "agent-threat-model system description",
+  "type": "object",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/basitalisandhu/agent-threat-model/main/schema/system.schema.json"
+}
