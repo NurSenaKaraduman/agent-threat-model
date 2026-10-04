@@ -59,3 +59,22 @@ jobs:
           fail-on: none
       - name: Show outputs
         run: echo "score=${{ steps.atm.outputs.residual-risk-score }} rating=${{ steps.atm.outputs.rating }}"
+
+  container-build:
+    name: Build the container image and run it
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - name: Build the image, print --help and analyse an example from a mount
+        run: |
+          docker build --build-arg VERSION=ci -t agent-threat-model:ci .
+          docker run --rm agent-threat-model:ci --help > help.txt && grep "Usage: atm" help.txt
+          docker run --rm agent-threat-model:ci --version
+          test "$(docker run --rm --entrypoint id agent-threat-model:ci -u)" = "1000"
+          docker run --rm -v "$PWD:/work:ro" agent-threat-model:ci analyse examples/support-bot.yaml --format markdown > report.md
+          diff report.md examples/reports/support-bot.md
+          set +e
+          docker run --rm -v "$PWD:/work:ro" agent-threat-model:ci analyse examples/support-bot.yaml --fail-on high > /dev/null
+          test $? -eq 1

@@ -78,7 +78,23 @@ Generated reports for every example are committed under [`examples/reports/`](ex
 
 ## Install
 
-Requires Python 3.11 or newer. PyPI publication is pending, so install from the repository:
+Container image (linux/amd64 and linux/arm64), published to GitHub Packages on every release. The entrypoint is `atm`; mount the directory holding your system YAML at `/work`:
+
+```bash
+docker run --rm -v "$PWD:/work" ghcr.io/basitalisandhu/agent-threat-model:0.1.0 analyse system.yaml
+docker run --rm -v "$PWD:/work" ghcr.io/basitalisandhu/agent-threat-model:0.1.0 analyse system.yaml --format sarif -o agent-threat-model.sarif --fail-on high
+```
+
+The image runs as uid 1000, so the mounted directory must be writable by that user when you use `-o`. Each image is signed with cosign (keyless) and has a build provenance attestation and an SPDX SBOM (attached to the GitHub Release). To verify:
+
+```bash
+cosign verify ghcr.io/basitalisandhu/agent-threat-model:0.1.0 \
+  --certificate-identity-regexp '^https://github.com/basitalisandhu/agent-threat-model/' \
+  --certificate-oidc-issuer https://token.actions.githubusercontent.com
+gh attestation verify oci://ghcr.io/basitalisandhu/agent-threat-model:0.1.0 --owner basitalisandhu
+```
+
+Python package: requires Python 3.11 or newer. PyPI publication is pending, so install from the repository:
 
 ```bash
 pipx install git+https://github.com/basitalisandhu/agent-threat-model                  # isolated CLI install
@@ -87,7 +103,13 @@ pip install git+https://github.com/basitalisandhu/agent-threat-model            
 git clone https://github.com/basitalisandhu/agent-threat-model && cd agent-threat-model && uv sync   # for development
 ```
 
-Once the package is on PyPI the short forms work too: `pipx install agent-threat-model`, `uvx agent-threat-model --help`, `pip install agent-threat-model`.
+Once published to PyPI:
+
+```bash
+pip install agent-threat-model
+```
+
+The other short forms work then too: `pipx install agent-threat-model`, `uvx agent-threat-model --help`.
 
 Both `atm` and `agent-threat-model` are installed as commands.
 
